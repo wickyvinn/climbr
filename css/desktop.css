@@ -1,0 +1,67 @@
+/*ids are #, classes are .*/
+
+body {
+	font-family: georgia;
+	/*background-image: url('../img/gymclimbr.jpg');
+	background-repeat: no-repeat;
+	background-size: 100%;*/
+}
+
+#container {
+	margin: 60px;
+	margin-bottom: 300px;
+}
+
+.box {
+	float: left;
+	margin: 30px;
+	padding: 10px;
+	width: 300px;
+	border: 6px solid black;
+}
+
+/*log in page*/
+
+#log_in_container {
+	margin-top: 50px;
+	margin-bottom: 100px;
+}
+
+body {
+	text-align: center;
+}
+
+#logo_image {
+	height: 10px;
+}
+
+.logo {
+	font-size: 200px;
+	font-family: 'Lobster', cursive;
+	color: #B20000;
+}
+
+.text {
+	font-size: 20px;
+	font-family: 'Raleway', sans-serif;
+}
+
+#log_in_form {
+	margin-top: 10px;
+	padding-top: 10px;
+	padding-bottom: 30px;
+}
+
+.log_in_input, .log_in_submit {
+	height: 60px;
+	width: 265px;
+	border-radius: 6px;
+	display: inline-block;
+	font-size: 20px;
+	font-family: 'Raleway', sans-serif;
+	margin-top: 10px;
+	padding: 2px 12px 2px 12px;
+	background-color: white;
+}
+
+
