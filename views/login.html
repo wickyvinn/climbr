@@ -9,11 +9,13 @@
       <div class="logo">climbr</div>
       <div class="text">find a climbing buddy nearby.</div>
       <div id="log_in_form">
-        <div><input class="log_in_input" placeholder="username"></input></div>
-        <div><input class="log_in_input" placeholder="password"></input></div>
-        <button class="log_in_submit" type="submit">CLIMB ON</button>
+        <form action="/login" method="POST">
+          <div><input class="log_in_input" type="username" placeholder="username"></input></div>
+          <div><input class="log_in_input" type="password" placeholder="password"></input></div>
+          <button class="log_in_submit" type="submit">CLIMB ON</button>
+        </form>
       </div>
-      <div class="text">just joining us? <a href="/signup">sign up</a></div> 
+      <div class="text">just joining us? <a href="/signup">sign up!</a></div> 
     </div>
   </body>
 </html>
