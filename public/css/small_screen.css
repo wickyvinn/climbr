@@ -37,12 +37,14 @@ body {
 	font-size: 230px;
 	font-family: 'Lobster', cursive;
 	font-color: #A37547;
+	color: #B20000;
 }
 
 .text {
 	margin: 5px;
 	font-size: 30px;
 	font-family: 'Raleway', sans-serif;
+	color: #7A3D00;
 }
 
 #log_in_form {
@@ -63,4 +65,12 @@ body {
 	background-color: white;
 }
 
+a {
+	color: #00005C;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #FF0066;
+}
 
