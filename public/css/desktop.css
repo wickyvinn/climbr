@@ -74,3 +74,13 @@ a {
 a:hover {
   color: #FF0066;
 }
+
+@font-face {
+  font-family: "Raleway";
+  src: url("Raleway-Regular.ttf") format("opentype");
+}
+
+@font-face {
+  font-family: "Lobster";
+  src: url("Lobster-Regular.ttf") format("opentype");
+}
