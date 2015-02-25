@@ -1,31 +1,15 @@
 /*ids are #, classes are .*/
 
-body {
-	font-size: 25px;
-	font-family: 'Raleway', sans-serif;
-}
-
 .container {
 	margin: 100px;
 }
 
-.box {
-	float: left;
-	margin: 30px;
-	padding: 10px;
-	width: 300px;
-	border: 6px solid black;
-}
 
 /*log in page*/
 
 #log_in_container {
 	margin-top: 300px;	
 	margin-bottom: 100px;
-}
-
-#logo_image {
-	height: 10px;
 }
 
 .logo {
@@ -62,23 +46,3 @@ body {
 	padding: 2px 12px 2px 12px;
 	background-color: white;
 }
-
-a {
-	color: #00005C;
-  text-decoration: none;
-}
-
-a:hover {
-  color: #FF0066;
-}
-
-@font-face {
-  font-family: "Raleway";
-  src: url("Raleway-Regular.ttf") format("opentype");
-}
-
-@font-face {
-  font-family: "Lobster";
-  src: url("Lobster-Regular.ttf") format("opentype");
-}
-

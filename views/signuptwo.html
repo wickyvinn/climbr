@@ -3,68 +3,82 @@
 	<head>
 			<link rel="stylesheet" media="(max-device-width: 500px)" href="../css/small_screen.css">
 	    <link rel="stylesheet" media="(min-device-width: 500px)" href="../css/desktop.css">
+	    <link rel="stylesheet" href="../css/universal.css">
 	    <script src="js/jquery.min.js"></script>
 	</head>
 	<body>
 		<div class="container">
 			Just a few more things we need to know about you as a climber. 
-			<br>You can come back to change this whenever you want.
-			
-			<div>
-				<input placeholder="first name"></input>
-				<select>
-					<option value="female">Female</option>
-					<option value="male">Male</option>
-					<option value="declined">Rather not say</option>
-				</select>
-				
+			<br><br>You can come back to change this whenever you want.
+			<form action="/signuptwo" method="POST">
 				<div>
-					<input id="height" placeholder="height" maxlength="4"></input>
-					<input id="weight" placeholder="weight" min="20" max="400"></input> 
-				</div>
-				
-				<div>
-					<input type="checkbox" name="top" value="yes">top rope certified<br>
-					<input type="checkbox" name="lead" value="yes">lead certified<br>
-				</div>
-				
-				<div>
+					<input placeholder="first name"></input>
+					<select>
+						<option value="female">Female</option>
+						<option value="male">Male</option>
+						<option value="declined">Rather not say</option>
+					</select>
 					
-					<h1>Rope Level</h1>
 					<div>
-						When I'm tired, I climb a <select class="ropeLevel"></select>
-						<br>When I'm pumped, I climb a <select class="ropeLevel"></select>
+						<input id="height" name="height" placeholder="height" maxlength="5"></input>
+						<input id="weight" name="weight" placeholder="weight" min="20" max="400"></input> 
+					</div>
+					
+					<div>
+						<input type="checkbox" name="top" value="yes">top rope certified<br>
+						<input type="checkbox" name="lead" value="yes">lead certified<br>
+					</div>
+					
+					<div>
+						
+						<h1>Rope Level</h1>
+						<div>
+							When I'm tired, I climb a <select class="ropeLevel" name="lowRopeLevel"></select>
+							<br>When I'm pumped, I climb a <select class="ropeLevel" name="highRopeLevel"></select>
+						</div>
+
+						<h1>Bouldering Level</h1>
+						<div>
+							When I'm tired, I climb a <select class="boulderLevel" name="lowBoulderLevel"></select>
+							<br>When I'm pumped, I climb a <select class="boulderLevel" name="highBoulderLevel"></select>
+						</div>
+					
 					</div>
 
-					<h1>Bouldering Level</h1>
-					<div>
-						When I'm tired, I climb a <select class="boulderLevel"></select>
-						<br>When I'm pumped, I climb a <select class="boulderLevel"></select>
-					</div>
-				
-				</div>
-
-				<button type="submit">BELAY ON</button>
+					<button type="submit">BELAY ON</button>
+				</form>
 		</div>
 
 		<script>
 
+			// when backspacing, remove quotes AND numbers
+			// is there a better way to do this? 
 			$('#height').keydown(function(e) {
 				if (e.keyCode == 8) {
 					var currentValue = $(this).val()
-					$(this).val(currentValue.substring(0, currentValue.length - 1));
+					if (currentValue.length === 5) $(this).val(currentValue.substring(0, currentValue.length - 2));
+					else $(this).val(currentValue.substring(0, currentValue.length - 1));
 				}
 			});
 
-			$('#height').keypress(function() {
+			// when entering in feet and inches, add units after keypress
+			// is there a better way to do this? 
+			$('#height').keypress(function(e) {
 			    var $heightField = $(this);
 			    var beforeVal = $heightField.val();
+			    var keyPressed = String.fromCharCode(e.which);
 			    if (beforeVal.length === 0) { // feet
 			    	setTimeout(function() { $heightField.val($heightField.val() + "'");
-				    }, 0);
+				    }, 1);
 					} else if (beforeVal.length === 2) { //inches
 						setTimeout(function() { $heightField.val($heightField.val() + '"');  
-						}, 0); 
+						}, 1); 
+					} else if (beforeVal.length === 4) { //inches double digits
+						setTimeout(function() { $heightField.val(beforeVal.slice(0,3) + keyPressed + '"');  
+						}, 1); 
+					} else if (beforeVal.length === 5) {
+						setTimeout(function() { $heightField.val(beforeVal.slice(0,2) + beforeVal.charAt(4) + keyPressed + '"');  
+						}, 1); 
 					}
 			});
 

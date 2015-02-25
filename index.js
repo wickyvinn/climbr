@@ -22,6 +22,10 @@ app.post('/signup', function(request, response) {
 	response.render("signuptwo.html");
 });
 
+app.get('/signuptwo', function(request, response) {
+	response.render("seshinfo.html");
+});
+
 app.listen(app.get('port'), function() {
   console.log("Node app is running at localhost:" + app.get('port'));
 });
