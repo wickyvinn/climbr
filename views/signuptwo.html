@@ -1,19 +1,16 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-			<link rel="stylesheet" media="(max-device-width: 500px)" href="../css/small_screen.css">
-	    <link rel="stylesheet" media="(min-device-width: 500px)" href="../css/desktop.css">
-	    <link rel="stylesheet" href="../css/universal.css">
 	    <script src="js/jquery.min.js"></script>
 	</head>
 	<body>
 		<div class="container">
-			Just a few more things we need to know about you as a climber. 
-			<br><br>You can come back to change this whenever you want.
+			<div>Here goes your permanent info. </div>
+			<div>You can update this later if any of it changes.</div>
 			<form action="/signuptwo" method="POST">
 				<div>
 					<input placeholder="first name"></input>
-					<select id="gender" name="gender">
+					<select id="gender" name="gender" class="info_dropdown">
 						<option value="default">Gender</option>
 						<option value="female">Female</option>
 						<option value="male">Male</option>
@@ -22,7 +19,7 @@
 					
 					<div>
 						<input id="height" name="height" placeholder="height (in inches)" maxlength="5"></input>
-						<br /><input id="weight" name="weight" placeholder="weight" min="20" max="400"></input> 
+						<input id="weight" name="weight" placeholder="weight" min="20" max="400"></input> 
 					</div>
 					
 					<div>
@@ -32,13 +29,13 @@
 					
 					<div>
 						
-						<h1>Rope Level</h1>
+						Rope Level
 						<div>
 							When I'm tired, I climb a <select class="ropeLevel" name="lowRopeLevel"></select>
 							<br>When I'm pumped, I climb a <select class="ropeLevel" name="highRopeLevel"></select>
 						</div>
 
-						<h1>Bouldering Level</h1>
+						Bouldering Level
 						<div>
 							When I'm tired, I climb a <select class="boulderLevel" name="lowBoulderLevel"></select>
 							<br>When I'm pumped, I climb a <select class="boulderLevel" name="highBoulderLevel"></select>
@@ -125,7 +122,7 @@
 				var selectedValue = $(this).val()
 				if (defaultValue === selectedValue) {
 					event.preventDefault();	
-					$("#preventSubmit").html("fill it out dude");
+					$("#preventSubmit").html("Some info fields are not yet filled out.");
 				}
 			});
 
