@@ -1,23 +1,46 @@
 .container {
 	margin: 2em;
+	font-family: arial;
 }
 
 input[type="text"], input[type="number"] {
-	width: 40%;
-	font-size: 15px;
+  outline: none;
+	width: 41%;
+	font-size: 17px;
 	padding: .5em;
 	margin-bottom: .25em;
+  -webkit-border-radius: 5px; 
+  -moz-border-radius: 5px; 
+  border-radius: 5px; 
+  border: none;
+  background-color: #E5E5E5;
+  font-color: ;
 }
 
+input[type="text"]:focus, input[type="number"]:focus {
+	background-color: #F8F8F8;
+}
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;	
+}
 
-.styled-select {
-   width: 48%;
-   height: 36px;
-   padding: .5em;
-   font-size: 15px;
-   border-radius: 0;
-   -webkit-appearance: none;
-   background: transparent;
+.styled-select, .ropeLevel, .boulderLevel {
+	outline: none;
+	width: 47%;
+	height: 37px;
+	padding: .5em;
+	font-size: 17px;
+	border-radius: 5px; 
+	-webkit-border-radius: 5px; 
+	-moz-border-radius: 5px; 
+	border: none;
+	background-color: #E5E5E5;
+}
+
+.checkBoxes {
+	font-size: 20px;
 }
 
