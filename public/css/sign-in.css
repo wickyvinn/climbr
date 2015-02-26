@@ -1,3 +1,23 @@
 .container {
 	margin: 2em;
 }
+
+input[type="text"], input[type="number"] {
+	width: 40%;
+	font-size: 15px;
+	padding: .5em;
+	margin-bottom: .25em;
+}
+
+
+
+.styled-select {
+   width: 48%;
+   height: 36px;
+   padding: .5em;
+   font-size: 15px;
+   border-radius: 0;
+   -webkit-appearance: none;
+   background: transparent;
+}
+

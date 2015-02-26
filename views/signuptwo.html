@@ -11,8 +11,8 @@
 			<div>You can update this later if any of it changes.</div>
 			<form action="/signuptwo" method="POST">
 				<div>
-					<input placeholder="first name"></input>
-					<select id="gender" name="gender" class="info_dropdown">
+					<input type="text" placeholder="first name"></input>
+					<select id="gender" name="gender" class="styled-select">
 						<option value="default">Gender</option>
 						<option value="female">Female</option>
 						<option value="male">Male</option>
@@ -20,8 +20,8 @@
 					</select>
 					
 					<div>
-						<input id="height" name="height" placeholder="height (in inches)" maxlength="5"></input>
-						<input id="weight" name="weight" placeholder="weight" min="20" max="400"></input> 
+						<input id="height" name="height" type="text" placeholder="height (inches)" maxlength="5"></input>
+						<input id="weight" name="weight" type="text" placeholder="weight" min="20" max="400"></input> 
 					</div>
 					
 					<div>
