@@ -55,6 +55,7 @@
 
 			// when entering in height (in inches), convert to feet and inches upon blur
 			// is there a better way to do this? 
+			// .focus and .blur functions works for chrome and safari. not for firefox. 
 			$('#height').blur(function() {
 				$(this).attr("type", "text");
 				if ($(this).val().length !== 0) {
