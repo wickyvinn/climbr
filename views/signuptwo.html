@@ -14,7 +14,7 @@
 				<div>
 					<input placeholder="first name"></input>
 					<select id="gender" name="gender">
-						<option value="default" selected="true" disabled="disabled">Gender</option>
+						<option value="default">Gender</option>
 						<option value="female">Female</option>
 						<option value="male">Male</option>
 						<option value="declined">Rather not say</option>
@@ -93,7 +93,7 @@
 			$(function(){
     		var $select = $(".ropeLevel");
     		var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
-    			$select.append($('<option></option>').html("Select a level").attr("selected","true").attr("disabled","disabled"));
+    			$select.append($('<option></option>').html("Select a level").attr("value","default"));
     		for (i=0;i<=25;i++) {
     			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
     		}
@@ -102,12 +102,34 @@
 			$(function(){
     		var $select = $(".boulderLevel");
     		var levels = ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"];
-    		$select.append($('<option></option>').html("Select a level").attr("selected","true").attr("disabled","disabled"));
+    		$select.append($('<option></option>').html("Select a level").attr("value","default"));
     		for (i=0;i<=19;i++) {
     			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
     		}
 			});
 
+
+		// validate form submission
+		$("form").submit(function(event) {
+			var emptyInputs = $(this).parent().find("input").filter(function() {
+        	return this.value === "";
+    	});
+
+			if (emptyInputs.length) {
+				event.preventDefault();
+				$("#preventSubmit").html("fill it out dude");
+			}
+
+			$("select").each(function () {
+				var defaultValue = "default";
+				var selectedValue = $(this).val()
+				if (defaultValue === selectedValue) {
+					event.preventDefault();	
+					$("#preventSubmit").html("fill it out dude");
+				}
+			});
+
+		});
 		</script>
 
 	</body>
