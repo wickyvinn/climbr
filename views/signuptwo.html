@@ -21,8 +21,8 @@
 					</select>
 					
 					<div>
-						<input id="height" name="height" placeholder="height (in inches)" maxlength="5"></input>
-						<br /><input id="weight" name="weight" placeholder="weight" min="20" max="400"></input> 
+						<input id="height" name="height" placeholder="height (in inches)" onfocus="this.type='number'" maxlength="5"></input>
+						<br /><input id="weight" name="weight" placeholder="weight" onfocus="this.type='number'" min="20" max="400"></input> 
 					</div>
 					
 					<div>
@@ -57,24 +57,25 @@
 			// is there a better way to do this? 
 			// .focus and .blur functions works for chrome and safari. not for firefox. 
 			$('#height').blur(function() {
-				$(this).attr("type", "text");
 				if ($(this).val().length !== 0) {
 					var enteredValue = parseInt($(this).val());
-					var feet = Math.floor(enteredValue / 12);
-					var inches = enteredValue % 12;
-					$(this).val(feet + " ft " + inches + " in");
-				}
+	        var feet = Math.floor(enteredValue / 12);
+	        var inches = enteredValue % 12;
+	        $(this).attr("type","text");
+	        $(this).val(feet + " ft " + inches + " in");
+			    }
 			});
 
 			$('#height').focus(function() {
 				var charArray = $(this).val().split(" ");
-				$(this).attr("type", "number");
-				if (charArray.length > 1) {
-					var feet = parseInt(charArray[0]);
-					var inches = parseInt(charArray[2]);
-					$(this).val(feet*12 + inches);
-				}
+		    if (charArray.length > 1) {
+	        var feet = parseInt(charArray[0]);
+	        var inches = parseInt(charArray[2]);
+	        $(this).attr("type","number");
+	        $(this).val(feet*12 + inches);
+		    }
 			});
+
 
 			$('#weight').blur(function() {
 				$(this).attr("type", "text");
