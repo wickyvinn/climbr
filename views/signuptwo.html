@@ -13,15 +13,16 @@
 			<form action="/signuptwo" method="POST">
 				<div>
 					<input placeholder="first name"></input>
-					<select>
+					<select id="gender" name="gender">
+						<option value="default" selected="true" disabled="disabled">Gender</option>
 						<option value="female">Female</option>
 						<option value="male">Male</option>
 						<option value="declined">Rather not say</option>
 					</select>
 					
 					<div>
-						<input id="height" name="height" placeholder="height" maxlength="5"></input>
-						<input id="weight" name="weight" placeholder="weight" min="20" max="400"></input> 
+						<input id="height" name="height" placeholder="height (in inches)" maxlength="5"></input>
+						<br /><input id="weight" name="weight" placeholder="weight" min="20" max="400"></input> 
 					</div>
 					
 					<div>
@@ -46,45 +47,53 @@
 					</div>
 
 					<button type="submit">BELAY ON</button>
+					<div id="preventSubmit"></div>
 				</form>
 		</div>
 
 		<script>
 
-			// when backspacing, remove quotes AND numbers
+			// when entering in height (in inches), convert to feet and inches upon blur
 			// is there a better way to do this? 
-			$('#height').keydown(function(e) {
-				if (e.keyCode == 8) {
-					var currentValue = $(this).val()
-					if (currentValue.length === 5) $(this).val(currentValue.substring(0, currentValue.length - 2));
-					else $(this).val(currentValue.substring(0, currentValue.length - 1));
+			$('#height').blur(function() {
+				$(this).attr("type", "text");
+				if ($(this).val().length !== 0) {
+					var enteredValue = parseInt($(this).val());
+					var feet = Math.floor(enteredValue / 12);
+					var inches = enteredValue % 12;
+					$(this).val(feet + " ft " + inches + " in");
 				}
 			});
 
-			// when entering in feet and inches, add units after keypress
-			// is there a better way to do this? 
-			$('#height').keypress(function(e) {
-			    var $heightField = $(this);
-			    var beforeVal = $heightField.val();
-			    var keyPressed = String.fromCharCode(e.which);
-			    if (beforeVal.length === 0) { // feet
-			    	setTimeout(function() { $heightField.val($heightField.val() + "'");
-				    }, 1);
-					} else if (beforeVal.length === 2) { //inches
-						setTimeout(function() { $heightField.val($heightField.val() + '"');  
-						}, 1); 
-					} else if (beforeVal.length === 4) { //inches double digits
-						setTimeout(function() { $heightField.val(beforeVal.slice(0,3) + keyPressed + '"');  
-						}, 1); 
-					} else if (beforeVal.length === 5) {
-						setTimeout(function() { $heightField.val(beforeVal.slice(0,2) + beforeVal.charAt(4) + keyPressed + '"');  
-						}, 1); 
-					}
+			$('#height').focus(function() {
+				var charArray = $(this).val().split(" ");
+				$(this).attr("type", "number");
+				if (charArray.length > 1) {
+					var feet = parseInt(charArray[0]);
+					var inches = parseInt(charArray[2]);
+					$(this).val(feet*12 + inches);
+				}
 			});
+
+			$('#weight').blur(function() {
+				$(this).attr("type", "text");
+				if ($(this).val().length > 0) {
+					$(this).val($(this).val() + " lbs");
+				}
+			});
+
+			$('#weight').focus(function() {
+				if ($(this).val().length > 0) {
+					$(this).val($(this).val().replace(" lbs", ""));
+				}
+				$(this).attr("type", "number");
+			});
+
 
 			$(function(){
     		var $select = $(".ropeLevel");
     		var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
+    			$select.append($('<option></option>').html("Select a level").attr("selected","true").attr("disabled","disabled"));
     		for (i=0;i<=25;i++) {
     			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
     		}
@@ -93,6 +102,7 @@
 			$(function(){
     		var $select = $(".boulderLevel");
     		var levels = ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"];
+    		$select.append($('<option></option>').html("Select a level").attr("selected","true").attr("disabled","disabled"));
     		for (i=0;i<=19;i++) {
     			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
     		}
