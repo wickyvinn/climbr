@@ -9,8 +9,9 @@
 		<div class="container">
 			<div>Here goes your permanent info. </div>
 			<div>You can update this later if any of it changes.</div>
-			<form action="/signuptwo" method="POST">
-				<div>
+			<form action="/seshinfo" method="POST">
+				<div class="form-section">
+					<h1> Personal Info</h1>
 					<input type="text" placeholder="First name"></input>
 					<select id="gender" name="gender" class="styled-select">
 						<option value="default">Gender</option>
@@ -28,24 +29,24 @@
 						<input type="checkbox" name="top" value="yes">top rope certified<br>
 						<input type="checkbox" name="lead" value="yes">lead certified<br>
 					</div>
-					
-					<div>
+				</div>
+				<div class="form-section">
 						
-						Rope Level
-						<div>
+						<h1> Rope Level</h1>
+						<div class="form-section">
 							When I'm tired, I climb a <select class="ropeLevel" name="lowRopeLevel"></select>
 							<br>When I'm pumped, I climb a <select class="ropeLevel" name="highRopeLevel"></select>
 						</div>
 
-						Bouldering Level
-						<div>
+						<h1> Bouldering Level</h1>
+						<div class="form-section">
 							When I'm tired, I climb a <select class="boulderLevel" name="lowBoulderLevel"></select>
 							<br>When I'm pumped, I climb a <select class="boulderLevel" name="highBoulderLevel"></select>
 						</div>
 					
-					</div>
+				</div>
 
-					<button type="submit">BELAY ON</button>
+					<button type="submit" >BELAY ON</button>
 					<div id="preventSubmit"></div>
 				</form>
 		</div>

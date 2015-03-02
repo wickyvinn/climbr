@@ -19,10 +19,10 @@ app.get('/signup', function(request, response) {
 app.post('/signup', function(request, response) {
 	var username = request.body.username
 	// verify this username doesn't exist in the database. can do via ajax. if so, next page should be via jquery.
-	response.render("signuptwo.html");
+	response.render("perminfo.html");
 });
 
-app.get('/signuptwo', function(request, response) {
+app.get('/seshinfo', function(request, response) {
 	response.render("seshinfo.html");
 });
 
