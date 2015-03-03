@@ -1,32 +1,66 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<link rel="stylesheet" media="(max-device-width: 500px)" href="../css/small_screen.css">
-	  <link rel="stylesheet" media="(min-device-width: 500px)" href="../css/desktop.css">
-	  <link rel="stylesheet" href="../css/universal.css">
-		<script src="js/jquery.min.js"></script>
+		<link rel="stylesheet" href="../css/sign-in.css">
+	  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <script src="js/jquery.min.js"></script>
 	</head>
 	<body>
 		<div class="container">
-			What would you like a climbing partner for today?
-			<div><input type="checkbox" name="toproping" value="yes">top roping</input></div>
-			<div><input type="checkbox" name="leadclimbing" value="yes">lead climbing</input></div>
-			<div><input type="checkbox" name="bouldering" value="yes">bouldering</input></div>
-			<br>How long are you climbing today?
-			<select class="sessionTime"></select>
-			<br>Look for you near the: 
-			<input type="text" placeholder= "i.e. the front desk"></input>
-			<button type="submit">CLIMBING</button>
+			<form action="/seshinfo" method="POST">
+				<div class="form-section">
+					<div>What do you want to do today?</div>
+					<div class="checkBoxes">
+						<input type="checkbox" id="topropesesh" name="toprope" value="yes">top rope<br>
+						<input type="checkbox" id="leadsesh" name="lead" value="yes">lead climb<br>
+						<input type="checkbox" id="bouldersesh" name="boulder" value="yes">boulder<br>
+					</div>
+				</div>
+				<div class="form-section">
+						<div>How long are you sticking around for?</div>
+						<div class="form-section">
+							<select class="sessionTime"></select>
+						</div>
+				</div>
+					<button type="submit">CLIMBING</button>
+					<div id="preventSubmit"></div>
+				</form>
 		</div>
-		
+
 		<script>
+
 			$(function(){
     		var $select = $(".sessionTime");
-    		var times = ["sunrise", "6:00am", "6:30am", "7:00am", "7:30am", "8:00am", "8:30am", "9:00am", "9:30am", "10:00am", "10:30am", "11:00am", "11:30am", "12:00pm", "12:30pm", "1:00pm", "1:30pm", "2:00pm", "2:30pm", "3:00pm", "3:30pm", "4:00pm", "4:30pm", "5:00pm", "5:30pm", "6:00pm", "6:30pm", "7:30pm", "8:00pm", "8:30pm", "9:00pm", "9:30pm", "10:00pm", "10:30pm", "11:00pm", "sundown"];
-    		for (i=0;i<=35;i++) {
+    		var times = ["whenever", "sundown", "5:00pm", "5:30pm", "6:00pm", "6:30pm", "7:30pm", "8:00pm", "8:30pm", "9:00pm", "9:30pm", "10:00pm", "10:30pm", "11:00pm", "11:30pm", "12:00am", "6:00am", "6:30am", "7:00am", "7:30am", "8:00am", "8:30am", "9:00am", "9:30am", "10:00am", "10:30am", "11:00am", "11:30am", "12:00pm", "12:30pm", "1:00pm", "1:30pm", "2:00pm", "2:30pm", "3:00pm", "3:30pm", "4:00pm", "4:30pm"];
+    		$select.append($('<option></option>').html("select a time").attr("value","default"));
+    		for (i=0;i<times.length;i++) {
     			$select.append($('<option></option>').val(times[i]).html(times[i]))
     		}
 			});
-	</script>
-	</body>
-</html>
+
+			// validate form submission
+			// some double code from perminfo.html
+			$("form").submit(function(event) {
+				var emptyInputs = $(this).parent().find("input").filter(function() {
+	        return this.value === "";	
+	    	});
+
+				var allCheckBoxes = $("input:checked");
+				console.log(allCheckBoxes.length);
+
+
+				$("select").each(function () {
+					var defaultValue = "default";
+					var selectedValue = $(this).val()
+					if ((defaultValue === selectedValue) || emptyInputs.length) {
+						event.preventDefault();	
+						$("#preventSubmit").html("Some fields are not yet filled out.");
+					} else if (allCheckBoxes.length === 0) {
+						event.preventDefault();	
+						$("#preventSubmit").html("You have to pick at least one thing you're doing today.");
+					}
+				});
+
+			});
+		</script>
+</html> 

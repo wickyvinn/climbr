@@ -9,9 +9,10 @@
 		<div class="container">
 			<div>Here goes your permanent info. </div>
 			<div>You can update this later if any of it changes.</div>
-			<form action="/signuptwo" method="POST">
-				<div>
-					<input type="text" placeholder="first name"></input>
+			<form action="/perminfo" method="POST">
+				<div class="form-section">
+					<h1> Personal Info</h1>
+					<input type="text" placeholder="First name"></input>
 					<select id="gender" name="gender" class="styled-select">
 						<option value="default">Gender</option>
 						<option value="female">Female</option>
@@ -20,32 +21,32 @@
 					</select>
 					
 					<div>
-						<input id="height" name="height" type="text" placeholder="height (inches)" maxlength="5"></input>
-						<input id="weight" name="weight" type="text" placeholder="weight" min="20" max="400"></input> 
+						<input id="height" name="height" type="text" placeholder="Height (inches)" maxlength="5"></input>
+						<input id="weight" name="weight" type="text" placeholder="Weight" min="20" max="400"></input> 
 					</div>
 					
-					<div>
+					<div class="checkBoxes">
 						<input type="checkbox" name="top" value="yes">top rope certified<br>
 						<input type="checkbox" name="lead" value="yes">lead certified<br>
 					</div>
-					
-					<div>
+				</div>
+				<div class="form-section">
 						
-						Rope Level
-						<div>
+						<h1> Rope Level</h1>
+						<div class="form-section">
 							When I'm tired, I climb a <select class="ropeLevel" name="lowRopeLevel"></select>
 							<br>When I'm pumped, I climb a <select class="ropeLevel" name="highRopeLevel"></select>
 						</div>
 
-						Bouldering Level
-						<div>
+						<h1> Bouldering Level</h1>
+						<div class="form-section">
 							When I'm tired, I climb a <select class="boulderLevel" name="lowBoulderLevel"></select>
 							<br>When I'm pumped, I climb a <select class="boulderLevel" name="highBoulderLevel"></select>
 						</div>
 					
-					</div>
+				</div>
 
-					<button type="submit">BELAY ON</button>
+					<button type="submit" >BELAY ON</button>
 					<div id="preventSubmit"></div>
 				</form>
 		</div>
@@ -93,7 +94,7 @@
     		var $select = $(".ropeLevel");
     		var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
     			$select.append($('<option></option>').html("Select a level").attr("value","default"));
-    		for (i=0;i<=25;i++) {
+    		for (i=0;i<levels.length;i++) {
     			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
     		}
 			});
@@ -102,7 +103,7 @@
     		var $select = $(".boulderLevel");
     		var levels = ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"];
     		$select.append($('<option></option>').html("Select a level").attr("value","default"));
-    		for (i=0;i<=19;i++) {
+    		for (i=0;i<levels.length;i++) {
     			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
     		}
 			});
@@ -114,15 +115,10 @@
         	return this.value === "";
     	});
 
-			if (emptyInputs.length) {
-				event.preventDefault();
-				$("#preventSubmit").html("fill it out dude");
-			}
-
 			$("select").each(function () {
 				var defaultValue = "default";
 				var selectedValue = $(this).val()
-				if (defaultValue === selectedValue) {
+				if ((defaultValue === selectedValue) || emptyInputs.length) {
 					event.preventDefault();	
 					$("#preventSubmit").html("Some info fields are not yet filled out.");
 				}

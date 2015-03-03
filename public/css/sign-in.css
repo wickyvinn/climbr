@@ -1,23 +1,62 @@
 .container {
 	margin: 2em;
+	font-family: arial;
+   font-size: 17px;
 }
 
-input[type="text"], input[type="number"] {
-	width: 40%;
-	font-size: 15px;
-	padding: .5em;
-	margin-bottom: .25em;
-}
-
-
-
-.styled-select {
-   width: 48%;
-   height: 36px;
+input[type="text"], input[type="number"], button {
+   outline: none;
+   width: 41%;
+   font-size: 17px;
    padding: .5em;
-   font-size: 15px;
-   border-radius: 0;
-   -webkit-appearance: none;
-   background: transparent;
+   margin-bottom: .25em;
+   -webkit-border-radius: 5px; 
+   -moz-border-radius: 5px; 
+   border-radius: 5px; 
+   border: none;
+   background-color: #E5E5E5;
 }
 
+button:hover {
+  background-color: #FF0066;
+}
+
+button:focus {
+   background-color: #FF0066;
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+	background-color: #F8F8F8;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;	
+}
+
+.styled-select, .ropeLevel, .boulderLevel {
+	outline: none;
+	width: 47%;
+	height: 37px;
+	padding: .5em;
+	font-size: 17px;
+	border-radius: 5px; 
+	-webkit-border-radius: 5px; 
+	-moz-border-radius: 5px; 
+	border: none;
+	background-color: #E5E5E5;
+}
+
+.form-section, .ropeLevel, .boulderLevel, .checkBoxes {
+   margin-top: 10px;
+   margin-bottom: 10px;
+} 
+
+h1 {
+   font-size: 20px;
+}
+
+select.boulderLevel, select.ropeLevel {
+   margin: 3px 0px 13px 0px;
+}

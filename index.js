@@ -8,23 +8,40 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
-app.get('/', function(request, response) {
-  response.render('login.html');
-});
+app.route('/')
+	.get(function(request, response) {
+		response.render('login.html');
+	})
+	.post(function(request, response) {
+		// verify this username doesn't exist in the database. can do via ajax. if so, next page should be via jquery.
+		// go straight to session info if permanent info has already been filled out. 
+		response.render('perminfo.html');
+	})
 
-app.get('/signup', function(request, response) {
-	response.render('signup.html');
-});
+app.route('/signup')
+	.get(function(request, response) {
+		response.render('signup.html');
+	})
+	.post(function(request, response) {
+		// verify this username doesn't exist in the database. can do via ajax. if so, next page should be via jquery.
+		response.render('perminfo.html');
+	})
 
-app.post('/signup', function(request, response) {
-	var username = request.body.username
-	// verify this username doesn't exist in the database. can do via ajax. if so, next page should be via jquery.
-	response.render("signuptwo.html");
-});
+app.route('/perminfo')
+	.get(function(request, response) {
+		response.render('perminfo.html');
+	})
+	.post(function(request, response) {
+		response.render('seshinfo.html');
+	})
 
-app.get('/signuptwo', function(request, response) {
-	response.render("seshinfo.html");
-});
+app.route('/seshinfo')
+	.get(function(request, response) {
+		response.render('seshinfo.html');
+	})
+	.post(function(request, response) {
+		response.send('all info done submitting.');
+	})
 
 app.listen(app.get('port'), function() {
   console.log("Node app is running at localhost:" + app.get('port'));
