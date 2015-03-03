@@ -1,23 +1,22 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <link rel="stylesheet" media="(max-device-width: 500px)" href="../css/small_screen.css">
-    <link rel="stylesheet" media="(min-device-width: 500px)" href="../css/desktop.css">
-    <link rel="stylesheet" href="../css/universal.css">
+    <link rel="stylesheet" href="../css/sign-in.css">
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
   </head>
   <body>
-    <div id="log_in_container">
+    <div class="container">
       <div class="logo">climbr</div>
-      <div class="text">find a climbing buddy nearby.</div>
-      <div id="log_in_form">
+      <div class="fancy-text">find a climbing buddy nearby.</div>
+
+      <div class="form-section" style="text-align: center;">
         <form action="/" method="POST">
-          <div><input class="log_in_input" type="username" placeholder="username"></input></div>
-          <div><input class="log_in_input" type="password" placeholder="password"></input></div>
+          <div><input type="username" placeholder="username"></input></div>
+          <div><input type="password" placeholder="password"></input></div>
           <button class="log_in_submit" type="submit">ON BELAY</button>
         </form>
       </div>
-      <div class="text">just joining us? <a href="/signup">sign up!</a></div> 
+      <div class="fancy-text">just joining us? <a href="/signup">sign up!</a></div> 
     </div>
   </body>
 </html>
