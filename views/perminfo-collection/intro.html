@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<link rel="stylesheet" href="../css/sign-in.css">
+	  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <script src="js/jquery.min.js"></script>
+	</head>
+	<body>
+		<div class="container">
+			<div id="directions">
+				<div>Here goes your permanent info. </div>
+				<div>You can update this later if any of it changes.</div>
+			</div>
+		</div>
+
+		<!-- blinking arrow button. can swipe right to move forward. -->
+		<script>
+			$(function(){
+				$("#container").on("swipe", function() {
+					alert("focused over the container");
+				})
+			});
+		</script>
+
+	</body>
+</html>
