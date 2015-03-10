@@ -15,7 +15,7 @@ app.route('/')
 	.post(function(request, response) {
 		// verify this username doesn't exist in the database. can do via ajax. if so, next page should be via jquery.
 		// go straight to session info if permanent info has already been filled out. 
-		response.render('perminfo-collection/intro.html');
+		response.render('perminfo-pages.html');
 	})
 
 app.route('/signup')
@@ -24,12 +24,12 @@ app.route('/signup')
 	})
 	.post(function(request, response) {
 		// verify this username doesn't exist in the database. can do via ajax. if so, next page should be via jquery.
-		response.render('perminfo-collection/intro.html');
+		response.render('perminfo-pages.html');
 	})
 
 app.route('/perminfo')
 	.get(function(request, response) {
-		response.render('perminfo-collection/intro.html');
+		response.render('perminfo-pages.html');
 	})
 	.post(function(request, response) {
 		response.render('seshinfo.html');

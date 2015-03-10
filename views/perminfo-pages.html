@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		
+		<style>
+		 #section-2, #section-3, #section-4, #section-5, #section-6, #submission {
+	 		display: none;
+		 }
+		</style>
+
+		<link rel="stylesheet" href="../css/sign-in.css">
+	  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <script src="js/jquery.min.js"></script>
+	</head>
+	
+	<body>
+		<div class="container">
+			<form action="/perminfo" method="POST">
+				<div id="section-1" class="form-section">
+					<div>Here goes your permanent info. </div>
+					<div>You can update this later if any of it changes.</div>
+				</div>
+				
+				<div id="section-2" class="form-section">
+					Tell us about yourself.
+					<input type="text" placeholder="First name"></input>
+					<select id="gender" name="gender" class="styled-select">
+						<option value="default">Gender</option>
+						<option value="female">Female</option>
+						<option value="male">Male</option>
+						<option value="declined">Rather not say</option>
+					</select>
+				</div>
+				
+				<div id="section-3" class="form-section">
+					How much do you weigh? 
+					<input id="weight" name="weight" type="text" placeholder="lbs" min="20" max="400"></input> 
+				</div>
+
+				<div id="section-4" class="checkBoxes">
+					Are you belay certified?
+					<input type="checkbox" name="top" value="yes">top rope certified<br>
+					<input type="checkbox" name="lead" value="yes">lead certified<br>
+				</div>
+			
+				<div id="section-5" class="form-section">
+					<h1>Rope Level</h1>
+					When I'm tired, I climb a <select class="ropeLevel" name="lowRopeLevel"></select>
+					<br>When I'm pumped, I climb a <select class="ropeLevel" name="highRopeLevel"></select>
+				</div>
+
+				<div id="section-6" class="form-section">
+					<h1>Boulder Level</h1>
+					When I'm tired, I climb a <select class="boulderLevel" name="lowBoulderLevel"></select>
+					<br>When I'm pumped, I climb a <select class="boulderLevel" name="highBoulderLevel"></select>
+				</div>
+					
+				<button id="next" onclick="nextSection(); return false;">Next</button>
+				<button id="submission" type="submit">BELAY ON</button>
+			</form>
+		</div>	
+
+		<script>
+			function nextSection() {
+				var displayedSection = $('[id^=section]:visible');
+				var displayedId = displayedSection.attr("id");
+				if (displayedId === "section-5") {
+					$("#next").hide();
+					$("#submission").show();
+				} 
+				var nextSectionNum = parseInt(displayedId.split('-')[1]) + 1;	
+				var nextSectionId = "section" + "-" + nextSectionNum.toString();
+				displayedSection.hide();
+				$('#'+nextSectionId).show();
+			};
+
+			$('#weight').blur(function() {
+				$(this).attr("type", "text");
+				if ($(this).val().length > 0) {
+					$(this).val($(this).val() + " lbs");
+				}
+			});
+
+			$('#weight').focus(function() {
+				if ($(this).val().length > 0) {
+					$(this).val($(this).val().replace(" lbs", ""));
+				}
+				$(this).attr("type", "number");
+			});
+
+			$(function(){
+	  		var $select = $(".ropeLevel");
+	  		var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
+	  			$select.append($('<option></option>').html("Select a level").attr("value","default"));
+	  		for (i=0;i<levels.length;i++) {
+	  			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
+	  		}
+			});
+
+			$(function(){
+	  		var $select = $(".boulderLevel");
+	  		var levels = ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"];
+	  		$select.append($('<option></option>').html("Select a level").attr("value","default"));
+	  		for (i=0;i<levels.length;i++) {
+	  			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
+	  		}
+			});
+
+		</script>
+	</body>
+</html>
