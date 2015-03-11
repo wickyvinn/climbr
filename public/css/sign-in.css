@@ -1,7 +1,7 @@
 .container {
 	margin: 2em;
 	font-family: arial;
-   font-size: 17px;
+  font-size: 17px; 
 }
 
 a {
@@ -44,7 +44,7 @@ input::-webkit-inner-spin-button {
   margin: 0;	
 }
 
-.styled-select, .ropeLevel, .boulderLevel {
+.styled-select, .ropeLevel, .boulderLevel, .sessionTime {
 	outline: none;
 	width: 47%;
 	height: 37px;
@@ -57,11 +57,13 @@ input::-webkit-inner-spin-button {
 	background-color: #E5E5E5;
 }
 
-#navigation-buttons {
+.navigation-buttons {
+  margin-top: 10px;
+  margin-bottom: 10px;
   text-align: center;
 }
 
-.form-section, .ropeLevel, .boulderLevel {
+.form-section-wrapper, .input-wrapper, .ropeLevel, .boulderLevel {
    margin-top: 10px;
    margin-bottom: 10px;
 } 

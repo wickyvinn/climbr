@@ -1,6 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
+		<style>
+		 #section-2, #submission, #back {
+	 		display: none;
+		 }
+		</style>
+
 		<link rel="stylesheet" href="../css/sign-in.css">
 	  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <script src="js/jquery.min.js"></script>
@@ -8,26 +14,65 @@
 	<body>
 		<div class="container">
 			<form action="/seshinfo" method="POST">
-				<div class="form-section">
+				<div class="form-section-wrapper">
 					<div>What do you want to do today?</div>
-					<div class="checkBoxes">
+					<div id="section-1" class="input-wrapper">
 						<input type="checkbox" id="topropesesh" name="toprope" value="yes">top rope<br>
 						<input type="checkbox" id="leadsesh" name="lead" value="yes">lead climb<br>
 						<input type="checkbox" id="bouldersesh" name="boulder" value="yes">boulder<br>
 					</div>
 				</div>
-				<div class="form-section">
+				<div id="section-2" class="form-section-wrapper">
 						<div>How long are you sticking around for?</div>
-						<div class="form-section">
+						<div class="input-wrapper">
 							<select class="sessionTime"></select>
 						</div>
 				</div>
-					<button type="submit">CLIMBING</button>
+				<div class="navigation-buttons">
+					<button id="back" onclick="backSection(); return false;">Back</button>
+					<button id="next" onclick="nextSection(); return false;">Next</button>
+					<button id="submission" type="submit">CLIMBING</button>
+				</div>
 					<div id="preventSubmit"></div>
 				</form>
 		</div>
 
 		<script>
+
+			function nextSection() {
+				
+				var displayedSection = $('[id^=section]:visible');
+				var displayedId = displayedSection.attr("id");
+
+				if (displayedId === "section-1") {
+					$("#next").hide();
+					$("#submission").show();
+				} 
+				
+				var nextSectionNum = parseInt(displayedId.split('-')[1]) + 1;	
+				if (nextSectionNum === 2) $("#back").show();
+
+				var nextSectionId = "section" + "-" + nextSectionNum.toString();
+				displayedSection.hide();
+				$('#'+nextSectionId).show();
+			};
+
+			function backSection() {
+
+				var displayedSection = $('[id^=section]:visible');
+				var displayedId = displayedSection.attr("id");
+				if (displayedId === "section-2") {
+					$("#submission").hide();
+					$("#next").show();
+				} 
+
+				var nextSectionNum = parseInt(displayedId.split('-')[1]) - 1;	
+				if (nextSectionNum === 1) $("#back").hide();
+
+				var nextSectionId = "section" + "-" + nextSectionNum.toString();
+				displayedSection.hide();
+				$('#'+nextSectionId).show();
+			};
 
 			$(function(){
     		var $select = $(".sessionTime");

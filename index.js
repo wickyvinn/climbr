@@ -32,7 +32,15 @@ app.route('/perminfo')
 		response.render('perminfo-pages.html');
 	})
 	.post(function(request, response) {
-		response.render('seshinfo.html');
+		var personalInfo = request.body;
+		var firstName = request.body.firstName;
+		var gender = request.body.gender;
+		var weight = request.body.weight;
+		var top = request.body.top;
+		var lead = request.body.lead;
+		var ropeLevelRange = request.body.lowRopeLevel + " to " + request.body.highRopeLevel
+		var boulderLevelRange = request.body.lowBoulderLevel + " to " + request.body.highBoulderLevel
+		response.render('perminfo-verify.html', { firstName: firstName, gender: gender, weight: weight, top: top, lead: lead, ropeLevelRange: ropeLevelRange, boulderLevelRange: boulderLevelRange });
 	})
 
 app.route('/seshinfo')
