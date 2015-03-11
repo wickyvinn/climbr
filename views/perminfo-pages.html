@@ -3,7 +3,7 @@
 	<head>
 		
 		<style>
-		 #section-2, #section-3, #section-4, #section-5, #section-6, #submission {
+		 #section-2, #section-3, #section-4, #section-5, #section-6, #submission, #back {
 	 		display: none;
 		 }
 		</style>
@@ -17,8 +17,7 @@
 		<div class="container">
 			<form action="/perminfo" method="POST">
 				<div id="section-1" class="form-section">
-					<div>Here goes your permanent info. </div>
-					<div>You can update this later if any of it changes.</div>
+					<div>Here goes your personal info. You can update this later if any of it changes.</div>
 				</div>
 				
 				<div id="section-2" class="form-section">
@@ -33,11 +32,11 @@
 				</div>
 				
 				<div id="section-3" class="form-section">
-					How much do you weigh? 
+					How much do you weigh?
 					<input id="weight" name="weight" type="text" placeholder="lbs" min="20" max="400"></input> 
 				</div>
 
-				<div id="section-4" class="checkBoxes">
+				<div id="section-4" class="form-section">
 					Are you belay certified?
 					<input type="checkbox" name="top" value="yes">top rope certified<br>
 					<input type="checkbox" name="lead" value="yes">lead certified<br>
@@ -54,21 +53,45 @@
 					When I'm tired, I climb a <select class="boulderLevel" name="lowBoulderLevel"></select>
 					<br>When I'm pumped, I climb a <select class="boulderLevel" name="highBoulderLevel"></select>
 				</div>
-					
-				<button id="next" onclick="nextSection(); return false;">Next</button>
-				<button id="submission" type="submit">BELAY ON</button>
+				<div id="navigation-buttons">
+					<button id="back" onclick="backSection(); return false;">Back</button>
+					<button id="next" onclick="nextSection(); return false;">Next</button>
+					<button id="submission" type="submit">BELAY ON</button>
+				</div>
 			</form>
 		</div>	
 
 		<script>
 			function nextSection() {
+				
 				var displayedSection = $('[id^=section]:visible');
 				var displayedId = displayedSection.attr("id");
+
 				if (displayedId === "section-5") {
 					$("#next").hide();
 					$("#submission").show();
 				} 
+				
 				var nextSectionNum = parseInt(displayedId.split('-')[1]) + 1;	
+				if (nextSectionNum === 2) $("#back").show();
+
+				var nextSectionId = "section" + "-" + nextSectionNum.toString();
+				displayedSection.hide();
+				$('#'+nextSectionId).show();
+			};
+
+			function backSection() {
+
+				var displayedSection = $('[id^=section]:visible');
+				var displayedId = displayedSection.attr("id");
+				if (displayedId === "section-5") {
+					$("#submission").hide();
+					$("#next").show();
+				} 
+
+				var nextSectionNum = parseInt(displayedId.split('-')[1]) - 1;	
+				if (nextSectionNum === 1) $("#back").hide();
+
 				var nextSectionId = "section" + "-" + nextSectionNum.toString();
 				displayedSection.hide();
 				$('#'+nextSectionId).show();

@@ -57,13 +57,18 @@ input::-webkit-inner-spin-button {
 	background-color: #E5E5E5;
 }
 
-.form-section, .ropeLevel, .boulderLevel, .checkBoxes {
+#navigation-buttons {
+  text-align: center;
+}
+
+.form-section, .ropeLevel, .boulderLevel {
    margin-top: 10px;
    margin-bottom: 10px;
 } 
 
 h1 {
    font-size: 20px;
+   text-align: center;
 }
 
 select.boulderLevel, select.ropeLevel {
