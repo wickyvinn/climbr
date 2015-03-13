@@ -74,16 +74,20 @@
 		<script>
 		// generalize this by finding the # of items, put in separate js file, and reference in seshinfo.
 			function nextSection() {
+
+				// i don't want to calculate this every time, how to put it where the function is called and just pass it into the function?
 				
+				var numOfSections = $('[id^=section]').length
 				var displayedSection = $('[id^=section]:visible');
 				var displayedId = displayedSection.attr("id");
 
-				if (displayedId === "section-5") {
+				var nextSectionNum = parseInt(displayedId.split('-')[1]) + 1;	
+				
+				if (nextSectionNum === (numOfSections-1)) {
 					$("#next").hide();
 					$("#submission").show();
-				} 
-				
-				var nextSectionNum = parseInt(displayedId.split('-')[1]) + 1;	
+				}
+
 				if (nextSectionNum === 2) $("#back").show();
 
 				var nextSectionId = "section" + "-" + nextSectionNum.toString();
@@ -93,19 +97,23 @@
 
 			function backSection() {
 
+				// lots of duplicit code here from next()
+				
+				var numOfSections = $('[id^=section]').length
 				var displayedSection = $('[id^=section]:visible');
 				var displayedId = displayedSection.attr("id");
-				if (displayedId === "section-5") {
+				
+				var nextSectionNum = parseInt(displayedId.split('-')[1]) - 1;	
+				if (nextSectionNum === 1) $("#back").hide();
+				if (nextSectionNum === (numOfSections-1)) {
 					$("#submission").hide();
 					$("#next").show();
 				} 
 
-				var nextSectionNum = parseInt(displayedId.split('-')[1]) - 1;	
-				if (nextSectionNum === 1) $("#back").hide();
-
 				var nextSectionId = "section" + "-" + nextSectionNum.toString();
 				displayedSection.hide();
 				$('#'+nextSectionId).show();
+				
 			};
 
 			$('#weight').blur(function() {
