@@ -66,44 +66,72 @@
 				<div class="navigation-buttons">
 					<button id="back" onclick="backSection(); return false;">Back</button>
 					<button id="next" onclick="nextSection(); return false;">Next</button>
-					<button id="submission" type="submit">BELAY ON</button>
+					<button id="submission" type="submit" onclick="validateSection()">BELAY ON</button>
+					<br><br><div id="preventNext"></div>
 				</div>
 			</form>
 		</div>	
 
 		<script>
-		// generalize this by finding the # of items, put in separate js file, and reference in seshinfo.
-			function nextSection() {
-
-				// i don't want to calculate this every time, how to put it where the function is called and just pass it into the function?
-				
-				var numOfSections = $('[id^=section]').length
+		// generalize this: put in separate js file, and reference in seshinfo.
+			function validateSection() {
 				var displayedSection = $('[id^=section]:visible');
 				var displayedId = displayedSection.attr("id");
-
-				var nextSectionNum = parseInt(displayedId.split('-')[1]) + 1;	
 				
-				if (nextSectionNum === (numOfSections-1)) {
-					$("#next").hide();
-					$("#submission").show();
+				var emptyInputs = displayedSection.find("input").filter(function() {
+	        return this.value === "";	
+	    	});
+				
+				var emptySelects = displayedSection.find("select").filter(function() {
+					var defaultValue = "default";
+					var selectedValue = $(this).val()
+					return (defaultValue === selectedValue);
+				});
+
+				if ((emptyInputs.length + emptySelects.length) != 0) { // prevent moving forward
+					$("#preventNext").html("You gotta fill out the fields first.");
+					event.preventDefault();
+					return false
+				} else return true
+			};
+
+			function nextSection() {
+
+				// 1. validates to make sure all fields of dispalyed section has been filled
+				// 2. moves onto the next section. shows submission button when appropriate
+
+				// i don't want to calculate # of sections every time, how to put it where the function is called and just pass it into the function?
+				
+				var displayedSection = $('[id^=section]:visible');
+				var displayedId = displayedSection.attr("id");
+				if (validateSection()) {
+					var nextSectionNum = parseInt(displayedId.split('-')[1]) + 1;	
+					var numOfSections = $('[id^=section]').length
+
+					if (nextSectionNum === (numOfSections-1)) {
+						$("#next").hide();
+						$("#submission").show();
+					}
+
+					if (nextSectionNum === 2) $("#back").show();
+
+					var nextSectionId = "section" + "-" + nextSectionNum.toString();
+					displayedSection.hide();
+					$('#'+nextSectionId).show();
+					$("#preventNext").html("");
 				}
-
-				if (nextSectionNum === 2) $("#back").show();
-
-				var nextSectionId = "section" + "-" + nextSectionNum.toString();
-				displayedSection.hide();
-				$('#'+nextSectionId).show();
 			};
 
 			function backSection() {
 
 				// lots of duplicit code here from next()
 				
-				var numOfSections = $('[id^=section]').length
 				var displayedSection = $('[id^=section]:visible');
 				var displayedId = displayedSection.attr("id");
 				
 				var nextSectionNum = parseInt(displayedId.split('-')[1]) - 1;	
+				var numOfSections = $('[id^=section]').length
+
 				if (nextSectionNum === 1) $("#back").hide();
 				if (nextSectionNum === (numOfSections-1)) {
 					$("#submission").hide();
@@ -113,7 +141,7 @@
 				var nextSectionId = "section" + "-" + nextSectionNum.toString();
 				displayedSection.hide();
 				$('#'+nextSectionId).show();
-				
+
 			};
 
 			$('#weight').blur(function() {
