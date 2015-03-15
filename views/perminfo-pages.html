@@ -97,9 +97,6 @@
 
 			function nextSection() {
 
-				// 1. validates to make sure all fields of dispalyed section has been filled
-				// 2. moves onto the next section. shows submission button when appropriate
-
 				// i don't want to calculate # of sections every time, how to put it where the function is called and just pass it into the function?
 				
 				var displayedSection = $('[id^=section]:visible');
@@ -133,7 +130,7 @@
 				var numOfSections = $('[id^=section]').length
 
 				if (nextSectionNum === 1) $("#back").hide();
-				if (nextSectionNum === (numOfSections-1)) {
+				if (nextSectionNum === (numOfSections-2)) {
 					$("#submission").hide();
 					$("#next").show();
 				} 
