@@ -32,7 +32,7 @@ function backSection() {
 	var numOfSections = $('[id^=section]').length
 
 	if (nextSectionNum === 1) $("#back").hide();
-	if (nextSectionNum === (numOfSections-2)) {
+	if (nextSectionNum === (numOfSections-1)) {
 		$("#submission").hide();
 		$("#next").show();
 	} 
@@ -54,10 +54,17 @@ function validateSection(section) {
 		return (defaultValue === selectedValue);
 	});
 
+	var checkBoxes = section.find("input:checkbox").length;
+	var checkedBoxes = section.find("input:checkbox:checked").length;
+
 	// if forms are empty, prevent moving forward
-	if ((emptyInputs.length + emptySelects.length) != 0) { 
+	if ((emptyInputs.length + emptySelects.length) != 0 || (checkBoxes > 0 && checkedBoxes < 1)) { 
 		$("#preventNext").html("You've left some answers empty.");
 		event.preventDefault(); // for the submit option
 		return false
 	} else return true
 };
+
+function validateActivity() {
+	
+}

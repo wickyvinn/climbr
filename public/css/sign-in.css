@@ -26,6 +26,10 @@ input, button {
    background-color: #E5E5E5;
 }
 
+input[type="checkbox"] {
+  width: 11%;
+}
+
 button:hover {
   background-color: #FF0066;
 }
@@ -44,9 +48,12 @@ input::-webkit-inner-spin-button {
   margin: 0;	
 }
 
-.styled-select, .ropeLevel, .boulderLevel, .sessionTime {
+.short-select {
+  width: 47%;
+}
+
+.short-select, .ropeLevel, .boulderLevel, .sessionTime {
 	outline: none;
-	width: 47%;
 	height: 37px;
 	padding: .5em;
 	font-size: 17px;
@@ -81,7 +88,7 @@ select.boulderLevel, select.ropeLevel {
   font-size: 100px;
   font-family: 'Lobster', cursive;
   font-color: #A37547;
-  color: #B20000;
+  color: #FF0066;
   text-align: center;
 }
 
