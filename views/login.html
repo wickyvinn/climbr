@@ -3,6 +3,12 @@
   <head>
     <link rel="stylesheet" href="../css/sign-in.css">
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <script src="js/jquery.min.js"></script>
+    <style>
+        #confirmPassword, #loginLink { 
+          display: none;
+        }
+    </style>
   </head>
   <body>
     <div class="container">
@@ -14,11 +20,26 @@
           <div class="input-wrapper">
             <div><input type="username" placeholder="username"></input></div>
             <div><input type="password" placeholder="password"></input></div>
+            <div id="confirmPassword"><input type="password" placeholder="confirm password..."></input></div>
           <button class="log_in_submit" type="submit">ON BELAY</button>
           </div>
         </form>
       </div>
-      <div class="fancy-text">just joining us? <a href="/signup">sign up!</a></div> 
+      <div id="signupLink" class="fancy-text">just joining us? <a onclick="signupPage()">sign up!</a></div> 
+      <div id="loginLink" class="fancy-text">have an account? <a onclick="loginPage()">log in!</a></div> 
     </div>
+
+    <script> 
+        function signupPage() {
+          $("#confirmPassword").show();
+          $("#signupLink").hide();
+          $("#loginLink").show();
+        }
+        function loginPage() {
+          $("#confirmPassword").hide();
+          $("#loginLink").hide();
+          $("#signupLink").show();
+        }
+    </script>
   </body>
 </html>

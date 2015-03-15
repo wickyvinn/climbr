@@ -11,6 +11,7 @@
 		<link rel="stylesheet" href="../css/sign-in.css">
 	  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <script src="js/jquery.min.js"></script>
+		<script src="js/navigation.js"></script>
 	</head>
 	
 	<body>
@@ -73,73 +74,6 @@
 		</div>	
 
 		<script>
-		// generalize this: put in separate js file, and reference in seshinfo.
-			function validateSection() {
-				var displayedSection = $('[id^=section]:visible');
-				var displayedId = displayedSection.attr("id");
-				
-				var emptyInputs = displayedSection.find("input").filter(function() {
-	        return this.value === "";	
-	    	});
-				
-				var emptySelects = displayedSection.find("select").filter(function() {
-					var defaultValue = "default";
-					var selectedValue = $(this).val()
-					return (defaultValue === selectedValue);
-				});
-
-				if ((emptyInputs.length + emptySelects.length) != 0) { // prevent moving forward
-					$("#preventNext").html("You gotta fill out the fields first.");
-					event.preventDefault();
-					return false
-				} else return true
-			};
-
-			function nextSection() {
-
-				// i don't want to calculate # of sections every time, how to put it where the function is called and just pass it into the function?
-				
-				var displayedSection = $('[id^=section]:visible');
-				var displayedId = displayedSection.attr("id");
-				if (validateSection()) {
-					var nextSectionNum = parseInt(displayedId.split('-')[1]) + 1;	
-					var numOfSections = $('[id^=section]').length
-
-					if (nextSectionNum === (numOfSections-1)) {
-						$("#next").hide();
-						$("#submission").show();
-					}
-
-					if (nextSectionNum === 2) $("#back").show();
-
-					var nextSectionId = "section" + "-" + nextSectionNum.toString();
-					displayedSection.hide();
-					$('#'+nextSectionId).show();
-					$("#preventNext").html("");
-				}
-			};
-
-			function backSection() {
-
-				// lots of duplicit code here from next()
-				
-				var displayedSection = $('[id^=section]:visible');
-				var displayedId = displayedSection.attr("id");
-				
-				var nextSectionNum = parseInt(displayedId.split('-')[1]) - 1;	
-				var numOfSections = $('[id^=section]').length
-
-				if (nextSectionNum === 1) $("#back").hide();
-				if (nextSectionNum === (numOfSections-2)) {
-					$("#submission").hide();
-					$("#next").show();
-				} 
-
-				var nextSectionId = "section" + "-" + nextSectionNum.toString();
-				displayedSection.hide();
-				$('#'+nextSectionId).show();
-
-			};
 
 			$('#weight').blur(function() {
 				$(this).attr("type", "text");
