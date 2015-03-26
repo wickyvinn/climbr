@@ -51,6 +51,11 @@ app.route('/seshinfo')
 		response.send('all info done submitting.');
 	})
 
+app.route('/profile')
+	.get(function(request, response) {
+		response.render('profile.html');
+	})
+
 app.listen(app.get('port'), function() {
   console.log("Node app is running at localhost:" + app.get('port'));
 });

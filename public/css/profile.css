@@ -1,0 +1,33 @@
+
+.profile-container {
+	margin: 2em;
+  
+  font-family: "Raleway";
+  font-size: 17px; 
+}
+
+.profile-wrapper {
+	border-style: solid;
+  border-color: #000000;
+}
+
+.display-name {
+	margin-top: .5em;
+  font-size: 50px;
+  font-family: "Raleway";
+  color: #000000;
+  text-align: center;
+}
+
+.profile-pic-wrapper, .button-wrapper {
+	padding: 1em;
+}
+
+.profile-pic, .tindr-buttons {
+	height: auto;
+	max-width: 100%;
+}
+
+.display-info-wrapper {
+	padding: 1em;
+}
