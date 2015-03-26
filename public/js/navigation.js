@@ -64,7 +64,3 @@ function validateSection(section) {
 		return false
 	} else return true
 };
-
-function validateActivity() {
-	
-}
