@@ -22,7 +22,7 @@
 				</div>
 				
 				<div id="section-2" class="form-section-wrapper">
-					Tell us about yourself.
+					Tell us about yourself.	
 					<div class="input-wrapper">
 						<input type="text" placeholder="First name" name="firstName"></input>
 						<select id="gender" name="gender" class="short-select">
@@ -75,6 +75,14 @@
 		</div>	
 
 		<script>
+
+			$('button').mousedown(function() {
+				$(this).css("background-color", "#FF0066");		
+			});
+
+			$('button').mouseup(function() {
+				$(this).css("background-color", "#E5E5E5");		
+			});
 
 			$('#weight').blur(function() {
 				$(this).attr("type", "text");

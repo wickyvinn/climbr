@@ -1,9 +1,8 @@
 
 .profile-container {
 	margin: 2em;
-  
   font-family: "Raleway";
-  font-size: 17px; 
+  font-size: 13px; 
 }
 
 .profile-wrapper {
@@ -19,15 +18,28 @@
   text-align: center;
 }
 
-.profile-pic-wrapper, .button-wrapper {
+.profile-pic-wrapper {
 	padding: 1em;
 }
 
-.profile-pic, .tindr-buttons {
+.button-wrapper {
+	padding-top: 1em;
+	padding-left: 3em;
+	padding-right: 3em;
+}
+
+.button {
+	max-width: 30%;
+}
+
+.profile-pic {
 	height: auto;
 	max-width: 100%;
 }
 
 .display-info-wrapper {
-	padding: 1em;
+	font-size: 15px;
+	font-family: "Raleway";
+	padding-bottom: 1em;
+	margin-left: 1em;
 }

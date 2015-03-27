@@ -30,14 +30,6 @@ input[type="checkbox"] {
   width: 11%;
 }
 
-button:hover {
-  background-color: #FF0066;
-}
-
-button:focus {
-   background-color: #FF0066;
-}
-
 input:focus {
 	background-color: #F8F8F8;
 }
