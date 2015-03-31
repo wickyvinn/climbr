@@ -2,6 +2,6 @@
   "name": "climbr",
   "description": "Find a climbing partner so you don't look like you don't have friends",
   "repository": "https://github.com/heroku/climbr",
-  "logo": "http://node-js-sample.herokuapp.com/node.svg",
-  "keywords": ["node", "express", "mongodb"]
+  "keywords": ["node", "express", "mongodb"];
+  "addons":["mongolab"]
 }
