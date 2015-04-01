@@ -1,7 +1,7 @@
 var express    = require('express');
 var bodyParser = require('body-parser');
 var mongoose   = require('mongoose');
-var session    = require('express-session')
+var session    = require('express-session');
 
 var app = express();
 app.set('port', (process.env.PORT || 5000));
@@ -10,6 +10,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
+
+//////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////// ALL THINGS MONGO /////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
 
 var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/climbr';
 
@@ -21,6 +26,23 @@ mongoose.connect(uristring, function (err, res) {
 var users = new mongoose.Schema({ username: String });
 var User = mongoose.model('users', users);
 
+var perminfo = new mongoose.Schema({ 
+	user_id: String, 
+	first_name: String, 
+	gender: String, 
+	weight: Number, 
+	top_cert: Boolean, 
+	lead_cert: Boolean,
+	rope_high: String,
+	rope_low: String,
+	boulder_high: String,
+	boulder_low: String
+});
+var PermInfo = mongoose.model('perminfo', perminfo);
+
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////// ROUTES ////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
 app.route('/')
 	.get(function(request, response) {
 		response.render('login.html', {error: ""});
@@ -36,33 +58,44 @@ app.route('/')
 		});
 	});
 
-app.route('/signup')
-	.get(function(request, response) {
-		response.render('signup.html');
-	})
-	.post(function(request, response) {
-		response.render('perminfo-pages.html');
-	})
-
 app.route('/perminfo')
 	.get(function(request, response) {
-		response.render('perminfo-pages.html');
+		if (request.session.user) {
+			response.render('perminfo-pages.html');
+		} else response.render('login.html', { error: "Please sign in." });
 	})
 	.post(function(request, response) {
-		var personalInfo = request.body;
-		var firstName = request.body.firstName;
-		var gender = request.body.gender;
-		var weight = request.body.weight;
-		var top = request.body.top;
-		var lead = request.body.lead;
-		var ropeLevelRange = request.body.lowRopeLevel + " to " + request.body.highRopeLevel
-		var boulderLevelRange = request.body.lowBoulderLevel + " to " + request.body.highBoulderLevel
-		response.render('perminfo-verify.html', { firstName: firstName, gender: gender, weight: weight, top: top, lead: lead, ropeLevelRange: ropeLevelRange, boulderLevelRange: boulderLevelRange });
+		if (request.session.user) {
+			PermInfo.create({
+				user_id: request.session.user._id, 
+				first_name: request.body.firstName,
+				gender: request.body.gender,
+				weight: request.body.weight,
+				top_cert: request.body.top, 
+			  lead_cert: request.body.lead, 
+			  rope_high: request.body.highRopeLevel,
+			  rope_low: request.body.lowRopeLevel,
+			  boulder_high: request.body.highBoulderLevel,
+			  boulder_low: request.body.lowBoulderLevel
+			});
+
+			var firstName = request.body.firstName;
+			var gender = request.body.gender;
+			var weight = request.body.weight;
+			var top = request.body.top;
+			var lead = request.body.lead;
+			var ropeLevelRange = request.body.lowRopeLevel + " to " + request.body.highRopeLevel
+			var boulderLevelRange = request.body.lowBoulderLevel + " to " + request.body.highBoulderLevel
+			response.render('perminfo-verify.html', { firstName: firstName, gender: gender, weight: weight, top: top, lead: lead, ropeLevelRange: ropeLevelRange, boulderLevelRange: boulderLevelRange });
+		
+		} else response.render('login.html', { error: "Please sign in." });
 	})
 
 app.route('/seshinfo')
 	.get(function(request, response) {
-		response.render('seshinfo.html');
+		if (request.session.user) {
+			response.render('seshinfo.html');
+		} else response.render('login.html', { error: "Please sign in." });
 	})
 	.post(function(request, response) {
 		response.send('all info done submitting.');
