@@ -1,64 +1,40 @@
-var express = require('express');
+var express    = require('express');
 var bodyParser = require('body-parser');
-var app = express();
-var mongoose = require('mongoose');
+var mongoose   = require('mongoose');
+var session    = require('express-session')
 
+var app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
-var uristring = 
-  process.env.MONGOLAB_URI || 
-  process.env.MONGOHQ_URL || 
-  'mongodb://localhost/climbr';
+var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/climbr';
 
-// Makes connection asynchronously.  Mongoose will queue up database
-// operations and release them when the connection is complete.
 mongoose.connect(uristring, function (err, res) {
-  if (err) { 
-    console.log ('ERROR connecting to: ' + uristring + '. ' + err);
-  } else {
-    console.log ('Succeeded connected to: ' + uristring);
-  }
+  if (err) console.log ('ERROR connecting to: ' + uristring + '. ' + err);
+  else console.log ('Succeeded connected to: ' + uristring);
 });
 
-var users = new mongoose.Schema({
-  username: String,
-  firstName: String,
-  gender: String,
-  weight: Number, 
-  top: Boolean,
-  lead: Boolean, 
-  ropeLevelRange: String,
-  boulderLevelRange: String
-});
-
-var User = mongoose.model('climbers', users);
+var users = new mongoose.Schema({ username: String });
+var User = mongoose.model('users', users);
 
 app.route('/')
 	.get(function(request, response) {
-		response.render('login.html', {usernameTakenNotice: ""});
+		response.render('login.html', {error: ""});
 	})
 	.post(function(request, response) {
-		// verify this username doesn't exist in the database. can do via ajax. if so, next page should be via jquery.
-		// go straight to session info if permanent info has already been filled out. 
-		// eventually i dont want any password. it should just be verified by phone number.
-		username = request.body.username 
-		var newUser = new User ({username: username});
-		var getUserByUsernameQ = User.find({username: username});
-		getUserByUsernameQ.exec(function(err, result) {	
-			if (!err) {
-				if (result.length > 0) response.render('login.html', {usernameTakenNotice: "This username is taken. Choose another!"});
-				else newUser.save(function (err) { 
-					if (err) console.log("user was not created successfully") 
-					else response.render('perminfo-pages.html');
-				});
+		User.findOne({"username": request.body.username}, function (err, user) {
+			if (!user) {
+				response.render("login.html", {error: "Username not found."});
+			} else {
+				request.session.user = user;
+				response.redirect("/seshinfo");
 			}
-			else response.send("your query effed up");
 		});
-	})
+	});
 
 app.route('/signup')
 	.get(function(request, response) {
