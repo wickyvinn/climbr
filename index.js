@@ -65,29 +65,32 @@ app.route('/perminfo')
 		} else response.render('login.html', { error: "Please sign in." });
 	})
 	.post(function(request, response) {
-		if (request.session.user) {
+		if (request.session.user) { // check if the user is signed in.
+			var weight = parseInt(request.body.weight.split(" ")[0])
 			PermInfo.create({
 				user_id: request.session.user._id, 
 				first_name: request.body.firstName,
 				gender: request.body.gender,
-				weight: request.body.weight,
+				weight: weight,
 				top_cert: request.body.top, 
 			  lead_cert: request.body.lead, 
 			  rope_high: request.body.highRopeLevel,
 			  rope_low: request.body.lowRopeLevel,
 			  boulder_high: request.body.highBoulderLevel,
 			  boulder_low: request.body.lowBoulderLevel
+			}, function(err, perminfo) {
+ 				if (err) response.send("401 - Bad Request." + err);
+				else { // expose the entered data to client.
+					var firstName = request.body.firstName;
+					var gender = request.body.gender;
+					var weight = request.body.weight;
+					var top = request.body.top;
+					var lead = request.body.lead;
+					var ropeLevelRange = request.body.lowRopeLevel + " to " + request.body.highRopeLevel
+					var boulderLevelRange = request.body.lowBoulderLevel + " to " + request.body.highBoulderLevel
+					response.render('perminfo-verify.html', { firstName: firstName, gender: gender, weight: weight, top: top, lead: lead, ropeLevelRange: ropeLevelRange, boulderLevelRange: boulderLevelRange });
+				}
 			});
-
-			var firstName = request.body.firstName;
-			var gender = request.body.gender;
-			var weight = request.body.weight;
-			var top = request.body.top;
-			var lead = request.body.lead;
-			var ropeLevelRange = request.body.lowRopeLevel + " to " + request.body.highRopeLevel
-			var boulderLevelRange = request.body.lowBoulderLevel + " to " + request.body.highBoulderLevel
-			response.render('perminfo-verify.html', { firstName: firstName, gender: gender, weight: weight, top: top, lead: lead, ropeLevelRange: ropeLevelRange, boulderLevelRange: boulderLevelRange });
-		
 		} else response.render('login.html', { error: "Please sign in." });
 	})
 
