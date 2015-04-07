@@ -58,6 +58,29 @@ app.route('/')
 		});
 	});
 
+app.route('/signup')
+	.get(function(request, response) {
+		response.render('signup.html', {error: ""});
+	})
+	.post(function(request, response) {
+		User.findOne({"username": request.body.username}, function (err, user) {
+			if (user) {
+				response.render("signup.html", {error: "Username already exists."});
+			} else {
+				// create the user
+				User.create({ username: request.body.username }, function (err, user) {
+					if (err) response.send("401 - Bad Request." + err);
+					else {
+						// issue session
+						request.session.user = user;
+						response.redirect("/perminfo");		
+					}
+				})
+			}
+		});
+	});
+
+
 app.route('/perminfo')
 	.get(function(request, response) {
 		if (request.session.user) {
