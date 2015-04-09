@@ -28,7 +28,7 @@ var User = mongoose.model('users', users);
 
 var perminfo = new mongoose.Schema({ 
 	user_id: String, 
-	first_name: String, 
+	"first_name": String, 
 	gender: String, 
 	weight: Number, 
 	top_cert: Boolean, 
@@ -54,8 +54,10 @@ function formatPermInfo(perminfo) {
 		weight: perminfo.weight + " lbs",
 		top: perminfo.top_cert !== undefined,
 		lead: perminfo.lead_cert !== undefined,
-		ropeRange: perminfo.rope_low + " to " + perminfo.rope_high,
-		boulderRange: perminfo.boulder_low + " to " + perminfo.boulder_high
+		ropeLow: perminfo.rope_low,
+		ropeHigh: perminfo.rope_high,
+		boulderLow: perminfo.boulder_low,
+		boulderHigh: perminfo.boulder_high
 	}
 }
 
@@ -111,8 +113,28 @@ app.route('/perminfo/edit')
 					response.render("perminfo-edit.html", newPermInfo);
 				}
 			});
-		} else response.render('login.html', { error: "Please sign in." });
+		}
 	})
+	.post(function(request, response) {
+		if (request.session.user) {
+			console.log("Thing sent to mongo: " + JSON.stringify(request.body))
+			PermInfo.update({user_id: request.session.user._id}, {$set: request.body}, {upsert: true}, 
+				function(err, perminfo) {
+					if (err) {
+						console.log("not good. " + err)
+						response.send("401 - Bad Request." + err);
+					}
+					else {
+						console.log("It worked.");
+						response.send("It worked.");
+					}
+				});
+
+		} else {
+			console.log("session doesn't exist.")
+			response.render('login.html', { error: "Please sign in." });
+		}
+	});
 
 app.route('/perminfo')
 	.get(function(request, response) {

@@ -7,166 +7,150 @@
 	 		display: none;
 		 }
 
-		 // More practical CSS...
-// using mobile first method (IE8,7 requires respond.js polyfill https://github.com/scottjehl/Respond)
+			table { 
+			  width: 100%; 
+			  border-collapse: collapse; 
+			}
+			/* Zebra striping */
+			tr:nth-of-type(odd) { 
+			  background: #eee; 
+			}
+			th { 
+			  background: #333; 
+			  color: white; 
+			  font-weight: bold; 
+			}
+			td, th { 
+			  padding: 6px; 
+			  border: 1px solid #ccc; 
+			  text-align: left; 
+			}
 
-$breakpoint-alpha: 480px; // adjust to your needs
+/* 
+Max width before this PARTICULAR table gets nasty
+This query will take effect for any screen smaller than 760px
+and also iPads specifically.
+*/
+@media 
+only screen and (max-width: 760px),
+(min-device-width: 768px) and (max-device-width: 1024px)  {
 
-.rwd-table {
-  margin: 1em 0;
-  min-width: 300px; // adjust to your needs
-  
-  tr {
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  th {
-    display: none; // for accessibility, use a visually hidden method here instead! Thanks, reddit!   
-  }
-  
-  td {
-    display: block; 
-    
-    &:first-child {
-      padding-top: .5em;
-    }
-    &:last-child {
-      padding-bottom: .5em;
-    }
-
-    &:before {
-      content: attr(data-th)": "; // who knew you could do this? The internet, that's who.
-      font-weight: bold;
-
-      // optional stuff to make it look nicer
-      width: 6.5em; // magic number :( adjust according to your own content
-      display: inline-block;
-      // end options
-      
-      @media (min-width: $breakpoint-alpha) {
-        display: none;
-      }
-    }
-  }
-  
-  th, td {
-    text-align: left;
-    
-    @media (min-width: $breakpoint-alpha) {
-      display: table-cell;
-      padding: .25em .5em;
-      
-      &:first-child {
-        padding-left: 0;
-      }
-      
-      &:last-child {
-        padding-right: 0;
-      }
-    }
-
-  }
-  
-  
+	/* Force table to not be like tables anymore */
+	table, thead, tbody, th, td, tr { 
+		display: block; 
+	}
+	
+	/* Hide table headers (but not display: none;, for accessibility) */
+	thead tr { 
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+	
+	tr { border: 1px solid #ccc; }
+	
+	td { 
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee; 
+		position: relative;
+		padding-left: 50%; 
+	}
+	
+	td:before { 
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%; 
+		padding-right: 10px; 
+		white-space: nowrap;
+	}
+	
+	/*
+	Label the data
+	*/
+	td:nth-of-type(1):before { content: "Name"; }
+	td:nth-of-type(2):before { content: "Gender"; }
+	td:nth-of-type(3):before { content: "Weight"; }
+	td:nth-of-type(4):before { content: "Top rope certified?"; }
+	td:nth-of-type(5):before { content: "Lead certified?"; }
+	td:nth-of-type(6):before { content: "Generally rope"; }
+	td:nth-of-type(7):before { content: "Generally boulder"; }
 }
 
 
-// presentational styling
-
-@import 'http://fonts.googleapis.com/css?family=Montserrat:300,400,700';
-
-body {
-  padding: 0 2em;
-  font-family: Montserrat, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  color: #444;
-  background: #eee;
-}
-
-h1 {
-  font-weight: normal;
-  letter-spacing: -1px;
-  color: #34495E;
-}
-
-.rwd-table {
-  background: #34495E;
-  color: #fff;
-  border-radius: .4em;
-  overflow: hidden;
-  tr {
-    border-color: lighten(#34495E, 10%);
-  }
-  th, td {
-    margin: .5em 1em;
-    @media (min-width: $breakpoint-alpha) { 
-      padding: 1em !important; 
-    }
-  }
-  th, td:before {
-    color: #dd5;
-  }
-}
 		</style>
 
 		<link rel="stylesheet" href="../css/sign-in.css">
 	  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <script src="js/jquery.min.js"></script>
+    <script src="../js/jquery.min.js"></script>
 	</head>
 	
 	<body>
 		<div class="container">
 			<form action="/seshinfo">
-				<table class="rwd-table">
-				  <tr>
-				    <th>Name</th>
-				    <th>Gender</th>
-				    <th>Weight</th>
-				    <th>Top Certified?</th>
-				    <th>Lead Certified?</th>
-				    <th>Generally climb</th>
-				    <th>Generally boulder</th>
-				  </tr>
-				  <tr>
-				    <td data-th="firstName"><%=firstName %> </td>
-				    <td data-th="gender"><%= gender %></td>
-				    <td data-th="weight"><%= weight %></td>
-				    <td data-th="top"><%= top %></td>
-				  </tr>
-				  <tr>
-				    <td data-th="">Howard The Duck</td>
-				    <td data-th="Genre">"Comedy"</td>
-				    <td data-th="Year">1986</td>
-				    <td data-th="Gross">$16,295,774</td>
-				  </tr>
-				  <tr>
-				    <td data-th="Movie Title">American Graffiti</td>
-				    <td data-th="Genre">Comedy, Drama</td>
-				    <td data-th="Year">1973</td>
-				    <td data-th="Gross">$115,000,000</td>
-				  </tr>
+
+
+				<table>
+					<thead>
+					<tr>
+						<th>Name</th>
+						<th>Gender</th>
+						<th>Weight</th>
+						<th>Top</th>
+						<th>Lead</th>
+						<th>Rope</th>
+						<th>Boulder</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr>
+						<td><input type="text" class="editable" name="first_name" value="<%=firstName %>"></input> </td>
+						<td><input type="text" class="editable" name="gender" value="<%=gender %>"></input> </td>
+						<td><input type="text" class="editable" name="weight" value="<%=weight %>"></input> </td>
+						<td><input type="text" class="editable" name="top" value="<%=top %>"></input> </td>
+						<td><input type="text" class="editable" name="lead" value="<%=lead %>"></input> </td>
+						<td>
+							<input type="text" class="editable" name="ropeLow" value="<%=ropeLow %>"></input> to 
+							<input type="text" class="editable" name="ropeHigh" value="<%=ropeHigh %>"></input></td>
+						<td>
+							<input type="text" class="editable" name="boulderLow" value="<%=boulderLow %>"></input> to
+							<input type="text" class="editable" name="boulderHigh" value="<%=boulderHigh %>"></input> 
+						</td>
+					</tr>
+					</tbody>
 				</table>
-
-
-
-
-
-
-
-				<h1>This is what we have for your permanent info.</h1f>
-				Name: 
-				<br>Gender: <%= gender %>
-				<br>Weight: <%= weight %> 
-				<br>Top rope certified: <%= top %>
-				<br>Lead certified: <%= lead %>
-				<br>Generally climb: <%=ropeRange %>
-				<br>Generally boulder: <%= boulderRange %>
 				<div class="navigation-buttons">
 					<button type="submit">Correct.</button>
 				</div>
 			</form>
 		</div>
+
+		<script>
+			$(".editable").on("focusout", function (event) {
+				var newValue = $(this).val();
+				var newValueType = ($(this).attr("name"));
+				var data = {}
+				data[newValueType] = newValue
+				console.log("the thing about to get saved: " + JSON.stringify(data))
+				$.ajax({
+				  type: "POST",
+				  url: "/perminfo/edit",
+				  xhrFields: {withCredentials: true},
+				  data: data,
+				  dataType: "json",
+				  success: function(response) {
+				  	console.log("thing that just got saved: " + data);
+				  	console.log(response)
+				  }
+				});
+			});
+
+		
+		</script>
 	</body>
 </html>
+
+
