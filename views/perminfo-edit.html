@@ -1,0 +1,172 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		
+		<style>
+		 #section-2, #section-3, #section-4, #section-5, #section-6, #submission, #back {
+	 		display: none;
+		 }
+
+		 // More practical CSS...
+// using mobile first method (IE8,7 requires respond.js polyfill https://github.com/scottjehl/Respond)
+
+$breakpoint-alpha: 480px; // adjust to your needs
+
+.rwd-table {
+  margin: 1em 0;
+  min-width: 300px; // adjust to your needs
+  
+  tr {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  th {
+    display: none; // for accessibility, use a visually hidden method here instead! Thanks, reddit!   
+  }
+  
+  td {
+    display: block; 
+    
+    &:first-child {
+      padding-top: .5em;
+    }
+    &:last-child {
+      padding-bottom: .5em;
+    }
+
+    &:before {
+      content: attr(data-th)": "; // who knew you could do this? The internet, that's who.
+      font-weight: bold;
+
+      // optional stuff to make it look nicer
+      width: 6.5em; // magic number :( adjust according to your own content
+      display: inline-block;
+      // end options
+      
+      @media (min-width: $breakpoint-alpha) {
+        display: none;
+      }
+    }
+  }
+  
+  th, td {
+    text-align: left;
+    
+    @media (min-width: $breakpoint-alpha) {
+      display: table-cell;
+      padding: .25em .5em;
+      
+      &:first-child {
+        padding-left: 0;
+      }
+      
+      &:last-child {
+        padding-right: 0;
+      }
+    }
+
+  }
+  
+  
+}
+
+
+// presentational styling
+
+@import 'http://fonts.googleapis.com/css?family=Montserrat:300,400,700';
+
+body {
+  padding: 0 2em;
+  font-family: Montserrat, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  color: #444;
+  background: #eee;
+}
+
+h1 {
+  font-weight: normal;
+  letter-spacing: -1px;
+  color: #34495E;
+}
+
+.rwd-table {
+  background: #34495E;
+  color: #fff;
+  border-radius: .4em;
+  overflow: hidden;
+  tr {
+    border-color: lighten(#34495E, 10%);
+  }
+  th, td {
+    margin: .5em 1em;
+    @media (min-width: $breakpoint-alpha) { 
+      padding: 1em !important; 
+    }
+  }
+  th, td:before {
+    color: #dd5;
+  }
+}
+		</style>
+
+		<link rel="stylesheet" href="../css/sign-in.css">
+	  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <script src="js/jquery.min.js"></script>
+	</head>
+	
+	<body>
+		<div class="container">
+			<form action="/seshinfo">
+				<table class="rwd-table">
+				  <tr>
+				    <th>Name</th>
+				    <th>Gender</th>
+				    <th>Weight</th>
+				    <th>Top Certified?</th>
+				    <th>Lead Certified?</th>
+				    <th>Generally climb</th>
+				    <th>Generally boulder</th>
+				  </tr>
+				  <tr>
+				    <td data-th="firstName"><%=firstName %> </td>
+				    <td data-th="gender"><%= gender %></td>
+				    <td data-th="weight"><%= weight %></td>
+				    <td data-th="top"><%= top %></td>
+				  </tr>
+				  <tr>
+				    <td data-th="">Howard The Duck</td>
+				    <td data-th="Genre">"Comedy"</td>
+				    <td data-th="Year">1986</td>
+				    <td data-th="Gross">$16,295,774</td>
+				  </tr>
+				  <tr>
+				    <td data-th="Movie Title">American Graffiti</td>
+				    <td data-th="Genre">Comedy, Drama</td>
+				    <td data-th="Year">1973</td>
+				    <td data-th="Gross">$115,000,000</td>
+				  </tr>
+				</table>
+
+
+
+
+
+
+
+				<h1>This is what we have for your permanent info.</h1f>
+				Name: 
+				<br>Gender: <%= gender %>
+				<br>Weight: <%= weight %> 
+				<br>Top rope certified: <%= top %>
+				<br>Lead certified: <%= lead %>
+				<br>Generally climb: <%=ropeRange %>
+				<br>Generally boulder: <%= boulderRange %>
+				<div class="navigation-buttons">
+					<button type="submit">Correct.</button>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>

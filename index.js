@@ -40,6 +40,25 @@ var perminfo = new mongoose.Schema({
 });
 var PermInfo = mongoose.model('perminfo', perminfo);
 
+
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////// SHARED FUNCITONS //////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+// // give perminfo json, and reformat it into a perminfo/edit page.
+function formatPermInfo(perminfo) {
+// here is a good place to make a class of perminfo in order to avoid getting keys that don't exist.
+	return {
+		firstName: perminfo.first_name.charAt(0).toUpperCase() + perminfo.first_name.slice(1),
+		gender: perminfo.gender.charAt(0).toUpperCase() + perminfo.gender.slice(1),
+		weight: perminfo.weight + " lbs",
+		top: perminfo.top_cert !== undefined,
+		lead: perminfo.lead_cert !== undefined,
+		ropeRange: perminfo.rope_low + " to " + perminfo.rope_high,
+		boulderRange: perminfo.boulder_low + " to " + perminfo.boulder_high
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// ROUTES ////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -73,46 +92,65 @@ app.route('/signup')
 					else {
 						// issue session
 						request.session.user = user;
-						response.redirect("/perminfo");		
+						response.redirect("/perminfo");
 					}
 				})
 			}
 		});
 	});
 
+app.route('/perminfo/edit')
+	.get(function(request, response) {
+		if (request.session.user) {
+		// i really hate that i'm repeating the find perminfo query here. figure out a way to pass json through redirect?
+			PermInfo.findOne({"user_id": request.session.user._id}, function (err, perminfo) {
+				if (err) response.send("401 - Bad Request." + err); 
+				else {
+					// format the data.
+					var newPermInfo = formatPermInfo(perminfo);
+					response.render("perminfo-edit.html", newPermInfo);
+				}
+			});
+		} else response.render('login.html', { error: "Please sign in." });
+	})
 
 app.route('/perminfo')
 	.get(function(request, response) {
 		if (request.session.user) {
-			response.render('perminfo-pages.html');
+			// check if they have permanent info data yet
+			PermInfo.findOne({"user_id":request.session.user._id}, function (err, perminfo) {
+				if (err) response.send("401 - Bad Request." + err); 
+				else {
+					if (perminfo) response.redirect("/perminfo/edit") // if so, take them to perm-info- single page rendering
+					else response.render('perminfo-pages.html'); // if not, they go through pages. 
+				}
+			});
+
 		} else response.render('login.html', { error: "Please sign in." });
 	})
 	.post(function(request, response) {
 		if (request.session.user) { // check if the user is signed in.
 			var weight = parseInt(request.body.weight.split(" ")[0])
-			PermInfo.create({
-				user_id: request.session.user._id, 
-				first_name: request.body.firstName,
-				gender: request.body.gender,
-				weight: weight,
-				top_cert: request.body.top, 
-			  lead_cert: request.body.lead, 
-			  rope_high: request.body.highRopeLevel,
-			  rope_low: request.body.lowRopeLevel,
-			  boulder_high: request.body.highBoulderLevel,
-			  boulder_low: request.body.lowBoulderLevel
-			}, function(err, perminfo) {
- 				if (err) response.send("401 - Bad Request." + err);
-				else { // expose the entered data to client.
-					var firstName = request.body.firstName;
-					var gender = request.body.gender;
-					var weight = request.body.weight;
-					var top = request.body.top;
-					var lead = request.body.lead;
-					var ropeLevelRange = request.body.lowRopeLevel + " to " + request.body.highRopeLevel
-					var boulderLevelRange = request.body.lowBoulderLevel + " to " + request.body.highBoulderLevel
-					response.render('perminfo-verify.html', { firstName: firstName, gender: gender, weight: weight, top: top, lead: lead, ropeLevelRange: ropeLevelRange, boulderLevelRange: boulderLevelRange });
+			PermInfo.update({user_id: request.session.user._id}, { 
+				// i probably don't really need the set, since i think the post will update the whole thing.
+				$set: {
+					first_name: request.body.firstName,
+					gender: request.body.gender,
+					weight: weight,
+					top_cert: request.body.top, 
+				  lead_cert: request.body.lead, 
+				  rope_high: request.body.highRopeLevel,
+				  rope_low: request.body.lowRopeLevel,
+				  boulder_high: request.body.highBoulderLevel,
+				  boulder_low: request.body.lowBoulderLevel
 				}
+			},
+			{
+				upsert: true
+			}
+			, function(err, perminfo) {
+					if (err) response.send("401 - Bad Request." + err);
+					else response.redirect('/perminfo/edit') // expose the entered data to client.
 			});
 		} else response.render('login.html', { error: "Please sign in." });
 	})
