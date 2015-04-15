@@ -28,7 +28,7 @@ var User = mongoose.model('users', users);
 
 var perminfo = new mongoose.Schema({ 
 	user_id: String, 
-	"first_name": String, 
+	first_name: String, 
 	gender: String, 
 	weight: Number, 
 	top_cert: Boolean, 
@@ -50,8 +50,8 @@ function formatPermInfo(perminfo) {
 // here is a good place to make a class of perminfo in order to avoid getting keys that don't exist.
 	return {
 		firstName: perminfo.first_name.charAt(0).toUpperCase() + perminfo.first_name.slice(1),
-		gender: perminfo.gender.charAt(0).toUpperCase() + perminfo.gender.slice(1),
-		weight: perminfo.weight + " lbs",
+		gender: perminfo.gender,
+		weight: perminfo.weight,
 		top: perminfo.top_cert !== undefined,
 		lead: perminfo.lead_cert !== undefined,
 		ropeLow: perminfo.rope_low,
@@ -105,6 +105,7 @@ app.route('/perminfo/edit')
 	.get(function(request, response) {
 		if (request.session.user) {
 		// i really hate that i'm repeating the find perminfo query here. figure out a way to pass json through redirect?
+		// make sure we handle weight and checkboxes for top/lead.
 			PermInfo.findOne({"user_id": request.session.user._id}, function (err, perminfo) {
 				if (err) response.send("401 - Bad Request." + err); 
 				else {
@@ -113,20 +114,21 @@ app.route('/perminfo/edit')
 					response.render("perminfo-edit.html", newPermInfo);
 				}
 			});
+		} else {
+			console.log("session doesn't exist.")
+			response.render('login.html', { error: "Please sign in." });
 		}
 	})
 	.post(function(request, response) {
 		if (request.session.user) {
-			console.log("Thing sent to mongo: " + JSON.stringify(request.body))
 			PermInfo.update({user_id: request.session.user._id}, {$set: request.body}, {upsert: true}, 
 				function(err, perminfo) {
 					if (err) {
-						console.log("not good. " + err)
+						console.log("401 - Bad Request. " + err)
 						response.send("401 - Bad Request." + err);
 					}
 					else {
-						console.log("It worked.");
-						response.send("It worked.");
+						response.writeHead(200, {"Content-Type": "text/plain"});
 					}
 				});
 
