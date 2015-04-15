@@ -1,8 +1,16 @@
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////// REQUIREMENTS //////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+// require libraries
 var express    = require('express');
 var bodyParser = require('body-parser');
 var mongoose   = require('mongoose');
 var session    = require('express-session');
 
+
+// set up appp
 var app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
@@ -11,10 +19,13 @@ app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
+
+// require modules
+var perminfojs = require("./public/js/perminfo.js");
+
 //////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////// ALL THINGS MONGO /////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
-
 
 var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/climbr';
 
@@ -38,32 +49,14 @@ var perminfo = new mongoose.Schema({
 	boulder_high: String,
 	boulder_low: String
 });
+
 var PermInfo = mongoose.model('perminfo', perminfo);
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////// SHARED FUNCITONS //////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-
-// // give perminfo json, and reformat it into a perminfo/edit page.
-function formatPermInfo(perminfo) {
-// here is a good place to make a class of perminfo in order to avoid getting keys that don't exist.
-	return {
-		firstName: perminfo.first_name.charAt(0).toUpperCase() + perminfo.first_name.slice(1),
-		gender: perminfo.gender,
-		weight: perminfo.weight,
-		top: perminfo.top_cert !== undefined,
-		lead: perminfo.lead_cert !== undefined,
-		ropeLow: perminfo.rope_low,
-		ropeHigh: perminfo.rope_high,
-		boulderLow: perminfo.boulder_low,
-		boulderHigh: perminfo.boulder_high
-	}
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// ROUTES ////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
+
 app.route('/')
 	.get(function(request, response) {
 		response.render('login.html', {error: ""});
@@ -110,8 +103,8 @@ app.route('/perminfo/edit')
 				if (err) response.send("401 - Bad Request." + err); 
 				else {
 					// format the data.
-					var newPermInfo = formatPermInfo(perminfo);
-					response.render("perminfo-edit.html", newPermInfo);
+					var formattedPermInfo = perminfojs.formatInfo(perminfo);
+					response.render("perminfo-edit.html", formattedPermInfo);
 				}
 			});
 		} else {
