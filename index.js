@@ -22,36 +22,62 @@ app.set('view engine', 'ejs');
 
 // require modules
 var perminfojs = require("./public/js/perminfo.js");
+var mongoosejs = require("./mongoose.js");
 
-//////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////// ALL THINGS MONGO /////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
+mongoosejs.connectToDb()
 
-var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/climbr';
 
-mongoose.connect(uristring, function (err, res) {
-  if (err) console.log ('ERROR connecting to: ' + uristring + '. ' + err);
-  else console.log ('Succeeded connected to: ' + uristring);
-});
+///// fucking error handling
 
-var users = new mongoose.Schema({ username: String });
-var User = mongoose.model('users', users);
+var Error = function (errCode, errMsg) {
+	this.errCode = errCode;
+	this.errMsg  = errMsg;
+}
+var Success = function (queryResult) {
+	this.body = body;
+}
 
-var perminfo = new mongoose.Schema({ 
-	user_id: String, 
-	first_name: String, 
-	gender: String, 
-	weight: Number, 
-	top_cert: Boolean, 
-	lead_cert: Boolean,
-	rope_high: String,
-	rope_low: String,
-	boulder_high: String,
-	boulder_low: String
-});
+// the callback for all query functions
+function queryHandler(request, response, successFunction, queryResult) {
+	
+	// handle all errors
 
-var PermInfo = mongoose.model('perminfo', perminfo);
+	if (queryResult instanceof Error) {
+		if (queryResult.errCode === 401) {
+			response.render("401.html", {error: queryResult.errMsg} );
+		} else if (queryResult.errCode === 404) {
+			response.render("404.html", {error: queryResult.errMsg} );
+		} else response.send("you forgot a code in the error declaration.");
 
+	// handle the success
+	
+	} else if (queryResult instanceof Success) {
+		successFunction(request, response, queryResult.body);
+	
+	// handle the confusion
+
+	} else response.send("Something shitty happened for real. Not an error or success? What happened.")
+
+};
+
+//// fucking query functions
+
+// they should always look like this: functionName(body, request, response, successFunction, queryHandler)
+
+function findUser(username, request, response, successFunction, queryHandler) {
+  var queryResult = mongoosejs.Users.findOne({"username": username}, function(err, user) {
+		if (err) { var queryResult = new Error(401, err); }
+
+		else if (!user) { var queryResult = new Error(404, "Username not found."); }
+
+		else { 
+			var queryResult = new Success(user); 
+		}
+
+		queryHandler(request, response, successFunction, queryResult);
+	});
+
+};
 
 //////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// ROUTES ////////////////////////////////////////////
@@ -62,14 +88,14 @@ app.route('/')
 		response.render('login.html', {error: ""});
 	})
 	.post(function(request, response) {
-		User.findOne({"username": request.body.username}, function (err, user) {
-			if (!user) {
-				response.render("login.html", {error: "Username not found."});
-			} else {
-				request.session.user = user;
-				response.redirect("/seshinfo");
-			}
-		});
+		
+		var successFunction = function (request, response, user) {
+			request.session.user = user; 
+			response.redirect("/seshinfo");
+		}
+		
+		findUser(request.body.username, request, response, successFunction, queryHandler);
+		
 	});
 
 app.route('/signup')
@@ -77,12 +103,12 @@ app.route('/signup')
 		response.render('signup.html', {error: ""});
 	})
 	.post(function(request, response) {
-		User.findOne({"username": request.body.username}, function (err, user) {
+		mongoosejs.Users.findOne({"username": request.body.username}, function (err, user) {
 			if (user) {
 				response.render("signup.html", {error: "Username already exists."});
 			} else {
 				// create the user
-				User.create({ username: request.body.username }, function (err, user) {
+				mongoosejs.Users.create({ username: request.body.username }, function (err, user) {
 					if (err) response.send("401 - Bad Request." + err);
 					else {
 						// issue session
@@ -99,7 +125,7 @@ app.route('/perminfo/edit')
 		if (request.session.user) {
 		// i really hate that i'm repeating the find perminfo query here. figure out a way to pass json through redirect?
 		// make sure we handle weight and checkboxes for top/lead.
-			PermInfo.findOne({"user_id": request.session.user._id}, function (err, perminfo) {
+			mongoosejs.PermInfos.findOne({"user_id": request.session.user._id}, function (err, perminfo) {
 				if (err) response.send("401 - Bad Request." + err); 
 				else {
 					// format the data.
@@ -114,7 +140,7 @@ app.route('/perminfo/edit')
 	})
 	.post(function(request, response) {
 		if (request.session.user) {
-			PermInfo.update({user_id: request.session.user._id}, {$set: request.body}, {upsert: true}, 
+			mongoosejs.PermInfos.update({user_id: request.session.user._id}, {$set: request.body}, {upsert: true}, 
 				function(err, perminfo) {
 					if (err) {
 						console.log("401 - Bad Request. " + err)
@@ -135,7 +161,7 @@ app.route('/perminfo')
 	.get(function(request, response) {
 		if (request.session.user) {
 			// check if they have permanent info data yet
-			PermInfo.findOne({"user_id":request.session.user._id}, function (err, perminfo) {
+			mongoosejs.PermInfos.findOne({"user_id":request.session.user._id}, function (err, perminfo) {
 				if (err) response.send("401 - Bad Request." + err); 
 				else {
 					if (perminfo) response.redirect("/perminfo/edit") // if so, take them to perm-info- single page rendering
@@ -148,7 +174,7 @@ app.route('/perminfo')
 	.post(function(request, response) {
 		if (request.session.user) { // check if the user is signed in.
 			var weight = parseInt(request.body.weight.split(" ")[0])
-			PermInfo.update({user_id: request.session.user._id}, { 
+			mongoosejs.PermInfos.update({user_id: request.session.user._id}, { 
 				// i probably don't really need the set, since i think the post will update the whole thing.
 				$set: {
 					first_name: request.body.firstName,

@@ -1,35 +1,43 @@
-/////////////// CONNECTION TO DB ///////////////
-
+// All things mongo
 var mongoose = require('mongoose');
+var Schema 	= mongoose.Schema;
 
-var uristring = 
-  process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/climbr';
+// connect to db
 
-mongoose.connect(uristring, function (err, res) {
-  if (err) console.log ('ERROR connecting to: ' + uristring + '. ' + err);
- 	else console.log ('Succeeded connected to: ' + uristring);
+exports.connectToDb = function() {
+	var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/climbr';
+	mongoose.connect(uristring, function (err, res) {
+	  if (err) console.log('ERROR connecting to: ' + uristring + '. ' + err);
+	 	else console.log('Succeeded connected to: ' + uristring);
+	});
+}
+
+
+/////////////////////////
+// !! SCHEMA BIDNAS !! //
+/////////////////////////
+
+var User 		 = new Schema({
+	username: 		String
+})
+
+var PermInfo = new Schema({ 
+	user_id: 			String, 
+	first_name: 	String, 
+	gender: 			String, 
+	weight: 			Number, 
+	top_cert: 		Boolean, 
+	lead_cert: 		Boolean,
+	rope_high: 		String,
+	rope_low: 		String,
+	boulder_high: String,
+	boulder_low: 	String
 });
 
-////////////////// SCHEMA ////////////////////
+
+var Users 		= mongoose.model('users', User);
+var PermInfos = mongoose.model('perminfos', PermInfo)
 
 
-module.exports = {
-	users: function () {
-		new mongoose.Schema({
-		  username: String,
-		  firstName: String,
-		  gender: String,
-		  weight: Number,
-		  top: Boolean,
-		  lead: Boolean, 
-		  ropeLevelLow: String,
-		  ropeLevelHigh: String,
-		  boulderLevelLow: String,
-		  boulderLevelHigh: String
-		};
-	},
-
-	User: function() {
-		mongoose.model('climbers', users);
-	};
-};
+exports.Users 		= Users;
+exports.PermInfos = PermInfos;
