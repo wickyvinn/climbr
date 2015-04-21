@@ -26,15 +26,14 @@ var mongoosejs = require("./mongoose.js");
 
 mongoosejs.connectToDb()
 
-
 ///// fucking error handling
 
 var Error = function (errCode, errMsg) {
-	this.errCode = errCode;
-	this.errMsg  = errMsg;
+	this.errCode 	= errCode;
+	this.errMsg 	= errMsg;
 }
-var Success = function (queryResult) {
-	this.body = body;
+var Success = function (body) {
+	this.body   	= body;
 }
 
 // the callback for all query functions
@@ -66,11 +65,13 @@ function queryHandler(request, response, successFunction, queryResult) {
 
 function findUser(username, request, response, successFunction, queryHandler) {
   var queryResult = mongoosejs.Users.findOne({"username": username}, function(err, user) {
+		
 		if (err) { var queryResult = new Error(401, err); }
-
-		else if (!user) { var queryResult = new Error(404, "Username not found."); }
-
-		else { 
+		
+		else if (user == null) {
+			var queryResult = new Error(404, "Username not found.");
+		
+		} else { 
 			var queryResult = new Success(user); 
 		}
 
@@ -88,7 +89,6 @@ app.route('/')
 		response.render('login.html', {error: ""});
 	})
 	.post(function(request, response) {
-		
 		var successFunction = function (request, response, user) {
 			request.session.user = user; 
 			response.redirect("/seshinfo");
