@@ -1,13 +1,13 @@
 body {
-	background-color: #FFFFF5;
+  background-color: #FFFFF5;
 }
 
 .container {
-	font-family: "Raleway";
+  font-family: "Raleway";
 }
 
 .profile-wrapper {
-	background-color: #D6E0CC;
+  background-color: #D6E0CC;
 }
 
 .display-name {
@@ -17,28 +17,28 @@ body {
 }
 
 .profile-pic-wrapper {
-	padding: 1em;
+  padding: 1em;
 }
 
 .button-wrapper {
-	padding-top: 1em;
-	padding-left: 2em;
-	padding-right: 2em;
+  padding-top: 1em;
+  padding-left: 2em;
+  padding-right: 2em;
 }
 
 .button {
-	max-width: 31%;
+  max-width: 31%;
 }
 
 .profile-pic {
-	height: auto;
-	max-width: 100%;
+  height: auto;
+  max-width: 100%;
 }
 
 .display-info-wrapper {
-	padding-top: .25em;
-	padding-left: 1.5em;
-	padding-right: 1.5em;
-	padding-bottom: 1.5em;
-	font-size: 15px;
+  padding-top: .25em;
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+  padding-bottom: 1.5em;
+  font-size: 15px;
 }

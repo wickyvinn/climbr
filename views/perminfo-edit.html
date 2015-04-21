@@ -1,30 +1,28 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		
-		<style>
-		 #section-2, #section-3, #section-4, #section-5, #section-6, #submission, #back {
-	 		display: none;
-		 }
-
-			table { 
-			  width: 100%; 
-			  border-collapse: collapse; 
-			}
-			/* Zebra striping */
-			tr:nth-of-type(odd) { 
-			  background: #eee; 
-			}
-			th { 
-			  background: #333; 
-			  color: white; 
-			  font-weight: bold; 
-			}
-			td, th { 
-			  padding: 6px; 
-			  border: 1px solid #ccc; 
-			  text-align: left; 
-			}
+  <head>
+    <style>
+      #section-2, #section-3, #section-4, #section-5, #section-6, #submission, #back {
+        display: none;
+      }
+      table { 
+        width: 100%; 
+        border-collapse: collapse; 
+      }
+      /* Zebra striping */
+      tr:nth-of-type(odd) { 
+        background: #eee; 
+      }
+      th { 
+        background: #333; 
+        color: white; 
+        font-weight: bold; 
+      }
+      td, th { 
+        padding: 6px; 
+        border: 1px solid #ccc; 
+        text-align: left; 
+      }
 
 /* 
 Max width before this PARTICULAR table gets nasty
@@ -35,202 +33,202 @@ and also iPads specifically.
 only screen and (max-width: 760px),
 (min-device-width: 768px) and (max-device-width: 1024px)  {
 
-	/* Force table to not be like tables anymore */
-	table, thead, tbody, th, td, tr { 
-		display: block; 
-	}
-	
-	/* Hide table headers (but not display: none;, for accessibility) */
-	thead tr { 
-		position: absolute;
-		top: -9999px;
-		left: -9999px;
-	}
-	
-	tr { border: 1px solid #ccc; }
-	
-	td { 
-		/* Behave  like a "row" */
-		border: none;
-		border-bottom: 1px solid #eee; 
-		position: relative;
-		padding-left: 50%; 
-	}
-	
-	td:before { 
-		/* Now like a table header */
-		position: absolute;
-		/* Top/left values mimic padding */
-		top: 6px;
-		left: 6px;
-		width: 45%; 
-		padding-right: 10px; 
-		white-space: nowrap;
-	}
-	
-	/*
-	Label the data
-	*/
-	td:nth-of-type(1):before { content: "Name"; }
-	td:nth-of-type(2):before { content: "Gender"; }
-	td:nth-of-type(3):before { content: "Weight"; }
-	td:nth-of-type(4):before { content: "Top rope cert?"; }
-	td:nth-of-type(5):before { content: "Lead cert?"; }
-	td:nth-of-type(6):before { content: "Generally rope"; }
-	td:nth-of-type(7):before { content: "Generally boulder"; }
+  /* Force table to not be like tables anymore */
+  table, thead, tbody, th, td, tr { 
+    display: block; 
+  }
+  
+  /* Hide table headers (but not display: none;, for accessibility) */
+  thead tr { 
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  tr { border: 1px solid #ccc; }
+  
+  td { 
+    /* Behave  like a "row" */
+    border: none;
+    border-bottom: 1px solid #eee; 
+    position: relative;
+    padding-left: 50%; 
+  }
+  
+  td:before { 
+    /* Now like a table header */
+    position: absolute;
+    /* Top/left values mimic padding */
+    top: 6px;
+    left: 6px;
+    width: 45%; 
+    padding-right: 10px; 
+    white-space: nowrap;
+  }
+  
+  /*
+  Label the data
+  */
+  td:nth-of-type(1):before { content: "Name"; }
+  td:nth-of-type(2):before { content: "Gender"; }
+  td:nth-of-type(3):before { content: "Weight"; }
+  td:nth-of-type(4):before { content: "Top rope cert?"; }
+  td:nth-of-type(5):before { content: "Lead cert?"; }
+  td:nth-of-type(6):before { content: "Generally rope"; }
+  td:nth-of-type(7):before { content: "Generally boulder"; }
 }
 
 
-		</style>
+    </style>
 
-		<link rel="stylesheet" href="../css/sign-in.css">
-	  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <link rel="stylesheet" href="../css/sign-in.css">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <script src="../js/jquery.min.js"></script>
-	</head>
-	
-	<body>
-		<div class="container">
-			<form action="/seshinfo">
+  </head>
+  
+  <body>
+    <div class="container">
+      <form action="/seshinfo">
 
 
-				<table>
-					<thead>
-					<tr>
-						<th>Name</th>
-						<th>Gender</th>
-						<th>Weight</th>
-						<th>Top</th>
-						<th>Lead</th>
-						<th>Rope</th>
-						<th>Boulder</th>
-					</tr>
-					</thead>
-					<tbody>
-					<tr>
-						<td><input type="text" class="editable" name="first_name" value="<%=firstName %>"></input> </td>
-						<td>
-							<select id="gender" name="gender" class="editable">
-								<option value="default">Gender</option>
-								<option value="female">Female</option>
-								<option value="male">Male</option>
-								<option value="declined">Rather not say</option>
-							</select>
-					</td>
-					<td>
-						<input id="weight" class="editable" name="weight" type="text" placeholder="lbs" min="20" max="400" value="<%=weight %> lbs"></input> 
-					</td>
+        <table>
+          <thead>
+          <tr>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Weight</th>
+            <th>Top</th>
+            <th>Lead</th>
+            <th>Rope</th>
+            <th>Boulder</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td><input type="text" class="editable" name="first_name" value="<%=firstName %>"></input> </td>
+            <td>
+              <select id="gender" name="gender" class="editable">
+                <option value="default">Gender</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="declined">Rather not say</option>
+              </select>
+          </td>
+          <td>
+            <input id="weight" class="editable" name="weight" type="text" placeholder="lbs" min="20" max="400" value="<%=weight %> lbs"></input> 
+          </td>
 
-						<td><input type="checkbox" class="editable" name="top" value="<%=top %>"></input></td>
-						<td><input type="checkbox" class="editable" name="lead" value="<%=lead %>"></input></td>
-						<td>
-							<select id="ropeLevelLow" class="editable" name="lowRopeLevel"></select> to
-							<select id="ropeLevelHigh" class="editable" name="highRopeLevel"></select>
-							<input type="text" class="editable" name="ropeLow" value="<%=ropeLow %>"></input> to 
-							<input type="text" class="editable" name="ropeHigh" value="<%=ropeHigh %>"></input></td>
-						<td>
-							<input type="text" class="editable" name="boulderLow" value="<%=boulderLow %>"></input> to
-							<input type="text" class="editable" name="boulderHigh" value="<%=boulderHigh %>"></input> 
-						</td>
-					</tr>
-					</tbody>
-				</table>
-				<div class="navigation-buttons">
-					<button type="submit">Correct.</button>
-				</div>
-			</form>
-		</div>
+            <td><input type="checkbox" class="editable" name="top" value="<%=top %>"></input></td>
+            <td><input type="checkbox" class="editable" name="lead" value="<%=lead %>"></input></td>
+            <td>
+              <select id="ropeLevelLow" class="editable" name="lowRopeLevel"></select> to
+              <select id="ropeLevelHigh" class="editable" name="highRopeLevel"></select>
+              <input type="text" class="editable" name="ropeLow" value="<%=ropeLow %>"></input> to 
+              <input type="text" class="editable" name="ropeHigh" value="<%=ropeHigh %>"></input></td>
+            <td>
+              <input type="text" class="editable" name="boulderLow" value="<%=boulderLow %>"></input> to
+              <input type="text" class="editable" name="boulderHigh" value="<%=boulderHigh %>"></input> 
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div class="navigation-buttons">
+          <button type="submit">Correct.</button>
+        </div>
+      </form>
+    </div>
 
-		<script>
+    <script>
 
-			$(function () {
-				var gender = "<%=gender %>";
-		    var element = document.getElementById('gender');
-		    element.value = gender;
-			});
+      $(function () {
+        var gender = "<%=gender %>";
+        var element = document.getElementById('gender');
+        element.value = gender;
+      });
 
-			$('#weight').blur(function() {
-				var weight = $(this).val();
-				$(this).attr("type", "text");
-				if ($(this).val().length > 0) {
-					$(this).val(parseInt($(this).val()).toString() + " lbs");
-				}
-			});
+      $('#weight').blur(function() {
+        var weight = $(this).val();
+        $(this).attr("type", "text");
+        if ($(this).val().length > 0) {
+          $(this).val(parseInt($(this).val()).toString() + " lbs");
+        }
+      });
 
-			$('#weight').focus(function() {
-				if ($(this).val().length > 0) {
-					$(this).val($(this).val().replace(" lbs", ""));
-				}
-				$(this).attr("type", "number");
-			});
+      $('#weight').focus(function() {
+        if ($(this).val().length > 0) {
+          $(this).val($(this).val().replace(" lbs", ""));
+        }
+        $(this).attr("type", "number");
+      });
 
-			function saveEditable(element) {
-				var newValue = element.val();
-				var newValueType = (element.attr("name"));
-				var data = {}
-				data[newValueType] = newValue
-				console.log("the thing about to get saved: " + JSON.stringify(data))
-				$.ajax({
-				  type: "POST",
-				  url: "/perminfo/edit",
-				  xhrFields: { withCredentials: true },
-				  data: data,
-				  dataType: "json",
-				  success: function(response) {
-				  	console.log("thing that just got saved: " + data);
-				  	console.log(response);
-				  },
-				  error: function(XMLHttpRequest, textStatus, errorThrown) {
-				  	console.log("ajax error message.");
-				  	console.log(textStatus);
-				  	console.log(errorThrown);
-				  	console.log(XMLHttpRequest);
-				  }
-				});
-			};
+      function saveEditable(element) {
+        var newValue = element.val();
+        var newValueType = (element.attr("name"));
+        var data = {}
+        data[newValueType] = newValue
+        console.log("the thing about to get saved: " + JSON.stringify(data))
+        $.ajax({
+          type: "POST",
+          url: "/perminfo/edit",
+          xhrFields: { withCredentials: true },
+          data: data,
+          dataType: "json",
+          success: function(response) {
+            console.log("thing that just got saved: " + data);
+            console.log(response);
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            console.log("ajax error message.");
+            console.log(textStatus);
+            console.log(errorThrown);
+            console.log(XMLHttpRequest);
+          }
+        });
+      };
 
-			$(".editable").on("change", function (event) {
-				var element = $(this);
-				saveEditable(element);
-			});
+      $(".editable").on("change", function (event) {
+        var element = $(this);
+        saveEditable(element);
+      });
 
-			function ropeLevels(element) {
-				var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
-				var $select = element;
-				$select.append($('<option></option>').html("Select a level").attr("value","default"))
-				for (i=0;i<levels.length;i++) {
-	  			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
-	  		}
-			};
+      function ropeLevels(element) {
+        var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
+        var $select = element;
+        $select.append($('<option></option>').html("Select a level").attr("value","default"))
+        for (i=0;i<levels.length;i++) {
+          $select.append($('<option></option>').val(levels[i]).html(levels[i]))
+        }
+      };
 
-			$(function(){
-	  		var $select = $(".ropeLevel");
-	  		var ropeLow = "<%=ropeLow %>";
-	  		var ropeHigh = "<%=ropeHigh %>";
-	  		var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
-  			if ($(this).prop("name") === "ropeLow") {
-  				$select.append($('<option></option>').html("Select a level").attr("value","default"))
-  				$select.value = ropeLow
-  			}
-  			else if ($(this).prop("name") === "ropeHigh") {
-  				$select.append($('<option></option>').html("Select a level").attr("value","default"));
-  				$select.value = ropeHigh
-  			}
-	  		for (i=0;i<levels.length;i++) {
-	  			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
-	  		}
-			});
+      $(function(){
+        var $select = $(".ropeLevel");
+        var ropeLow = "<%=ropeLow %>";
+        var ropeHigh = "<%=ropeHigh %>";
+        var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
+        if ($(this).prop("name") === "ropeLow") {
+          $select.append($('<option></option>').html("Select a level").attr("value","default"))
+          $select.value = ropeLow
+        }
+        else if ($(this).prop("name") === "ropeHigh") {
+          $select.append($('<option></option>').html("Select a level").attr("value","default"));
+          $select.value = ropeHigh
+        }
+        for (i=0;i<levels.length;i++) {
+          $select.append($('<option></option>').val(levels[i]).html(levels[i]))
+        }
+      });
 
-			$(function(){
-	  		var $select = $(".boulderLevel");
-	  		var levels = ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"];
-	  		$select.append($('<option></option>').html("<%=ropeHigh %>").attr("value","default"));
-	  		for (i=0;i<levels.length;i++) {
-	  			$select.append($('<option></option>').val(levels[i]).html(levels[i]))
-	  		}
-			});
-		
-		</script>
-	</body>
+      $(function(){
+        var $select = $(".boulderLevel");
+        var levels = ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"];
+        $select.append($('<option></option>').html("<%=ropeHigh %>").attr("value","default"));
+        for (i=0;i<levels.length;i++) {
+          $select.append($('<option></option>').val(levels[i]).html(levels[i]))
+        }
+      });
+    
+    </script>
+  </body>
 </html>
 
 

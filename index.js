@@ -22,31 +22,31 @@ app.set('view engine', 'ejs');
 
 // require modules
 var perminfojs = require("./public/js/perminfo.js");
-var db 				 = require("./mongoose.js");
+var db         = require("./mongoose.js");
 
 db.connectToDb()
 
 ///// fucking error handling
 
 var Error = function (errCode, errMsg) {
-	this.errCode 	= errCode;
-	this.errMsg 	= errMsg;
+  this.errCode  = errCode;
+  this.errMsg   = errMsg;
 }
 var Success = function (body) {
-	this.body   	= body;
+  this.body     = body;
 }
 
-exports.Error 	= Error;
+exports.Error   = Error;
 exports.Success = Success;
 
 /// handle any error that is returned from a query.
 
 function errorHandler(response, queryResult) {
-	if (queryResult.errCode === 401) {
-		response.render("401.html", {error: queryResult.errMsg} );
-	} else if (queryResult.errCode === 404) {
-		response.render("404.html", {error: queryResult.errMsg} );
-	} else response.send("you forgot a code in the error declaration.");
+  if (queryResult.errCode === 401) {
+    response.render("401.html", {error: queryResult.errMsg} );
+  } else if (queryResult.errCode === 404) {
+    response.render("404.html", {error: queryResult.errMsg} );
+  } else response.send("you forgot a code in the error declaration.");
 }
 
 
@@ -55,147 +55,147 @@ function errorHandler(response, queryResult) {
 //////////////////////////////////////////////////////////////////////////////////////
 
 app.route('/')
-	.get(function(request, response) {
-		response.render('login.html', {error: ""});
-	})
-	.post(function(request, response) {
+  .get(function(request, response) {
+    response.render('login.html', {error: ""});
+  })
+  .post(function(request, response) {
 
-		function respond(userOrError) {
-			if (userOrError instanceof Error) errorHandler(response, userOrError);
-			else {
-				if (userOrError.body === null) response.render('login.html', {error: "Username doesn't exist."}); 
-				else {
-					request.session.user = userOrError.body;
-					response.redirect("/seshinfo");	
-				}
-			}
-		};
+    function respond(userOrError) {
+      if (userOrError instanceof Error) errorHandler(response, userOrError);
+      else {
+        if (userOrError.body === null) response.render('login.html', {error: "Username doesn't exist."}); 
+        else {
+          request.session.user = userOrError.body;
+          response.redirect("/perminfo"); 
+        }
+      }
+    };
 
-		db.findUser(request.body.username, respond);
-			
-	});
+    db.findUser(request.body.username, respond);
+      
+  });
 
 app.route('/signup')
-	
-	.get(function(request, response) {
-		response.render('signup.html', {error: ""});
-	})
+  
+  .get(function(request, response) {
+    response.render('signup.html', {error: ""});
+  })
 
-	.post(function(request, response) {
+  .post(function(request, response) {
 
-		function respondToCreate(userOrError) {
-			if (userOrError instanceof Error) errorHandler(response, userOrError);
-			else {
-				request.session.user = userOrError.body;
-				response.redirect("/perminfo");
-			}
-		};
+    function respondToCreate(userOrError) {
+      if (userOrError instanceof Error) errorHandler(response, userOrError);
+      else {
+        request.session.user = userOrError.body;
+        response.redirect("/perminfo");
+      }
+    };
 
-		function respondToFind(userOrError) {
-			if (userOrError instanceof Error) errorHandler(response, userOrError);
-			else {
-				if (userOrError.body == null) db.createUser({ username: request.body.username }, respondToCreate);
-				else response.render("signup.html", {error: "Username already exists."});
-			}
-		};
+    function respondToFind(userOrError) {
+      if (userOrError instanceof Error) errorHandler(response, userOrError);
+      else {
+        if (userOrError.body == null) db.createUser({ username: request.body.username }, respondToCreate);
+        else response.render("signup.html", {error: "Username already exists."});
+      }
+    };
 
-		db.findUser(request.body.username, respondToFind)
-		
-	});
+    db.findUser(request.body.username, respondToFind)
+    
+  });
 
 app.route('/perminfo/edit')
-	.get(function(request, response) {
-		if (request.session.user) {
+  .get(function(request, response) {
+    if (request.session.user) {
 
-			function respond(perminfoOrError) {
-				if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
-				else {
-					var formattedPermInfo = perminfojs.formatInfo(perminfoOrError.body);
-					response.render("perminfo-edit.html", formattedPermInfo);
-				}
-			}
+      function respond(perminfoOrError) {
+        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+        else {
+          var formattedPermInfo = perminfojs.formatInfo(perminfoOrError.body);
+          response.render("perminfo-edit.html", formattedPermInfo);
+        }
+      }
 
-			db.findPermInfo({"user_id":request.session.user._id}, respond);
+      db.findPermInfo({"user_id":request.session.user._id}, respond);
 
-		} else response.render('login.html', { error: "Please sign in." });
-	})
+    } else response.render('login.html', { error: "Please sign in." });
+  })
 
-	.post(function(request, response) {
-		if (request.session.user) {
-			
-			function respond(perminfoOrError) {
-				if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
-				else {
-					if (perminfoOrError.body === null) response.redirect("/perminfo");
-					else response.redirect("/seshinfo");
-				}
-			};
-			
-			db.updatePermInfo(request.session.user._id, request.body, respond); 
+  .post(function(request, response) {
+    if (request.session.user) {
+      
+      function respond(perminfoOrError) {
+        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+        else {
+          if (perminfoOrError.body === null) response.redirect("/perminfo");
+          else response.redirect("/seshinfo");
+        }
+      };
+      
+      db.updatePermInfo(request.session.user._id, request.body, respond); 
 
-		} else response.render('login.html', { error: "Please sign in." });
-	});
+    } else response.render('login.html', { error: "Please sign in." });
+  });
 
 app.route('/perminfo')
-	.get(function(request, response) {
-		if (request.session.user) {
+  .get(function(request, response) {
+    if (request.session.user) {
 
-			function respond(perminfoOrError) {
-				if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
-				else {
-					if (perminfoOrError.body == null) response.render('perminfo-pages.html');
-					else response.redirect("/perminfo/edit");
-				}
-			};
+      function respond(perminfoOrError) {
+        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+        else {
+          if (perminfoOrError.body == null) response.render('perminfo-pages.html');
+          else response.redirect("/perminfo/edit");
+        }
+      };
 
-			db.findPermInfo({"user_id":request.session.user._id}, respond);
+      db.findPermInfo({"user_id":request.session.user._id}, respond);
 
-		} else response.render('login.html', { error: "Please sign in." });
-	})
-	
-	.post(function(request, response) {
-		if (request.session.user) {
+    } else response.render('login.html', { error: "Please sign in." });
+  })
+  
+  .post(function(request, response) {
+    if (request.session.user) {
 
-			// TODO: will go away when implement AJAX on perminfo-pages.html. replaced by just 'request' i think.
-			var updateBody = {
-					first_name: request.body.firstName,
-					gender: request.body.gender,
-					weight: parseInt(request.body.weight.split(" ")[0]),
-					top_cert: request.body.top, 
-				  lead_cert: request.body.lead, 
-				  rope_high: request.body.highRopeLevel,
-				  rope_low: request.body.lowRopeLevel,
-				  boulder_high: request.body.highBoulderLevel,
-				  boulder_low: request.body.lowBoulderLevel
-				}
+      // TODO: will go away when implement AJAX on perminfo-pages.html. replaced by just 'request' i think.
+      var updateBody = {
+          first_name: request.body.firstName,
+          gender: request.body.gender,
+          weight: parseInt(request.body.weight.split(" ")[0]),
+          top_cert: request.body.top, 
+          lead_cert: request.body.lead, 
+          rope_high: request.body.highRopeLevel,
+          rope_low: request.body.lowRopeLevel,
+          boulder_high: request.body.highBoulderLevel,
+          boulder_low: request.body.lowBoulderLevel
+        }
 
-			function respond(perminfoOrError) {
-				if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
-				else {
-					if (perminfoOrError.body == null) response.render('perminfo-pages.html');
-					else response.redirect("/perminfo/edit");
-				}
-			};
+      function respond(perminfoOrError) {
+        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+        else {
+          if (perminfoOrError.body == null) response.render('perminfo-pages.html');
+          else response.redirect("/perminfo/edit");
+        }
+      };
 
-			db.updatePermInfo(request.session.user._id, updateBody, respond);
+      db.updatePermInfo(request.session.user._id, updateBody, respond);
 
-		} else response.render('login.html', { error: "Please sign in." });
-	})
+    } else response.render('login.html', { error: "Please sign in." });
+  })
 
 app.route('/seshinfo')
-	.get(function(request, response) {
-		if (request.session.user) {
-			response.render('seshinfo.html');
-		} else response.render('login.html', { error: "Please sign in." });
-	})
-	.post(function(request, response) {
-		response.send('all info done submitting.');
-	})
+  .get(function(request, response) {
+    if (request.session.user) {
+      response.render('seshinfo.html');
+    } else response.render('login.html', { error: "Please sign in." });
+  })
+  .post(function(request, response) {
+    response.send('all info done submitting.');
+  })
 
 app.route('/profile')
-	.get(function(request, response) {
-		response.render('profile.html');
-	})
+  .get(function(request, response) {
+    response.render('profile.html');
+  })
 
 app.listen(app.get('port'), function() {
   console.log("climbr is running at localhost:" + app.get('port') + '.');
