@@ -1,8 +1,16 @@
+//////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////// REQUIREMENTS //////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+
+// require libraries
 var express    = require('express');
 var bodyParser = require('body-parser');
 var mongoose   = require('mongoose');
 var session    = require('express-session');
 
+
+// set up appp
 var app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
@@ -11,154 +19,148 @@ app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
-//////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////// ALL THINGS MONGO /////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
 
+// require modules
+var perminfojs = require("./public/js/perminfo.js");
+var db 				 = require("./mongoose.js");
 
-var uristring = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/climbr';
+db.connectToDb()
 
-mongoose.connect(uristring, function (err, res) {
-  if (err) console.log ('ERROR connecting to: ' + uristring + '. ' + err);
-  else console.log ('Succeeded connected to: ' + uristring);
-});
+///// fucking error handling
 
-var users = new mongoose.Schema({ username: String });
-var User = mongoose.model('users', users);
-
-var perminfo = new mongoose.Schema({ 
-	user_id: String, 
-	"first_name": String, 
-	gender: String, 
-	weight: Number, 
-	top_cert: Boolean, 
-	lead_cert: Boolean,
-	rope_high: String,
-	rope_low: String,
-	boulder_high: String,
-	boulder_low: String
-});
-var PermInfo = mongoose.model('perminfo', perminfo);
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////// SHARED FUNCITONS //////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////
-
-// // give perminfo json, and reformat it into a perminfo/edit page.
-function formatPermInfo(perminfo) {
-// here is a good place to make a class of perminfo in order to avoid getting keys that don't exist.
-	return {
-		firstName: perminfo.first_name.charAt(0).toUpperCase() + perminfo.first_name.slice(1),
-		gender: perminfo.gender.charAt(0).toUpperCase() + perminfo.gender.slice(1),
-		weight: perminfo.weight + " lbs",
-		top: perminfo.top_cert !== undefined,
-		lead: perminfo.lead_cert !== undefined,
-		ropeLow: perminfo.rope_low,
-		ropeHigh: perminfo.rope_high,
-		boulderLow: perminfo.boulder_low,
-		boulderHigh: perminfo.boulder_high
-	}
+var Error = function (errCode, errMsg) {
+	this.errCode 	= errCode;
+	this.errMsg 	= errMsg;
 }
+var Success = function (body) {
+	this.body   	= body;
+}
+
+exports.Error 	= Error;
+exports.Success = Success;
+
+/// handle any error that is returned from a query.
+
+function errorHandler(response, queryResult) {
+	if (queryResult.errCode === 401) {
+		response.render("401.html", {error: queryResult.errMsg} );
+	} else if (queryResult.errCode === 404) {
+		response.render("404.html", {error: queryResult.errMsg} );
+	} else response.send("you forgot a code in the error declaration.");
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// ROUTES ////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
+
 app.route('/')
 	.get(function(request, response) {
 		response.render('login.html', {error: ""});
 	})
 	.post(function(request, response) {
-		User.findOne({"username": request.body.username}, function (err, user) {
-			if (!user) {
-				response.render("login.html", {error: "Username not found."});
-			} else {
-				request.session.user = user;
-				response.redirect("/seshinfo");
+
+		function respond(userOrError) {
+			if (userOrError instanceof Error) errorHandler(response, userOrError);
+			else {
+				if (userOrError.body === null) response.render('login.html', {error: "Username doesn't exist."}); 
+				else {
+					request.session.user = userOrError.body;
+					response.redirect("/seshinfo");	
+				}
 			}
-		});
+		};
+
+		db.findUser(request.body.username, respond);
+			
 	});
 
 app.route('/signup')
+	
 	.get(function(request, response) {
 		response.render('signup.html', {error: ""});
 	})
+
 	.post(function(request, response) {
-		User.findOne({"username": request.body.username}, function (err, user) {
-			if (user) {
-				response.render("signup.html", {error: "Username already exists."});
-			} else {
-				// create the user
-				User.create({ username: request.body.username }, function (err, user) {
-					if (err) response.send("401 - Bad Request." + err);
-					else {
-						// issue session
-						request.session.user = user;
-						response.redirect("/perminfo");
-					}
-				})
+
+		function respondToCreate(userOrError) {
+			if (userOrError instanceof Error) errorHandler(response, userOrError);
+			else {
+				request.session.user = userOrError.body;
+				response.redirect("/perminfo");
 			}
-		});
+		};
+
+		function respondToFind(userOrError) {
+			if (userOrError instanceof Error) errorHandler(response, userOrError);
+			else {
+				if (userOrError.body == null) db.createUser({ username: request.body.username }, respondToCreate);
+				else response.render("signup.html", {error: "Username already exists."});
+			}
+		};
+
+		db.findUser(request.body.username, respondToFind)
+		
 	});
 
 app.route('/perminfo/edit')
 	.get(function(request, response) {
 		if (request.session.user) {
-		// i really hate that i'm repeating the find perminfo query here. figure out a way to pass json through redirect?
-			PermInfo.findOne({"user_id": request.session.user._id}, function (err, perminfo) {
-				if (err) response.send("401 - Bad Request." + err); 
+
+			function respond(perminfoOrError) {
+				if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
 				else {
-					// format the data.
-					var newPermInfo = formatPermInfo(perminfo);
-					response.render("perminfo-edit.html", newPermInfo);
+					var formattedPermInfo = perminfojs.formatInfo(perminfoOrError.body);
+					response.render("perminfo-edit.html", formattedPermInfo);
 				}
-			});
-		}
+			}
+
+			db.findPermInfo({"user_id":request.session.user._id}, respond);
+
+		} else response.render('login.html', { error: "Please sign in." });
 	})
+
 	.post(function(request, response) {
 		if (request.session.user) {
-			console.log("Thing sent to mongo: " + JSON.stringify(request.body))
-			PermInfo.update({user_id: request.session.user._id}, {$set: request.body}, {upsert: true}, 
-				function(err, perminfo) {
-					if (err) {
-						console.log("not good. " + err)
-						response.send("401 - Bad Request." + err);
-					}
-					else {
-						console.log("It worked.");
-						response.send("It worked.");
-					}
-				});
+			
+			function respond(perminfoOrError) {
+				if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+				else {
+					if (perminfoOrError.body === null) response.redirect("/perminfo");
+					else response.redirect("/seshinfo");
+				}
+			};
+			
+			db.updatePermInfo(request.session.user._id, request.body, respond); 
 
-		} else {
-			console.log("session doesn't exist.")
-			response.render('login.html', { error: "Please sign in." });
-		}
+		} else response.render('login.html', { error: "Please sign in." });
 	});
 
 app.route('/perminfo')
 	.get(function(request, response) {
 		if (request.session.user) {
-			// check if they have permanent info data yet
-			PermInfo.findOne({"user_id":request.session.user._id}, function (err, perminfo) {
-				if (err) response.send("401 - Bad Request." + err); 
+
+			function respond(perminfoOrError) {
+				if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
 				else {
-					if (perminfo) response.redirect("/perminfo/edit") // if so, take them to perm-info- single page rendering
-					else response.render('perminfo-pages.html'); // if not, they go through pages. 
+					if (perminfoOrError.body == null) response.render('perminfo-pages.html');
+					else response.redirect("/perminfo/edit");
 				}
-			});
+			};
+
+			db.findPermInfo({"user_id":request.session.user._id}, respond);
 
 		} else response.render('login.html', { error: "Please sign in." });
 	})
+	
 	.post(function(request, response) {
-		if (request.session.user) { // check if the user is signed in.
-			var weight = parseInt(request.body.weight.split(" ")[0])
-			PermInfo.update({user_id: request.session.user._id}, { 
-				// i probably don't really need the set, since i think the post will update the whole thing.
-				$set: {
+		if (request.session.user) {
+
+			// TODO: will go away when implement AJAX on perminfo-pages.html. replaced by just 'request' i think.
+			var updateBody = {
 					first_name: request.body.firstName,
 					gender: request.body.gender,
-					weight: weight,
+					weight: parseInt(request.body.weight.split(" ")[0]),
 					top_cert: request.body.top, 
 				  lead_cert: request.body.lead, 
 				  rope_high: request.body.highRopeLevel,
@@ -166,14 +168,17 @@ app.route('/perminfo')
 				  boulder_high: request.body.highBoulderLevel,
 				  boulder_low: request.body.lowBoulderLevel
 				}
-			},
-			{
-				upsert: true
-			}
-			, function(err, perminfo) {
-					if (err) response.send("401 - Bad Request." + err);
-					else response.redirect('/perminfo/edit') // expose the entered data to client.
-			});
+
+			function respond(perminfoOrError) {
+				if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+				else {
+					if (perminfoOrError.body == null) response.render('perminfo-pages.html');
+					else response.redirect("/perminfo/edit");
+				}
+			};
+
+			db.updatePermInfo(request.session.user._id, updateBody, respond);
+
 		} else response.render('login.html', { error: "Please sign in." });
 	})
 
@@ -193,6 +198,6 @@ app.route('/profile')
 	})
 
 app.listen(app.get('port'), function() {
-  console.log("Node app is running at localhost:" + app.get('port'));
+  console.log("climbr is running at localhost:" + app.get('port') + '.');
 });
 
