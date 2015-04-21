@@ -36,49 +36,42 @@ var Success = function (body) {
 	this.body   	= body;
 }
 
-// the callback for all query functions
-function queryHandler(request, response, successFunction, queryResult) {
-	
-	// handle all errors
+/// handle any error that is returned from a query.
 
-	if (queryResult instanceof Error) {
-		if (queryResult.errCode === 401) {
-			response.render("401.html", {error: queryResult.errMsg} );
-		} else if (queryResult.errCode === 404) {
-			response.render("404.html", {error: queryResult.errMsg} );
-		} else response.send("you forgot a code in the error declaration.");
-
-	// handle the success
-	
-	} else if (queryResult instanceof Success) {
-		successFunction(request, response, queryResult.body);
-	
-	// handle the confusion
-
-	} else response.send("Something shitty happened for real. Not an error or success? What happened.")
-
-};
+function errorHandler(response, queryResult) {
+	if (queryResult.errCode === 401) {
+		response.render("401.html", {error: queryResult.errMsg} );
+	} else if (queryResult.errCode === 404) {
+		response.render("404.html", {error: queryResult.errMsg} );
+	} else response.send("you forgot a code in the error declaration.");
+}
 
 //// fucking query functions
 
-// they should always look like this: functionName(body, request, response, successFunction, queryHandler)
-
-function findUser(username, request, response, successFunction, queryHandler) {
-  var queryResult = mongoosejs.Users.findOne({"username": username}, function(err, user) {
+function findUser(username, respondFunction) {
+  
+  mongoosejs.Users.findOne({"username": username}, function(err, user) {
 		
 		if (err) { var queryResult = new Error(401, err); }
-		
-		else if (user == null) {
-			var queryResult = new Error(404, "Username not found.");
-		
-		} else { 
-			var queryResult = new Success(user); 
-		}
+		else if (user) { var queryResult = new Success(user); }
+		else { var queryResult = new Success(null); }
+		respondFunction(queryResult)
 
-		queryHandler(request, response, successFunction, queryResult);
 	});
 
 };
+
+function createUser(body, respondFunction) {
+
+	mongoosejs.Users.create(body, function(err, user) {
+	
+		if (user) { var queryResult = new Success(user); }
+		else if (err) { var queryResult = new Error(401, err); }
+		else { var queryResult = new Error (401, "SHIT SHIT SOMETHING WEIRD HAPPENNED!!"); }
+		respondFunction(queryResult);
+	
+	});
+}
 
 //////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// ROUTES ////////////////////////////////////////////
@@ -89,35 +82,54 @@ app.route('/')
 		response.render('login.html', {error: ""});
 	})
 	.post(function(request, response) {
-		var successFunction = function (request, response, user) {
-			request.session.user = user; 
-			response.redirect("/seshinfo");
-		}
-		
-		findUser(request.body.username, request, response, successFunction, queryHandler);
-		
+
+		function respond(userOrError) {
+			if (userOrError instanceof Error) errorHandler(response, userOrError);
+			else if (userOrError instanceof Success) {
+				// if no user was found, send login back to client.
+				if (userOrError.body == null) response.render('login.html', {error: "Username doesn't exist."}); 
+				else {
+					request.session.user = userOrError.body; 
+					response.redirect("/seshinfo");	
+				}
+			}
+			else {
+				// for some reason, the query returned neither a Success nor an Error.
+				response.send("Bad stuff happened when trying to: POST /login.");
+			}
+		};
+
+		findUser(request.body.username, respond);
+			
 	});
 
 app.route('/signup')
+	
 	.get(function(request, response) {
 		response.render('signup.html', {error: ""});
 	})
+
 	.post(function(request, response) {
-		mongoosejs.Users.findOne({"username": request.body.username}, function (err, user) {
-			if (user) {
-				response.render("signup.html", {error: "Username already exists."});
-			} else {
-				// create the user
-				mongoosejs.Users.create({ username: request.body.username }, function (err, user) {
-					if (err) response.send("401 - Bad Request." + err);
-					else {
-						// issue session
-						request.session.user = user;
-						response.redirect("/perminfo");
-					}
-				})
+
+		function respondToCreate(userOrError) {
+			if (userOrError instanceof Error) errorHandler(response, userOrError);
+			else {
+				// issue session
+				request.session.user = userOrError.body;
+				response.redirect("/perminfo");
 			}
-		});
+		};
+
+		function respondToFind(userOrError) {
+			if (userOrError instanceof Error) errorHandler(response, userOrError);
+			else {
+				if (userOrError.body == null) createUser({ username: request.body.username }, respondToCreate);
+				else response.render("signup.html", {error: "Username already exists."});
+			}
+		};
+
+		findUser(request.body.username, respondToFind)
+		
 	});
 
 app.route('/perminfo/edit')
