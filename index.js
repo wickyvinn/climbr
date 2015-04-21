@@ -22,9 +22,9 @@ app.set('view engine', 'ejs');
 
 // require modules
 var perminfojs = require("./public/js/perminfo.js");
-var mongoosejs = require("./mongoose.js");
+var db 				= require("./mongoose.js");
 
-mongoosejs.connectToDb()
+db.connectToDb()
 
 ///// fucking error handling
 
@@ -36,6 +36,9 @@ var Success = function (body) {
 	this.body   	= body;
 }
 
+exports.Error = Error;
+exports.Success = Success;
+
 /// handle any error that is returned from a query.
 
 function errorHandler(response, queryResult) {
@@ -46,32 +49,6 @@ function errorHandler(response, queryResult) {
 	} else response.send("you forgot a code in the error declaration.");
 }
 
-//// fucking query functions
-
-function findUser(username, respondFunction) {
-  
-  mongoosejs.Users.findOne({"username": username}, function(err, user) {
-		
-		if (err) { var queryResult = new Error(401, err); }
-		else if (user) { var queryResult = new Success(user); }
-		else { var queryResult = new Success(null); }
-		respondFunction(queryResult)
-
-	});
-
-};
-
-function createUser(body, respondFunction) {
-
-	mongoosejs.Users.create(body, function(err, user) {
-	
-		if (user) { var queryResult = new Success(user); }
-		else if (err) { var queryResult = new Error(401, err); }
-		else { var queryResult = new Error (401, "SHIT SHIT SOMETHING WEIRD HAPPENNED!!"); }
-		respondFunction(queryResult);
-	
-	});
-}
 
 //////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// ROUTES ////////////////////////////////////////////
@@ -99,7 +76,7 @@ app.route('/')
 			}
 		};
 
-		findUser(request.body.username, respond);
+		db.findUser(request.body.username, respond);
 			
 	});
 
@@ -123,12 +100,12 @@ app.route('/signup')
 		function respondToFind(userOrError) {
 			if (userOrError instanceof Error) errorHandler(response, userOrError);
 			else {
-				if (userOrError.body == null) createUser({ username: request.body.username }, respondToCreate);
+				if (userOrError.body == null) db.createUser({ username: request.body.username }, respondToCreate);
 				else response.render("signup.html", {error: "Username already exists."});
 			}
 		};
 
-		findUser(request.body.username, respondToFind)
+		db.findUser(request.body.username, respondToFind)
 		
 	});
 
@@ -137,7 +114,7 @@ app.route('/perminfo/edit')
 		if (request.session.user) {
 		// i really hate that i'm repeating the find perminfo query here. figure out a way to pass json through redirect?
 		// make sure we handle weight and checkboxes for top/lead.
-			mongoosejs.PermInfos.findOne({"user_id": request.session.user._id}, function (err, perminfo) {
+			db.PermInfos.findOne({"user_id": request.session.user._id}, function (err, perminfo) {
 				if (err) response.send("401 - Bad Request." + err); 
 				else {
 					// format the data.
@@ -152,7 +129,7 @@ app.route('/perminfo/edit')
 	})
 	.post(function(request, response) {
 		if (request.session.user) {
-			mongoosejs.PermInfos.update({user_id: request.session.user._id}, {$set: request.body}, {upsert: true}, 
+			db.PermInfos.update({user_id: request.session.user._id}, {$set: request.body}, {upsert: true}, 
 				function(err, perminfo) {
 					if (err) {
 						console.log("401 - Bad Request. " + err)
@@ -173,7 +150,7 @@ app.route('/perminfo')
 	.get(function(request, response) {
 		if (request.session.user) {
 			// check if they have permanent info data yet
-			mongoosejs.PermInfos.findOne({"user_id":request.session.user._id}, function (err, perminfo) {
+			db.PermInfos.findOne({"user_id":request.session.user._id}, function (err, perminfo) {
 				if (err) response.send("401 - Bad Request." + err); 
 				else {
 					if (perminfo) response.redirect("/perminfo/edit") // if so, take them to perm-info- single page rendering
@@ -186,7 +163,7 @@ app.route('/perminfo')
 	.post(function(request, response) {
 		if (request.session.user) { // check if the user is signed in.
 			var weight = parseInt(request.body.weight.split(" ")[0])
-			mongoosejs.PermInfos.update({user_id: request.session.user._id}, { 
+			db.PermInfos.update({user_id: request.session.user._id}, { 
 				// i probably don't really need the set, since i think the post will update the whole thing.
 				$set: {
 					first_name: request.body.firstName,
