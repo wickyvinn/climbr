@@ -18,7 +18,7 @@
         <div id="section-1" class="form-section-wrapper">
             What do you want to do today?
           <div class="input-wrapper">
-            <input type="checkbox" id="topropesesh" name="toprope" value="yes">top rope<br>
+            <input type="checkbox" id="topropesesh" name="top" value="yes">top rope<br>
             <input type="checkbox" id="leadsesh" name="lead" value="yes">lead climb<br>
             <input type="checkbox" id="bouldersesh" name="boulder" value="yes">boulder<br>
           </div>
@@ -26,7 +26,7 @@
         <div id="section-2" class="form-section-wrapper">
             <div>How long are you sticking around for?</div>
             <div class="input-wrapper">
-              <select class="sessionTime"></select>
+              About <select class="sessionLength" name="sessionLength"></select>
             </div>
         </div>
         <div class="navigation-buttons">
@@ -42,11 +42,18 @@
     <script>
 
       $(function(){
-        var $select = $(".sessionTime");
-        var times = ["whenever", "sundown", "5:00pm", "5:30pm", "6:00pm", "6:30pm", "7:30pm", "8:00pm", "8:30pm", "9:00pm", "9:30pm", "10:00pm", "10:30pm", "11:00pm", "11:30pm", "12:00am", "6:00am", "6:30am", "7:00am", "7:30am", "8:00am", "8:30am", "9:00am", "9:30am", "10:00am", "10:30am", "11:00am", "11:30am", "12:00pm", "12:30pm", "1:00pm", "1:30pm", "2:00pm", "2:30pm", "3:00pm", "3:30pm", "4:00pm", "4:30pm"];
+        var $select = $(".sessionLength");
+
+        var timesValue = [30, 60];
+        var timesDisplay = ["30 mins", "1 hr"];
+        for (var i=3; i<=12; i++) {
+          timesValue.push((i*30));
+          timesDisplay.push((i/2) + " hrs");
+        };
+
         $select.append($('<option></option>').html("Select a time").attr("value","default"));
-        for (i=0;i<times.length;i++) {
-          $select.append($('<option></option>').val(times[i]).html(times[i]))
+        for (i=0;i<timesValue.length;i++) {
+          $select.append($('<option></option>').val(timesValue[i]).html(timesDisplay[i]))
         }
       });
     </script>

@@ -66,7 +66,7 @@ app.route('/')
         if (userOrError.body === null) response.render('login.html', {error: "Username doesn't exist."}); 
         else {
           request.session.user = userOrError.body;
-          response.redirect("/perminfo"); 
+          response.redirect("/seshinfo"); 
         }
       }
     };
@@ -167,7 +167,7 @@ app.route('/perminfo')
           rope_low: request.body.lowRopeLevel,
           boulder_high: request.body.highBoulderLevel,
           boulder_low: request.body.lowBoulderLevel
-        }
+      }
 
       function respond(perminfoOrError) {
         if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
@@ -189,8 +189,49 @@ app.route('/seshinfo')
     } else response.render('login.html', { error: "Please sign in." });
   })
   .post(function(request, response) {
-    response.send('all info done submitting.');
+    
+    var sessionLength = request.body.sessionLength 
+
+    var time_in  = Date.now()
+    var time_out = Date.now() + sessionLength*60000
+
+    var updateBody = {
+      top: request.body.top, 
+      lead: request.body.lead,
+      boulder: request.body.boulder,
+      time_in: time_in,
+      time_out: time_out
+    }
+
+    function respond(seshinfoOrError) {
+      if (seshinfoOrError instanceof Error) errorHandler(response, seshinfoOrError);
+      else response.render('matches.html');
+    };
+
+    db.updateSeshInfo(request.session.user._id, updateBody, respond);    
+
+    response.redirect('/matches');
   })
+
+app.route('/matches')
+  .get(function(request, response) {
+    if (request.session.user) {
+
+      function respondFirst(seshinfos) {
+        if (seshinfos instanceof Error) errorHandler(response, seshinfos);
+        else db.findPermInfos(request.session.user._id, respondSecond);
+      };
+
+      function respondSecond(perminfos) {
+        if (perminfos instanceof Error) errorHandler(response, perminfos);
+        else response.render("matches.html");
+      };
+
+      db.findSeshInfos(request.session.user._id, respondFirst);
+      db.findPermInfos(request.session.user._id, respondSecond);
+
+    } else response.render('login.html', { error: "Please signin." });
+  });
 
 app.route('/profile')
   .get(function(request, response) {
