@@ -185,7 +185,18 @@ app.route('/perminfo')
 app.route('/seshinfo')
   .get(function(request, response) {
     if (request.session.user) {
-      response.render('seshinfo.html');
+
+      function respond(perminfoOrError) {
+        if (perminfoOrError instanceof Error) errorHandler(response, seshinfoOrError);
+        else {
+          var topCert = perminfoOrError.body.top_cert;
+          var leadCert = perminfoOrError.body.lead_cert;
+          response.render('seshinfo.html', {topCert: topCert, leadCert: leadCert});
+        }
+      }
+      
+      db.findPermInfo(request.session.user._id, respond);
+      
     } else response.render('login.html', { error: "Please sign in." });
   })
   .post(function(request, response) {
@@ -205,7 +216,7 @@ app.route('/seshinfo')
 
     function respond(seshinfoOrError) {
       if (seshinfoOrError instanceof Error) errorHandler(response, seshinfoOrError);
-      else response.render('matches.html');
+      else response.render('/matches');
     };
 
     db.updateSeshInfo(request.session.user._id, updateBody, respond);    

@@ -18,9 +18,9 @@
         <div id="section-1" class="form-section-wrapper">
             What do you want to do today?
           <div class="input-wrapper">
-            <input type="checkbox" id="topropesesh" name="top" value="yes">top rope<br>
-            <input type="checkbox" id="leadsesh" name="lead" value="yes">lead climb<br>
-            <input type="checkbox" id="bouldersesh" name="boulder" value="yes">boulder<br>
+            <div id="topropesesh"><label id="topropesesh"><input id="topropesesh" type="checkbox" name="top" value="yes">top rope</label></div>
+            <div id="leadropesesh"><label id="leadropesesh"><input id="leadropesesh" type="checkbox" name="lead" value="yes">lead rope</label></div>
+            <div id="bouldersesh"><label id="bouldersesh"><input id="bouldersesh" type="checkbox" name="boulder" value="yes">boulder</label></div>
           </div>
         </div>
         <div id="section-2" class="form-section-wrapper">
@@ -40,6 +40,15 @@
     </div>
 
     <script>
+
+      $(function() {
+        if (<%=leadCert %> || <%=topCert %>) {
+          $("#topropesesh").show()
+        } else $("#topropesesh").hide() 
+
+        if (<%=leadCert %>) $("#leadropesesh").show()
+        else $("#leadropesesh").hide()
+      });
 
       $(function(){
         var $select = $(".sessionLength");
