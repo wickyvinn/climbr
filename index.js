@@ -215,22 +215,28 @@ app.route('/seshinfo')
 
 app.route('/matches')
   .get(function(request, response) {
-    if (request.session.user) {
+    // need to be able to check for a session WITHOUT being limited that user's creds.
 
-      function respondFirst(seshinfos) {
-        if (seshinfos instanceof Error) errorHandler(response, seshinfos);
-        else db.findPermInfos(request.session.user._id, respondSecond);
-      };
+    var userId = request.session.user._id
+    
+    db.SeshInfos.find( { user_id: { $ne:mongoose.Types.ObjectId(userId) } },
+      function(err, seshinfos) {
+        if (err) errorHandler(response, Error(401, err));
+        else if (!seshinfos) errorHandler(response, Error(401, "BADBAD VERY BAD"));
+        
+        function respond(seshinfos, perminfos) {
+          response.render("matches.html", {seshinfos: seshinfos, perminfos: perminfos}); 
+        }
 
-      function respondSecond(perminfos) {
-        if (perminfos instanceof Error) errorHandler(response, perminfos);
-        else response.render("matches.html");
-      };
-
-      db.findSeshInfos(request.session.user._id, respondFirst);
-      db.findPermInfos(request.session.user._id, respondSecond);
-
-    } else response.render('login.html', { error: "Please signin." });
+        db.PermInfos.find( { user_id: { $ne:mongoose.Types.ObjectId(userId) } },
+          function(err, perminfos) {
+            if (err) errorHandler(response, Error(401, err));
+            else if (!perminfos) errorHandler(response, Error(401, "BADBAD VERY BAD"))
+            respond(seshinfos, perminfos);
+          }
+        )
+      }
+    ); 
   });
 
 app.route('/profile')

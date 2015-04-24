@@ -149,6 +149,7 @@ function updateSeshInfo(userId, body, respondFunction) {
 
 exports.Users      = Users;
 exports.PermInfos  = PermInfos;
+exports.SeshInfos  = SeshInfos;
 
 exports.findUser       = findUser;
 exports.createUser     = createUser;
