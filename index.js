@@ -106,14 +106,13 @@ app.route('/signup')
 app.route('/perminfo/edit')
   .get(function(request, response) {
     if (request.session.user) {
-
       function respond(perminfoOrError) {
         if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
         else {
           var formattedPermInfo = perminfojs.formatInfo(perminfoOrError.body);
           response.render("perminfo-edit.html", formattedPermInfo);
-        }
-      }
+        };
+      };
 
       db.findPermInfo({"user_id":request.session.user._id}, respond);
 
