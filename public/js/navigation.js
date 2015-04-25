@@ -3,7 +3,7 @@ function nextSection() {
   var currentSection = $('[id^=section]:visible');
   var currentSectionId = currentSection.attr("id");
 
-  if (validateSection(currentSection)) {
+  if (validateSection(currentSection) || currentSectionId === "section-4") {
     var nextSectionNum = parseInt(currentSectionId.split('-')[1]) + 1;  
     var numOfSections = $('[id^=section]').length
 
