@@ -18,9 +18,9 @@
         <div id="section-1" class="form-section-wrapper">
             What do you want to do today?
           <div class="input-wrapper">
-            <div id="topropesesh"><label id="topropesesh"><input id="topropesesh" type="checkbox" name="top" value="yes">top rope</label></div>
-            <div id="leadropesesh"><label id="leadropesesh"><input id="leadropesesh" type="checkbox" name="lead" value="yes">lead rope</label></div>
-            <div id="bouldersesh"><label id="bouldersesh"><input id="bouldersesh" type="checkbox" name="boulder" value="yes">boulder</label></div>
+            <div id="topropesesh"><label id="topropesesh"><input id="topropesesh" type="checkbox" name="wannaTop" value="yes">top rope</label></div>
+            <div id="leadropesesh"><label id="leadropesesh"><input id="leadropesesh" type="checkbox" name="wannaLead" value="yes">lead rope</label></div>
+            <div id="bouldersesh"><label id="bouldersesh"><input id="bouldersesh" type="checkbox" name="wannaBoulder" value="yes">boulder</label></div>
           </div>
         </div>
         <div id="section-2" class="form-section-wrapper">
@@ -42,6 +42,8 @@
     <script>
 
       $(function() {
+        console.log(<%=leadCert %> );
+        console.log(<%=topCert %> );
         if (<%=leadCert %> || <%=topCert %>) {
           $("#topropesesh").show()
         } else $("#topropesesh").hide() 

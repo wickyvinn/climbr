@@ -23,25 +23,25 @@ var User     = new Schema({
 })
 
 var PermInfo = new Schema({ 
-  user_id:      String, 
-  first_name:   String, 
-  gender:       String, 
-  weight:       Number, 
-  top_cert:     Boolean, 
-  lead_cert:    Boolean,
-  rope_high:    String,
-  rope_low:     String,
-  boulder_high: String,
-  boulder_low:  String
+  userId:      String, 
+  firstName:   String, 
+  gender:      String, 
+  weight:      Number, 
+  topCert:     Boolean, 
+  leadCert:    Boolean,
+  ropeHigh:    String,
+  ropeLow:     String,
+  boulderHigh: String,
+  boulderLow:  String
 });
 
 var SeshInfo = new Schema({
-  user_id:      String,
-  top:          Boolean,
-  lead:         Boolean,
-  boulder:      Boolean,
-  time_in:      Date,
-  time_out:     Date
+  userId:      String,
+  wannaTop:    Boolean,
+  wannaLead:   Boolean,
+  wannaBoulder: Boolean,
+  timeIn:      Date,
+  timeOut:     Date
 });
 
 var Users     = mongoose.model('users', User);
@@ -93,7 +93,7 @@ function findPermInfo(body, respondFunction) {
 // find sessioninfos, filter out the current user herself.
 function findPermInfos(userId, respondFunction) {
 
-  PermInfos.find( { user_id: { $ne:mongoose.Types.ObjectId(userId) } }, 
+  PermInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } }, 
     function(err, users) {
       if (err) { var queryResult = new idx.Error(401, err); }
       else if (users) { var queryResult = new idx.Success(users); }
@@ -106,7 +106,7 @@ function findPermInfos(userId, respondFunction) {
 
 function updatePermInfo(userId, body, respondFunction) {
 
-  PermInfos.update({user_id: userId}, {$set: body}, {upsert: true}, function(err, perminfo) {
+  PermInfos.update({userId: userId}, {$set: body}, {upsert: true}, function(err, perminfo) {
 
     if (perminfo) { var queryResult = new idx.Success(perminfo); }
     else if (err) { var queryResult = new idx.Error(401, err); }
@@ -120,7 +120,7 @@ function updatePermInfo(userId, body, respondFunction) {
 // find sessioninfos, filter out the current user herself.
 function findSeshInfos(userId, respondFunction) {
 
-  SeshInfos.find( { user_id: { $ne:mongoose.Types.ObjectId(userId) } }, 
+  SeshInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } }, 
     function(err, users) {
       if (err) { var queryResult = new idx.Error(401, err); }
       else if (users) { var queryResult = new idx.Success(users); }
@@ -133,7 +133,7 @@ function findSeshInfos(userId, respondFunction) {
 
 function updateSeshInfo(userId, body, respondFunction) {
 
-    SeshInfos.update({user_id: userId}, {$set: body}, {upsert: true}, function(err, seshinfo) {
+    SeshInfos.update({userId: userId}, {$set: body}, {upsert: true}, function(err, seshinfo) {
 
     if (seshinfo) { var queryResult = new idx.Success(seshinfo); }
     else if (err) { var queryResult = new idx.Error(401, err); }

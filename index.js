@@ -103,18 +103,68 @@ app.route('/signup')
     
   });
 
+app.route('/perminfo')
+  .get(function(request, response) {
+    if (request.session.user) {
+
+      function respond(perminfoOrError) {
+        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+        else {
+          if (perminfoOrError.body == null) response.render('perminfo-pages.html');
+          else response.redirect("/perminfo/edit");
+        }
+      };
+
+      db.findPermInfo({"userId":request.session.user._id}, respond);
+
+    } else response.render('login.html', { error: "Please sign in." });
+  })
+  
+  .post(function(request, response) {
+    if (request.session.user) {
+
+      // TODO: will go away when implement AJAX on perminfo-pages.html. replaced by just 'request' i think.
+      var updateBody = {
+          firstName: request.body.firstName,
+          gender: request.body.gender,
+          weight: parseInt(request.body.weight.split(" ")[0]),
+          topCert: request.body.topCert, 
+          leadCert: request.body.leadCert, 
+          ropeHigh: request.body.ropeHigh,
+          ropeLow: request.body.ropeLow,
+          boulderHigh: request.body.boulderHigh,
+          boulderLow: request.body.boulderLow
+      }
+
+      function respond(perminfoOrError) {
+        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+        else {
+          if (perminfoOrError.body == null) response.render('perminfo-pages.html');
+          else response.redirect("/perminfo/edit");
+        }
+      };
+
+      db.updatePermInfo(request.session.user._id, updateBody, respond);
+
+    } else response.render('login.html', { error: "Please sign in." });
+  })
+
+
 app.route('/perminfo/edit')
   .get(function(request, response) {
     if (request.session.user) {
       function respond(perminfoOrError) {
         if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
         else {
-          var formattedPermInfo = perminfojs.formatInfo(perminfoOrError.body);
-          response.render("perminfo-edit.html", formattedPermInfo);
+          if (perminfoOrError.body === null) response.redirect("/perminfo");
+          else {
+            var formattedPermInfo = perminfojs.formatInfo(perminfoOrError.body);
+            response.render("perminfo-edit.html", formattedPermInfo);
+          }
         };
       };
 
-      db.findPermInfo({"user_id":request.session.user._id}, respond);
+      db.findPermInfo({"userId":request.session.user._id}, respond);
 
     } else response.render('login.html', { error: "Please sign in." });
   })
@@ -135,63 +185,15 @@ app.route('/perminfo/edit')
     } else response.render('login.html', { error: "Please sign in." });
   });
 
-app.route('/perminfo')
-  .get(function(request, response) {
-    if (request.session.user) {
-
-      function respond(perminfoOrError) {
-        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
-        else {
-          if (perminfoOrError.body == null) response.render('perminfo-pages.html');
-          else response.redirect("/perminfo/edit");
-        }
-      };
-
-      db.findPermInfo({"user_id":request.session.user._id}, respond);
-
-    } else response.render('login.html', { error: "Please sign in." });
-  })
-  
-  .post(function(request, response) {
-    if (request.session.user) {
-
-      // TODO: will go away when implement AJAX on perminfo-pages.html. replaced by just 'request' i think.
-      var updateBody = {
-          first_name: request.body.firstName,
-          gender: request.body.gender,
-          weight: parseInt(request.body.weight.split(" ")[0]),
-          top_cert: request.body.top, 
-          lead_cert: request.body.lead, 
-          rope_high: request.body.highRopeLevel,
-          rope_low: request.body.lowRopeLevel,
-          boulder_high: request.body.highBoulderLevel,
-          boulder_low: request.body.lowBoulderLevel
-      }
-
-      function respond(perminfoOrError) {
-        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
-        else {
-          if (perminfoOrError.body == null) response.render('perminfo-pages.html');
-          else response.redirect("/perminfo/edit");
-        }
-      };
-
-      db.updatePermInfo(request.session.user._id, updateBody, respond);
-
-    } else response.render('login.html', { error: "Please sign in." });
-  })
-
 app.route('/seshinfo')
   .get(function(request, response) {
     if (request.session.user) {
 
       function respond(perminfoOrError) {
         if (perminfoOrError instanceof Error) errorHandler(response, seshinfoOrError);
-        else {
-          var topCert = perminfoOrError.body.top_cert;
-          var leadCert = perminfoOrError.body.lead_cert;
-          response.render('seshinfo.html', {topCert: topCert, leadCert: leadCert});
-        }
+        else if (perminfoOrError.body === null) response.redirect("/perminfo");
+        else response.render('seshinfo.html', 
+          { topCert: perminfoOrError.body.topCert, leadCert: perminfoOrError.body.leadCert });
       }
       
       db.findPermInfo(request.session.user._id, respond);
@@ -199,28 +201,31 @@ app.route('/seshinfo')
     } else response.render('login.html', { error: "Please sign in." });
   })
   .post(function(request, response) {
+    if (request.session.user) {
+
+      var sessionLength = request.body.sessionLength 
+
+      var timeIn  = Date.now()
+      var timeOut = Date.now() + sessionLength*60000
+
+      var updateBody = {
+        wannaTop: request.body.wannaTop, 
+        wannaLead: request.body.wannaLead,
+        wannaBoulder: request.body.wannaBoulder,
+        timeIn: timeIn,
+        timeOut: timeOut
+      }
+
+      function respond(seshinfoOrError) {
+        if (seshinfoOrError instanceof Error) errorHandler(response, seshinfoOrError);
+        else response.redirect('/matches');
+      };
+
+      db.updateSeshInfo(request.session.user._id, updateBody, respond);    
     
-    var sessionLength = request.body.sessionLength 
+    } else response.render('login.html', { error: "Please sign in." });
+    
 
-    var time_in  = Date.now()
-    var time_out = Date.now() + sessionLength*60000
-
-    var updateBody = {
-      top: request.body.top, 
-      lead: request.body.lead,
-      boulder: request.body.boulder,
-      time_in: time_in,
-      time_out: time_out
-    }
-
-    function respond(seshinfoOrError) {
-      if (seshinfoOrError instanceof Error) errorHandler(response, seshinfoOrError);
-      else response.render('/matches');
-    };
-
-    db.updateSeshInfo(request.session.user._id, updateBody, respond);    
-
-    response.redirect('/matches');
   })
 
 app.route('/matches')
@@ -229,7 +234,7 @@ app.route('/matches')
 
     var userId = request.session.user._id
     
-    db.SeshInfos.find( { user_id: { $ne:mongoose.Types.ObjectId(userId) } },
+    db.SeshInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },
       function(err, seshinfos) {
         if (err) errorHandler(response, Error(401, err));
         else if (!seshinfos) errorHandler(response, Error(401, "BADBAD VERY BAD"));
@@ -238,7 +243,7 @@ app.route('/matches')
           response.render("matches.html", {seshinfos: seshinfos, perminfos: perminfos}); 
         }
 
-        db.PermInfos.find( { user_id: { $ne:mongoose.Types.ObjectId(userId) } },
+        db.PermInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },
           function(err, perminfos) {
             if (err) errorHandler(response, Error(401, err));
             else if (!perminfos) errorHandler(response, Error(401, "BADBAD VERY BAD"))
