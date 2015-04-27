@@ -8,6 +8,8 @@ var express    = require('express');
 var bodyParser = require('body-parser');
 var mongoose   = require('mongoose');
 var session    = require('express-session');
+var cookieParser = require('cookie-parser');
+var MongoStore = require('connect-mongo')(session);
 
 
 // set up appp
@@ -15,7 +17,6 @@ var app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
@@ -26,7 +27,18 @@ var db         = require("./mongoose.js");
 
 db.connectToDb()
 
-///// fucking error handling
+// set up sessions
+
+app.use(cookieParser());
+app.use(session({
+  secret: '076ee61d63aa10a125ea872411e433b9',
+  maxAge: new Date(Date.now() + 3600000),
+  store: new MongoStore({ mongooseConnection: mongoose.connection }),
+  cookie: { maxAge: 60000 }
+ }));
+
+
+///// error handling
 
 var Error = function (errCode, errMsg) {
   this.errCode  = errCode;
@@ -230,28 +242,29 @@ app.route('/seshinfo')
 
 app.route('/matches')
   .get(function(request, response) {
-    // need to be able to check for a session WITHOUT being limited that user's creds.
-
-    var userId = request.session.user._id
-    
-    db.SeshInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },
-      function(err, seshinfos) {
-        if (err) errorHandler(response, Error(401, err));
-        else if (!seshinfos) errorHandler(response, Error(401, "BADBAD VERY BAD"));
-        
-        function respond(seshinfos, perminfos) {
-          response.render("matches.html", {seshinfos: seshinfos, perminfos: perminfos}); 
-        }
-
-        db.PermInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },
-          function(err, perminfos) {
-            if (err) errorHandler(response, Error(401, err));
-            else if (!perminfos) errorHandler(response, Error(401, "BADBAD VERY BAD"))
-            respond(seshinfos, perminfos);
+    if (request.session.user) {
+      var userId = request.session.user._id
+      
+      db.SeshInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },
+        function(err, seshinfos) {
+          if (err) errorHandler(response, Error(401, err));
+          else if (!seshinfos) errorHandler(response, Error(401, "BADBAD VERY BAD"));
+          
+          function respond(seshinfos, perminfos) {
+            response.render("matches.html", {seshinfos: seshinfos, perminfos: perminfos}); 
           }
-        )
-      }
-    ); 
+
+          db.PermInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },
+            function(err, perminfos) {
+              if (err) errorHandler(response, Error(401, err));
+              else if (!perminfos) errorHandler(response, Error(401, "BADBAD VERY BAD"))
+              respond(seshinfos, perminfos);
+            }
+          )
+        }
+      ); 
+      
+    } else response.render('login.html', { error: "Please sign in." });
   });
 
 app.route('/profile')
