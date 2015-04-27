@@ -105,7 +105,7 @@ only screen and (max-width: 760px),
           </thead>
           <tbody>
           <tr>
-            <td><input type="text" class="editable" name="first_name" value="<%=firstName %>"></input> </td>
+            <td><input type="text" class="editable" name="firstName" value="<%=firstName %>"></input> </td>
             <td>
               <select id="gender" name="gender" class="editable">
                 <option value="default">Gender</option>
@@ -117,14 +117,14 @@ only screen and (max-width: 760px),
           <td>
             <input id="weight" class="editable" name="weight" type="text" placeholder="lbs" min="20" max="400" value="<%=weight %> lbs"></input> 
           </td>
-            <td><input id="top" type="checkbox" class="editable" name="top_cert"></input></td>
-            <td><input id="lead" type="checkbox" class="editable" name="lead_cert"></input></td>
+            <td><input id="top" type="checkbox" class="editable" name="topCert"></input></td>
+            <td><input id="lead" type="checkbox" class="editable" name="leadCert"></input></td>
             <td>
-              <select id="ropeLow" class="editable ropeLevel" name="rope_low"></select> to
-              <select id="ropeHigh" class="editable ropeLevel" name="rope_high"></select>
+              <select id="ropeLow" class="editable ropeLevel" name="ropeLow"></select> to
+              <select id="ropeHigh" class="editable ropeLevel" name="ropeHigh"></select>
             <td>
-              <select id="boulderLow" class="editable boulderLevel" name="boulder_low"></select> to
-              <select id="boulderHigh" class="editable boulderLevel" name="boulder_high"></select>
+              <select id="boulderLow" class="editable boulderLevel" name="boulderLow"></select> to
+              <select id="boulderHigh" class="editable boulderLevel" name="boulderHigh"></select>
             </td>
           </tr>
           </tbody>
@@ -158,7 +158,7 @@ only screen and (max-width: 760px),
 
       $(".editable").on("change", function (event) {
         var newValueType = ($(this).attr("name"));
-        if (newValueType === "top_cert" || newValueType === "lead_cert") {
+        if (newValueType === "topCert" || newValueType === "leadCert") {
           var newValue = $(this).is(":checked");
         } else {
           var newValue = $(this).val();

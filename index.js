@@ -66,7 +66,7 @@ app.route('/')
         if (userOrError.body === null) response.render('login.html', {error: "Username doesn't exist."}); 
         else {
           request.session.user = userOrError.body;
-          response.redirect("/seshinfo"); 
+          response.redirect("/perminfo"); 
         }
       }
     };
@@ -110,7 +110,7 @@ app.route('/perminfo/edit')
         if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
         else {
           var formattedPermInfo = perminfojs.formatInfo(perminfoOrError.body);
-          response.render("perminfo-edit.html", formattedPermInfo);
+          response.render("perminfo-edit.html", JSON.stringify(formattedPermInfo));
         };
       };
 
@@ -160,12 +160,12 @@ app.route('/perminfo')
           first_name: request.body.firstName,
           gender: request.body.gender,
           weight: parseInt(request.body.weight.split(" ")[0]),
-          top_cert: request.body.top, 
-          lead_cert: request.body.lead, 
-          rope_high: request.body.highRopeLevel,
-          rope_low: request.body.lowRopeLevel,
-          boulder_high: request.body.highBoulderLevel,
-          boulder_low: request.body.lowBoulderLevel
+          topCert: request.body.topCert, 
+          leadCert: request.body.leadCert, 
+          ropeHigh: request.body.ropeHigh,
+          ropeLow: request.body.ropeLow,
+          boulderHigh: request.body.boulderHigh,
+          boulderLow: request.body.boulderLow
       }
 
       function respond(perminfoOrError) {
@@ -188,9 +188,7 @@ app.route('/seshinfo')
       function respond(perminfoOrError) {
         if (perminfoOrError instanceof Error) errorHandler(response, seshinfoOrError);
         else {
-          var topCert = perminfoOrError.body.top_cert;
-          var leadCert = perminfoOrError.body.lead_cert;
-          response.render('seshinfo.html', {topCert: topCert, leadCert: leadCert});
+          response.render('seshinfo.html', {topCert: perminfoOrError.body.topCert, leadCert: perminfoOrError.body.leadCert});
         }
       }
       

@@ -2,14 +2,14 @@
 
 exports.formatInfo = function(perminfo) {
   return {
-    firstName: perminfo.first_name.charAt(0).toUpperCase() + perminfo.first_name.slice(1),
+    firstName: perminfo.firstName.charAt(0).toUpperCase() + perminfo.firstName.slice(1),
     gender: perminfo.gender,
     weight: perminfo.weight,
-    top: perminfo.top_cert === true,
-    lead: perminfo.lead_cert === true,
-    ropeLow: perminfo.rope_low,
-    ropeHigh: perminfo.rope_high,
-    boulderLow: perminfo.boulder_low,
-    boulderHigh: perminfo.boulder_high
+    top: perminfo.topCert === true,
+    lead: perminfo.leadCert === true,
+    ropeLow: perminfo.ropeLow,
+    ropeHigh: perminfo.ropeHigh,
+    boulderLow: perminfo.boulderLow,
+    boulderHigh: perminfo.boulderHigh
   }
 };  
