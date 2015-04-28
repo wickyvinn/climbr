@@ -22,7 +22,7 @@ app.set('view engine', 'ejs');
 
 
 // require modules
-var perminfojs = require("./public/js/perminfo.js");
+var logic      = require("./public/js/logic.js");
 var db         = require("./mongoose.js");
 
 db.connectToDb()
@@ -32,9 +32,9 @@ db.connectToDb()
 app.use(cookieParser());
 app.use(session({
   secret: '076ee61d63aa10a125ea872411e433b9',
-  maxAge: new Date(Date.now() + 3600000),
+  maxAge: new Date(Date.now() + 36000000),
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
-  cookie: { maxAge: 60000 }
+  cookie: { maxAge: 3600000 }
  }));
 
 
@@ -72,7 +72,7 @@ app.route('/')
   })
   .post(function(request, response) {
 
-    function respond(userOrError) {
+    function respond(userOrError)   {
       if (userOrError instanceof Error) errorHandler(response, userOrError);
       else {
         if (userOrError.body === null) response.render('login.html', {error: "Username doesn't exist."}); 
@@ -170,7 +170,7 @@ app.route('/perminfo/edit')
         else {
           if (perminfoOrError.body === null) response.redirect("/perminfo");
           else {
-            var formattedPermInfo = perminfojs.formatInfo(perminfoOrError.body);
+            var formattedPermInfo = logic.formatInfo(perminfoOrError.body);
             response.render("perminfo-edit.html", formattedPermInfo);
           }
         };
@@ -251,7 +251,8 @@ app.route('/matches')
           else if (!seshinfos) errorHandler(response, Error(401, "BADBAD VERY BAD"));
           
           function respond(seshinfos, perminfos) {
-            response.render("matches.html", {seshinfos: seshinfos, perminfos: perminfos}); 
+            var matches = logic.joinMatches(seshinfos, perminfos);
+            response.render("matches.html", {matches: JSON.stringify(matches)}); 
           }
 
           db.PermInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },
