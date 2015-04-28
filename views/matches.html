@@ -1,6 +1,54 @@
+<!DOCTYPE HTML>
 <html>
+  
+  <head>
+    <link rel="stylesheet" href="../css/sign-in.css">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/navigation.js"></script>
+  </head>
+  
   <body>
-    <%=seshinfos%>
-    <%=perminfos%>
+    <div class="container">
+      <div id="displayed"></div>
+      <h1 id="firstName"></h1>
+
+      <div>Here until: <div id="hereuntil"></div></div>
+      <br />
+      <div><input id="topCert" type="checkbox" disabled>top rope certified</input></div>
+      <div><input id="leadCert" type="checkbox" disabled>lead certified</input></div>
+      
+      <br />Down to:
+      <div><input id="wannaTop" type="checkbox" disabled>top rope</input></div>
+      <div><input id="wannaLead" type="checkbox" disabled>lead climb</input></div>
+      <div><input id="wannaBoulder" type="checkbox" disabled>boulder</input></div>
+      <br /><div style="text-align:center"><button id="next">Next</button></div>
+    </div>
   </body>
+  
+  <script>
+    var matches = <%- matches %>;
+
+    function populateProfile(match) {
+      $('#firstName').html(match.perminfo.firstName);
+      $('#topCert').prop('checked', match.perminfo.topCert);
+      $('#leadCert').prop('checked', match.perminfo.leadCert);
+      $('#wannaTop').prop('checked', match.seshinfo.wannaTop);
+      $('#wannaLead').prop('checked', match.seshinfo.wannaLead);
+      $('#wannaBoulder').prop('checked', match.seshinfo.wannaBoulder);
+      $('#hereuntil').html(match.seshinfo.timeOut);
+    }
+
+    $(function() {
+      populateProfile(matches[0]);
+      var i=0;
+      $('#next').on('click', function () {
+        console.log(matches.length);
+        i = (i+1) % (matches.length);
+        populateProfile(matches[i]);
+      });
+    })
+      
+  </script>
+
 </html>
