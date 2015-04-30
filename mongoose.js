@@ -32,7 +32,8 @@ var PermInfo = new Schema({
   ropeHigh:    String,
   ropeLow:     String,
   boulderHigh: String,
-  boulderLow:  String
+  boulderLow:  String,
+  photoAddress: String
 });
 
 var SeshInfo = new Schema({

@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=320; user-scalable=no" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    
+    <script src="js/jquery.min.js"></script>
+    <style>
+
+    #profilePhoto {
+      width:40%; 
+    }
+
+    </style>
+
+  </head>
+ 
+  <body>
+ 
+  <form id = "uploadForm" enctype = "multipart/form-data" action = "/photo" method = "post">
+    <input type="file" name="userPhoto" capture="camera" accept="image/*" id="userPhoto"/>
+    <input type="submit" value="Upload Image" name="submit">
+  </form>
+
+  <div><img id="profilePhoto"></div>
+    
+    <script>
+      // credit: http://www.raymondcamden.com/2013/05/20/Capturing-camerapicture-data-without-PhoneGap
+      var desiredWidth;
+
+      $(document).ready(function() {
+        $("#userPhoto").on("change",showPhoto);
+        desiredWidth = window.innerWidth;
+      });
+
+      // credit: https://www.youtube.com/watch?v=EPYnGFEcis4&feature=youtube_gdata_player
+
+      function showPhoto(event) {
+        if (event.target.files.length == 1 && event.target.files[0].type.indexOf("image/") == 0) {
+          $("#profilePhoto").attr("src",URL.createObjectURL(event.target.files[0]));
+        }
+      }
+
+    </script>    
+
+  </body>
+ 
+</html>

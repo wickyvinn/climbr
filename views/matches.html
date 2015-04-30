@@ -6,13 +6,20 @@
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <script src="js/jquery.min.js"></script>
     <script src="js/navigation.js"></script>
+
+    <style>
+      #profilePicture {
+        width: 100%;
+      },
+    
+    </style>
   </head>
   
   <body>
     <div class="container">
       <div id="displayed"></div>
       <h1 id="firstName"></h1>
-
+      <div><img id="profilePicture"></div>
       <div>Here until: <div id="hereuntil"></div></div>
       <br />
       <div><input id="topCert" type="checkbox" disabled>top rope certified</input></div>
@@ -37,6 +44,7 @@
       $('#wannaLead').prop('checked', match.seshinfo.wannaLead);
       $('#wannaBoulder').prop('checked', match.seshinfo.wannaBoulder);
       $('#hereuntil').html(match.seshinfo.timeOut);
+      $('#profilePicture').attr('src', match.perminfo.photoAddress);  
     }
 
     $(function() {
