@@ -181,6 +181,7 @@ app.route('/perminfo')
 app.route('/perminfo/edit')
   .get(function(request, response) {
     if (request.session.user) {
+
       function respond(perminfoOrError) {
         if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
         else {
@@ -224,14 +225,14 @@ app.route('/seshinfo')
           { topCert: perminfoOrError.body.topCert, leadCert: perminfoOrError.body.leadCert });
       }
       
-      db.findPermInfo(request.session.user._id, respond);
+      db.findPermInfo({"userId":request.session.user._id}, respond);
       
     } else response.render('login.html', { error: "Please sign in." });
   })
   .post(function(request, response) {
     if (request.session.user) {
 
-      var sessionLength = request.body.sessionLength 
+      var sessionLength = request.body.sessionLength // in hours
 
       var timeIn  = Date.now()
       var timeOut = Date.now() + sessionLength*60000
@@ -297,8 +298,6 @@ app.route('/photo')
       if (done==true) {
       
         var photoAddress = request.files.userPhoto.path.replace("public", "");
-
-        console.log("photoAddress to be updated: " + photoAddress);
 
         function respond(perminfoOrError) {
           if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
