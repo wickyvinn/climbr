@@ -10,7 +10,8 @@ var mongoose   = require('mongoose');
 var session    = require('express-session');
 var cookieParser = require('cookie-parser');
 var MongoStore = require('connect-mongo')(session);
-
+var multer     = require('multer');
+var done       = false;
 
 // set up appp
 var app = express();
@@ -19,6 +20,21 @@ app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
+
+/*Configure the multer.*/
+// looks like this 'done' variable is global but i dunno if i like that. 
+app.use(multer({ dest: './public/uploads/',
+ rename: function (fieldname, filename) {
+    return filename+Date.now();
+  },
+  onFileUploadStart: function (file) {
+    console.log(file.originalname + ' is starting ...')
+  },
+  onFileUploadComplete: function (file) {
+    console.log(file.fieldname + ' uploaded to  ' + file.path)
+    done=true;
+  }
+}));
 
 
 // require modules
@@ -165,6 +181,7 @@ app.route('/perminfo')
 app.route('/perminfo/edit')
   .get(function(request, response) {
     if (request.session.user) {
+
       function respond(perminfoOrError) {
         if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
         else {
@@ -208,14 +225,14 @@ app.route('/seshinfo')
           { topCert: perminfoOrError.body.topCert, leadCert: perminfoOrError.body.leadCert });
       }
       
-      db.findPermInfo(request.session.user._id, respond);
+      db.findPermInfo({"userId":request.session.user._id}, respond);
       
     } else response.render('login.html', { error: "Please sign in." });
   })
   .post(function(request, response) {
     if (request.session.user) {
 
-      var sessionLength = request.body.sessionLength 
+      var sessionLength = request.body.sessionLength // in hours
 
       var timeIn  = Date.now()
       var timeOut = Date.now() + sessionLength*60000
@@ -268,10 +285,34 @@ app.route('/matches')
     } else response.render('login.html', { error: "Please sign in." });
   });
 
-app.route('/profile')
+app.route('/photo')
   .get(function(request, response) {
-    response.render('profile.html');
+    if (request.session.user) response.render('photo.html');
+    else response.render('login.html', { error: "Please sign in." });
   })
+  .post(function(request, response) {
+    if (request.session.user) {
+      
+      var userId = request.session.user._id
+      
+      if (done==true) {
+      
+        var photoAddress = request.files.userPhoto.path.replace("public", "");
+
+        function respond(perminfoOrError) {
+          if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+          else {
+            if (perminfoOrError.body === null) response.redirect("/photo");
+            else response.end("User perminfo updated.");
+          }
+        };
+        
+        db.updatePermInfo(userId, { photoAddress: photoAddress }, respond); 
+
+      }
+    } else response.render('login.html', { error: "Please sign in." });
+
+  });
 
 app.listen(app.get('port'), function() {
   console.log("climbr is running at localhost:" + app.get('port') + '.');
