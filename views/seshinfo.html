@@ -7,21 +7,32 @@
      }
     </style>
 
-    <link rel="stylesheet" href="../css/sign-in.css">
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <script src="js/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" >
+    
+    <link href="../css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link href="../css/bootstrap/bootstrap.css" rel="stylesheet">
+    <link href="../css/sign-in.css" rel="stylesheet">
+    <link href="../css/seshinfo.css" rel="stylesheet">
+    
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap/bootstrap.js"></script>
+    <script src="../js/bootstrap-toggle.min.js"></script>
+    
     <script src="js/navigation.js"></script>
+
   </head>
   <body>
     <div class="container">
       <form action="/seshinfo" method="POST">
         <div id="section-1" class="form-section-wrapper">
-            What do you want to do today?
-          <div class="input-wrapper">
-            <div id="topropesesh"><label id="topropesesh"><input id="topropesesh" type="checkbox" name="wannaTop" value="yes">top rope</label></div>
-            <div id="leadropesesh"><label id="leadropesesh"><input id="leadropesesh" type="checkbox" name="wannaLead" value="yes">lead rope</label></div>
-            <div id="bouldersesh"><label id="bouldersesh"><input id="bouldersesh" type="checkbox" name="wannaBoulder" value="yes">boulder</label></div>
-          </div>
+            <h4>What do you want to do today?</h4>
+
+            <div><input id="topropesesh" name="wannaTop" type="checkbox" checked data-toggle="toggle" data-on="Top Rope" data-off="Not top rope" data-onstyle="success" data-offstyle="danger"></div>
+            <br><div><input id="leadropesesh" name="wannaLead" type="checkbox" checked data-toggle="toggle" data-on="Lead Climb" data-off="Not lead" data-onstyle="success" data-offstyle="danger"></div>
+            <br><div><input id="bouldersesh" name="wannaBoulder" type="checkbox" checked data-toggle="toggle" data-on="Boulder" data-off="Not Boulder" data-onstyle="success" data-offstyle="danger"></div>
+
         </div>
         <div id="section-2" class="form-section-wrapper">
             <div>How long are you sticking around for?</div>
@@ -42,8 +53,6 @@
     <script>
 
       $(function() {
-        console.log(<%=leadCert %> );
-        console.log(<%=topCert %> );
         if (<%=leadCert %> || <%=topCert %>) {
           $("#topropesesh").show()
         } else $("#topropesesh").hide() 
