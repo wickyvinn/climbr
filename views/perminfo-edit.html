@@ -1,137 +1,116 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <style>
-      #section-2, #section-3, #section-4, #section-5, #section-6, #submission, #back {
-        display: none;
-      }
-      table { 
-        width: 100%; 
-        border-collapse: collapse; 
-      }
-      /* Zebra striping */
-      tr:nth-of-type(odd) { 
-        background: #eee; 
-      }
-      th { 
-        background: #333; 
-        color: white; 
-        font-weight: bold; 
-      }
-      td, th { 
-        padding: 6px; 
-        border: 1px solid #ccc; 
-        text-align: left; 
-      }
 
-/* 
-Max width before this PARTICULAR table gets nasty
-This query will take effect for any screen smaller than 760px
-and also iPads specifically.
-*/
-@media 
-only screen and (max-width: 760px),
-(min-device-width: 768px) and (max-device-width: 1024px)  {
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" >
 
-  /* Force table to not be like tables anymore */
-  table, thead, tbody, th, td, tr { 
-    display: block; 
-  }
-  
-  /* Hide table headers (but not display: none;, for accessibility) */
-  thead tr { 
-    position: absolute;
-    top: -9999px;
-    left: -9999px;
-  }
-  
-  tr { border: 1px solid #ccc; }
-  
-  td { 
-    /* Behave  like a "row" */
-    border: none;
-    border-bottom: 1px solid #eee; 
-    position: relative;
-    padding-left: 50%; 
-  }
-  
-  td:before { 
-    /* Now like a table header */
-    position: absolute;
-    /* Top/left values mimic padding */
-    top: 6px;
-    left: 6px;
-    width: 45%; 
-    padding-right: 10px; 
-    white-space: nowrap;
-  }
-  
-  /*
-  Label the data
-  */
-  td:nth-of-type(1):before { content: "Name"; }
-  td:nth-of-type(2):before { content: "Gender"; }
-  td:nth-of-type(3):before { content: "Weight"; }
-  td:nth-of-type(4):before { content: "Top rope cert?"; }
-  td:nth-of-type(5):before { content: "Lead cert?"; }
-  td:nth-of-type(6):before { content: "Generally rope"; }
-  td:nth-of-type(7):before { content: "Generally boulder"; }
-}
+    <link href="../css/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link href="../css/navbar.css" rel="stylesheet">
 
-
-    </style>
-
-    <link rel="stylesheet" href="../css/sign-in.css">
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <script src="../js/jquery.min.js"></script>
-  </head>
+    <script src="../js/bootstrap/bootstrap.js"></script>
+    <script src="../js/bootstrap-toggle.min.js"></script>
   
+  </head>
   <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand logo" href="/">climbr</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/matches">Matches</a></li>
+            <li class="active"><a href="/perminfo">About You</a></li>
+            <li><a href="/seshinfo">What do you want to do today?</a></li>
+            <li><a href="/">Log out</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
     <div class="container">
-      <form action="/seshinfo">
-
-
-        <table>
-          <thead>
-          <tr>
-            <th>Name</th>
-            <th>Gender</th>
-            <th>Weight</th>
-            <th>Top</th>
-            <th>Lead</th>
-            <th>Rope</th>
-            <th>Boulder</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr>
-            <td><input type="text" class="editable" name="firstName" value="<%=firstName %>"></input> </td>
-            <td>
+        <div class="header">
+          about you
+        </div>
+        <div class="infoPartI">
+          <div class="row">
+            <div class="perm-col-left col-xs-3"><span class="glyphicon glyphicon-user"></span></div>
+            <div class="perm-col-right col-xs-8"><input type="text" class="editable" name="firstName" value=<%=firstName%>></input></div>
+          </div>
+          <div class="row">
+            <div class="perm-col-left col-xs-3"><strong>♀♂</strong></div>
+            <div class="perm-col-right col-xs-8">
               <select id="gender" name="gender" class="editable">
                 <option value="default">Gender</option>
                 <option value="female">Female</option>
                 <option value="male">Male</option>
                 <option value="declined">Rather not say</option>
               </select>
-          </td>
-          <td>
-            <input id="weight" class="editable" name="weight" type="text" placeholder="lbs" min="20" max="400" value="<%=weight %> lbs"></input> 
-          </td>
-            <td><input id="top" type="checkbox" class="editable" name="topCert"></input></td>
-            <td><input id="lead" type="checkbox" class="editable" name="leadCert"></input></td>
-            <td>
+            </div>
+          </div>
+          <div class="row">
+            <div class="perm-col-left col-xs-3"><img src="../img/scales.png"></img></span></div>
+            <div class="perm-col-right col-xs-8"><input id="weight" class="editable" name="weight" type="text" placeholder="lbs" min="20" max="400" value="<%=weight %> lbs"></input></div>
+          </div>
+        </div>
+
+        <div class="infoPartII">
+          
+          <div class="row">
+            <div class="perm-col-left col-xs-3"><span class="glyphicon glyphicon-tag"></span></div>
+            <div class="col-xs-6">top rope certified?</div>
+            <div class="col-xs-3">
+              <input id="top" name="topCert" type="checkbox" class="editable" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="perm-col-left col-xs-3"><span class="glyphicon glyphicon-tags"></span></div>
+            <div class="col-xs-6">lead certified?</div>
+            <div class="col-xs-3">
+              <input id="lead" name="leadCert" type="checkbox" class="editable" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
+            </div>
+          </div>
+        
+        </div>
+
+        <div class="infoPartII">
+          <div class="row">
+            <div class="perm-col-left col-xs-3"><img src="../img/ropeup.png"></div>
+            <div class="perm-col-right col-xs-8">
               <select id="ropeLow" class="editable ropeLevel" name="ropeLow"></select> to
               <select id="ropeHigh" class="editable ropeLevel" name="ropeHigh"></select>
-            <td>
-              <select id="boulderLow" class="editable boulderLevel" name="boulderLow"></select> to
+            </div>
+          </div>
+          <div class="row">
+            <div class="perm-col-left col-xs-3"><img src="../img/boulder.png"></div>
+            <div class="perm-col-right col-xs-8">
+              <select id="boulderLow" class="editable boulderLevel" name="boulderLow"></select>to
               <select id="boulderHigh" class="editable boulderLevel" name="boulderHigh"></select>
-            </td>
-          </tr>
-          </tbody>
-        </table>
+            </div>
+          </div>
+        </div>
         
-      </form>
+        <div class="infoPartII">
+          <div class="row">
+            <div class="perm-col-left col-xs-3"><span class="glyphicon glyphicon-camera"></span></div>
+            <div class="perm-col-right col-xs-8"><a href="/photo">Upload photo</a></div>
+          </div>
+
+        </div>
+
     </div>
+
 
     <script>
 
@@ -153,6 +132,7 @@ only screen and (max-width: 760px),
         }
         $(this).attr("type", "number");
       });
+
 
       $(".editable").on("change", function (event) {
         var newValueType = ($(this).attr("name"));
@@ -186,7 +166,7 @@ only screen and (max-width: 760px),
         var select = $(".ropeLevel");
         var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
 
-        select.append($('<option></option>').html("Select a level"));
+        select.append($('<option></option>').html("---"));
 
         for (i=0;i<levels.length;i++) {
           select.append($('<option></option>').val(levels[i]).html(levels[i]))
@@ -201,7 +181,7 @@ only screen and (max-width: 760px),
         var select = $(".boulderLevel");
         var levels = ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"];
 
-        select.append($('<option></option>').html("Select a level"));
+        select.append($('<option></option>').html("---"));
 
         for (i=0;i<levels.length;i++) {
           select.append($('<option></option>').val(levels[i]).html(levels[i]))
@@ -210,10 +190,13 @@ only screen and (max-width: 760px),
         $("#boulderLow").val("<%=boulderLow %>");
         $("#boulderHigh").val("<%=boulderHigh %>");
 
+
       });
     
     </script>
+
+
+
+
   </body>
 </html>
-
-

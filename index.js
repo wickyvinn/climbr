@@ -94,7 +94,7 @@ app.route('/')
         if (userOrError.body === null) response.render('login.html', {error: "Username doesn't exist."}); 
         else {
           request.session.user = userOrError.body;
-          response.redirect("/seshinfo"); 
+          response.redirect("/perminfo"); 
         }
       }
     };

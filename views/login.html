@@ -1,27 +1,34 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <link rel="stylesheet" href="../css/sign-in.css">
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <script src="js/jquery.min.js"></script>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" >
+    
+
+    <link href="../css/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../css/signin.css" rel="stylesheet">
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap/bootstrap.js"></script>
+  
   </head>
   <body>
-    <div class="container">
+    
+  <div class="container">
+
+    <form action="/" method="POST" class="form-signin">
       <div class="logo">climbr</div>
-      <div class="fancy-text">find a climbing buddy nearby.</div>
-
-      <div class="form-section-wrapper" style="text-align: center;">
-        <form action="/" method="POST">
-          <div class="input-wrapper">
-            <div><input type="username" name="username" placeholder="username"></input></div>
-            <div><input type="password" nane="password" placeholder="password"></input></div>
-          <button class="log_in_submit" type="submit">Belay On</button>
-          <div class="fancy-text"><%=error %> </div>
-          </div>
-        </form>
-      </div>
-      <div id="signupLink" class="fancy-text">just joining us? <a href="/signup">sign up!</a></div> 
-    </div>
-
+      <h5 class="form-signin-heading fancy-text">find a climbing buddy nearby.</h5>
+      <input type="username" name="username" class="form-control" placeholder="username" required=""></input>
+      <input type="password" name="password" class="form-control" placeholder="password"></input>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Belay On</button>
+    </form>  
+      <h5 class="fancy-text">just joining us? <a href="/signup">sign up!</a></h5> 
+      <div class="fancy-text"><%=error %> </div>
+  
+  </div>
+      
   </body>
+
 </html>

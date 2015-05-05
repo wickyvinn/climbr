@@ -1,0 +1,66 @@
+body {
+  min-height: 2000px;
+  padding-top: 70px;
+}
+
+div[class^="col-"], div[class*="col-"] {
+  font-size: 14px;
+  color: #9D9DA4;
+  font-family: "Raleway";
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.perm-col-left {
+  text-align: center;
+}
+
+.perm-col-right {
+  border-bottom-style: solid;
+  border-width: 1px;
+  border-color: #D8DCDC;
+}
+
+.header {
+  font-size: 20px;
+  text-align: center;
+  font-family: 'Lobster', cursive;
+  color: #FF0066;
+  padding-bottom: 1.5px;
+}
+
+.infoPartI {
+  padding-top: 10px;
+}
+
+.infoPartII {
+  padding-top: 40px;
+}
+
+
+.logo {
+  font-size: 30px;
+  font-family: 'Lobster', cursive;
+  color: white;
+}
+
+input {
+  border: none;
+}
+
+select {
+  background:transparent;
+  -webkit-appearance: none;
+  border: none;
+
+}
+
+@font-face {
+  font-family: "Lobster";
+  src: url("Lobster-Regular.ttf") format("opentype");
+}
+
+@font-face {
+  font-family: "Raleway";
+  src: url("Raleway-Regular.ttf") format("opentype");
+}
