@@ -37,15 +37,11 @@ div[class^="col-"], div[class*="col-"] {
   padding-top: 40px;
 }
 
-img {
-  max-width:50%;
-  max-height:50%;
-}
 
 .logo {
   font-size: 30px;
   font-family: 'Lobster', cursive;
-  color: #FF0066;
+  color: white;
 }
 
 input {
@@ -58,10 +54,6 @@ select {
   border: none;
 
 }
-
-/*cred to http://callmenick.com/post/css-toggle-switch-examples*/
-
-
 
 @font-face {
   font-family: "Lobster";
