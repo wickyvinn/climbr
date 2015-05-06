@@ -1,56 +1,126 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-    <style>
-     #section-2, #submission, #back {
-      display: none;
-     }
-    </style>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" >
-    
+
+    <link href="../css/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="../css/bootstrap-toggle.min.css" rel="stylesheet">
-    <link href="../css/bootstrap/bootstrap.css" rel="stylesheet">
-    <link href="../css/sign-in.css" rel="stylesheet">
-    <link href="../css/seshinfo.css" rel="stylesheet">
-    
+    <link href="../css/navbar.css" rel="stylesheet">
+
     <script src="../js/jquery.min.js"></script>
     <script src="../js/bootstrap/bootstrap.js"></script>
     <script src="../js/bootstrap-toggle.min.js"></script>
-    
     <script src="js/navigation.js"></script>
-
+  
   </head>
   <body>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand logo" href="/">climbr</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/matches">Matches</a></li>
+            <li class="active"><a href="/perminfo">About You</a></li>
+            <li><a href="/seshinfo">What do you want to do today?</a></li>
+            <li><a href="/">Log out</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
     <div class="container">
-      <form action="/seshinfo" method="POST">
-        <div id="section-1" class="form-section-wrapper">
-            <h4>What do you want to do today?</h4>
-
-            <div><input id="topropesesh" name="wannaTop" type="checkbox" checked data-toggle="toggle" data-on="Top Rope" data-off="Not top rope" data-onstyle="success" data-offstyle="danger"></div>
-            <br><div><input id="leadropesesh" name="wannaLead" type="checkbox" checked data-toggle="toggle" data-on="Lead Climb" data-off="Not lead" data-onstyle="success" data-offstyle="danger"></div>
-            <br><div><input id="bouldersesh" name="wannaBoulder" type="checkbox" checked data-toggle="toggle" data-on="Boulder" data-off="Not Boulder" data-onstyle="success" data-offstyle="danger"></div>
-
+        <div class="header">
+          today's sesh
         </div>
-        <div id="section-2" class="form-section-wrapper">
-            <div>How long are you sticking around for?</div>
-            <div class="input-wrapper">
-              About <select class="sessionLength" name="sessionLength"></select>
+        <form action="/seshinfo" method="POST">
+        <div id="sectionToValidate">
+          <div class="infoPartI">
+            <div class="row">
+              <div class="question col-xs-12">What do you want to today?</div>
             </div>
+            <div id="topropesesh" class="row">
+              <div class="col-xs-2"></div>
+              <div class="col-xs-5">Top rope?</div>
+
+              <div class="col-xs-3">
+                <input id="topropesesh" name="wannaTop" type="checkbox" class="editable" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
+              </div>
+            </div>
+            <div id="leadropesesh" class="row">
+              <div class="col-xs-2"></div>
+              <div class="col-xs-5">Lead climb?</div>
+              <div class="col-xs-3">
+                <input id="leadropesesh" name="wannaLead" type="checkbox" class="editable" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-2"></div>
+              <div class="col-xs-5">Boulder?</div>
+              <div class="col-xs-3">
+                <input id="bouldersesh" name="wannaBoulder" type="checkbox" class="editable" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
+              </div>
+            </div>
+          </div>
+
+          <div class="infoPartII">
+            <div class="row">
+              <div class="question col-xs-12">How long are you sticking around for?</div>
+            </div>
+            <div class="row">
+              <div class="col-xs-2"></div>
+              <div class="sesh-col-mid col-xs-4">About</div>
+              <div class="sesh-col-right col-xs-2">
+                <select class="sessionLength" name="sessionLength"></select>
+              </div>
+              
+            </div>
+          </div>
         </div>
-        <div class="navigation-buttons">
-          <button id="back" onclick="backSection(); return false;">Back</button>
-          <button id="next" onclick="nextSection(); return false;">Next</button>
-          <button id="submission" type="submit" onclick="validateSection()">Submit</button>
+
+
+        <div class="submitWrapper">
+          
+          <button id="submission" class="btn btn-default submitBtn" type="submit" onclick="validateSection()">CLIMB ON</button>
         </div>
-          <br><div id="preventNext"></div>
-          <div id="preventSubmit"></div>
-        </form>
+      </form>
     </div>
 
     <script>
+
+      function validateSection() {
+        var section = $('#sectionToValidate');
+        var emptyInputs = section.find("input").filter(function() {
+          return this.value === ""; 
+        });
+        
+        var emptySelects = section.find("select").filter(function() {
+          var defaultValue = "default";
+          var selectedValue = $(this).val()
+          return (defaultValue === selectedValue);
+        });
+
+        var checkBoxes = section.find("input:checkbox").length;
+        var checkedBoxes = section.find("input:checkbox:checked").length;
+
+        // if forms are empty, prevent moving forward
+        if ((emptyInputs.length + emptySelects.length) != 0 || (checkBoxes > 0 && checkedBoxes < 1)) { 
+          alert("Hold on, you left some answers empty.");
+          event.preventDefault(); // for the submit option
+          return false
+        } else return true
+      };
+
 
       $(function() {
         if (<%=leadCert %> || <%=topCert %>) {
@@ -60,6 +130,7 @@
         if (<%=leadCert %>) $("#leadropesesh").show()
         else $("#leadropesesh").hide()
       });
+
 
       $(function(){
         var $select = $(".sessionLength");
@@ -76,5 +147,7 @@
           $select.append($('<option></option>').val(timesValue[i]).html(timesDisplay[i]))
         }
       });
+
     </script>
-</html> 
+  </body>
+</html>
