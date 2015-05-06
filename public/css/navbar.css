@@ -9,8 +9,11 @@ body {
   padding-top: 70px;
 }
 
-div[class^="col-"], div[class*="col-"] {
+.perm-col {
   font-size: 14px;
+}
+
+div[class^="col-"], div[class*="col-"] {
   color: #9D9DA4;
   font-family: "Raleway";
   padding-top: 6px;
@@ -81,7 +84,93 @@ select {
   background:transparent;
   -webkit-appearance: none;
   border: none;
+}
 
+.profileContainer {
+  margin: 8px;
+
+  background-color: #FFF;
+  border-radius: 5px;
+  border-color: #D8DCDC;
+  border-width: 3px;
+  border-style: solid;
+  padding: 5px;
+
+  position: relative;
+}
+
+.profileInfoWrapper {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+
+  background-color: #FFF;
+  font-family: "Raleway";
+  color: grey;
+  font-size: 12px;
+
+  position: relative;
+  z-index: 3;
+}
+
+img.profile {
+  max-width: 100%;
+  max-height: auto;
+
+  border-radius: 5px;
+  border-color: #D8DCDC;
+  border-width: 3px;
+  border-style: solid;
+
+  z-index: 1;
+
+  background-color: transparent;
+}
+
+.profileNameWrapper {
+  font-family: "Lobster";
+  font-size: 25px;
+  color: #FFF;
+  background-color: rgba(0, 0, 5, .3);
+  
+  padding: 5px;
+  padding-left: 20px;
+  border-radius: 5px;
+  
+  position: absolute;
+  top: 215px;
+  z-index: 2;
+
+  margin-left: 3px;
+  margin-right: 3px;
+  width: 94%;
+}
+
+.swipeButtonsWrapper {
+  text-align: center;
+  margin-right: 70px;
+  margin-left: 70px;
+
+  padding: 3px;
+
+  background-color: white;
+
+  position: relative;
+  /*max-width: 150px;*/
+  border-radius: 400px;
+  border-color: #D8DCDC;
+  border-width: 3px;
+  border-style: solid;
+}
+
+.swipeRight {
+  font-size: 60px;
+  color: green;
+}
+
+.swipeLeft {
+  font-size: 60px;
+  color: #FF0066;
 }
 
 @font-face {

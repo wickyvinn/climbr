@@ -285,6 +285,11 @@ app.route('/matches')
     } else response.render('login.html', { error: "Please sign in." });
   });
 
+app.route('/climbrs')
+  .get(function(request, response) {
+    response.render("climbrs.html");
+  })
+
 app.route('/photo')
   .get(function(request, response) {
     if (request.session.user) response.render('photo.html');
