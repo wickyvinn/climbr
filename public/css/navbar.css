@@ -19,6 +19,10 @@ div[class^="col-"], div[class*="col-"] {
   padding-bottom: 6px;
 }
 
+.question, #preventNext {
+  font-family: "Raleway";
+}
+
 .perm-col-left, .question  {
   text-align: center;
 }
