@@ -1,62 +1,187 @@
 <!DOCTYPE HTML>
 <html>
-  
   <head>
-    <link rel="stylesheet" href="../css/sign-in.css">
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <script src="js/jquery.min.js"></script>
-    <script src="js/navigation.js"></script>
 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" >
+
+    <link href="../css/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="../css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link href="../css/navbar.css" rel="stylesheet">
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/bootstrap/bootstrap.js"></script>
+    <script src="../js/bootstrap-toggle.min.js"></script>
+    <script src="../js/hammer.min.js"></script>
+  
     <style>
-      #profilePicture {
-        width: 100%;
-      },
-    
+      body {
+        background-color: #EDF8FB;
+      }
+
+      #thumbsup {
+        text-align: center;
+        font-size: 200px;
+        color: #33CC33;
+      }
+
+      #thumbsdown {
+        text-align: center;
+        font-size: 200px;
+        color: #FF0000;
+      }
+
+      #thumbsupWrapper, #thumbsdownWrapper {
+        display: none;
+        text-align: center;
+        position: absolute;
+        z-index: 2;
+        margin-left: 50px;
+        
+      }
+
+      #thumbsupWrapper {
+        margin-top: 50px;
+      }
+
+      #thumbsdownWrapper {
+        margin-top: 50px;
+      }
     </style>
   </head>
-  
   <body>
-    <div class="container">
-      <div id="displayed"></div>
-      <h1 id="firstName"></h1>
-      <div><img id="profilePicture"></div>
-      <div>Here until: <div id="hereuntil"></div></div>
-      <br />
-      <div><input id="topCert" type="checkbox" disabled>top rope certified</input></div>
-      <div><input id="leadCert" type="checkbox" disabled>lead certified</input></div>
-      
-      <br />Down to:
-      <div><input id="wannaTop" type="checkbox" disabled>top rope</input></div>
-      <div><input id="wannaLead" type="checkbox" disabled>lead climb</input></div>
-      <div><input id="wannaBoulder" type="checkbox" disabled>boulder</input></div>
-      <br /><div style="text-align:center"><button id="next">Next</button></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand logo" href="/">climbr</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="/matches">Matches <span class="badge" id="matchesBadge"></span></a></li>
+            <li><a href="/perminfo">About You</a></li>
+            <li><a href="/seshinfo">Today's Sesh</a></li>
+            <li><a href="/">Log out</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div id="nonavContainer" class="container">
+      <div id="thumbsupWrapper"><span id="thumbsup" class="glyphicon glyphicon-thumbs-up"></span></div>
+      <div id="thumbsdownWrapper"><span id="thumbsdown" class="glyphicon glyphicon-thumbs-down"></span></div>
+      <div class="profileContainer">
+        <img id="profilePicture" class="profile">
+        <div class="profileNameWrapper">
+          <div id="firstName"></div>
+        </div>
+        <div class="profileInfoWrapper">
+          <div class="row">
+            <div class="col-xs-1"><span class="glyphicon glyphicon-time"></span></div>
+            <div class="col-xs-10" id="hereuntil"></div>
+          </div>
+          <div class="row">
+            <div class="col-xs-1"><span class="glyphicon glyphicon-list-alt"></span></div>
+            <div class="col-xs-10" id="activities"></div>
+          </div>
+          <div class="row" id="certsWrapper">
+            <div class="col-xs-1"><span class="glyphicon glyphicon-tags"></span></div>
+            <div class="col-xs-10" id="certs"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="swipeButtonsWrapper">
+        <span class="glyphicon glyphicon-remove-circle swipe swipeLeft"></span>
+        <span class="glyphicon glyphicon-ok-circle swipeRight"></span>
+      </div>
+
     </div>
-  </body>
-  
-  <script>
-    var matches = <%- matches %>;
+    <script>
+      var matches = <%- matches %>;
 
-    function populateProfile(match) {
-      $('#firstName').html(match.perminfo.firstName);
-      $('#topCert').prop('checked', match.perminfo.topCert);
-      $('#leadCert').prop('checked', match.perminfo.leadCert);
-      $('#wannaTop').prop('checked', match.seshinfo.wannaTop);
-      $('#wannaLead').prop('checked', match.seshinfo.wannaLead);
-      $('#wannaBoulder').prop('checked', match.seshinfo.wannaBoulder);
-      $('#hereuntil').html(match.seshinfo.timeOut);
-      $('#profilePicture').attr('src', match.perminfo.photoAddress);  
-    }
+      $("#matchesBadge").html(matches.length);
 
-    $(function() {
-      populateProfile(matches[0]);
-      var i=0;
-      $('#next').on('click', function () {
-        console.log(matches.length);
-        i = (i+1) % (matches.length);
-        populateProfile(matches[i]);
+      function populateProfile(match) {
+        $('#firstName').html(match.perminfo.firstName);
+
+        // populate cert info
+        if ((match.perminfo.topCert && match.perminfo.leadCert) || match.perminfo.leadCert) {
+          $("#certs").html("top & lead certified");
+        } else if (match.perminfo.topCert) {
+          $("#certs").html("top certified");
+        } else $("#certs").html("not yet belay certified")
+
+        // populate "here until" info
+        var d = new Date(match.seshinfo.timeOut);
+        var timeOutMilitary = String(d.getHours()) + String(d.getMinutes());
+        var timeOut = getFormattedTime(timeOutMilitary);
+        $('#hereuntil').html("here until ~ " + timeOut);
+
+        // populate "down to" info
+        var activities = []
+        if (match.seshinfo.wannaTop) activities.push("top rope");
+        if (match.seshinfo.wannaLead) activities.push("lead climb");
+        if (match.seshinfo.wannaBoulder) activities.push("boulder");
+        $('#activities').html("down to " + activities.join(", "));
+
+        $('#profilePicture').attr('src', "../img/Igor.png");  
+      }
+
+      $(function() {
+        populateProfile(matches[0]);
+        var i=0;
+        $('.swipe').on('click', function () {
+          i = (i+1) % (matches.length);
+          populateProfile(matches[i]);
+        });
+
+        var container = document.getElementById("nonavContainer");
+        var containerHammer = new Hammer(container);
+        
+        containerHammer.on("swipeleft", function() {
+          $('body').fadeTo(500, 0.5, function() { // once body is hidden, show the thumb.
+            $('#thumbsdownWrapper').slideDown(100).delay(500).fadeOut(200, function () {
+              i = (i+1) % (matches.length);
+              populateProfile(matches[i]);
+              $('body').fadeTo(200, 1) // once the thumb is fades out, update the match and fade the body in.
+            })
+          })
+        });
+
+        containerHammer.on("swiperight", function() {
+
+          $('body').fadeTo(500, 0.5, function() { // once body is hidden, show the thumb.
+            $('#thumbsupWrapper').slideDown(100).delay(500).fadeOut(200, function () {
+              i = (i+1) % (matches.length);
+              populateProfile(matches[i]);
+              $('body').fadeTo(200, 1) // once the thumb is fades out, update the match and fade the body in.
+            })
+
+          })
+        });
+          
       });
-    })
-      
-  </script>
 
+      function addZero(i) {
+        if (i < 10) { i = "0" + i; }
+        return i;
+      }
+
+       function getFormattedTime(fourDigitTime) {
+        var hours24 = parseInt(fourDigitTime.substring(0, 2),10);
+        var hours = ((hours24 + 11) % 12) + 1;
+        var amPm = hours24 > 11 ? 'pm' : 'am';
+        var minutes = fourDigitTime.substring(2);
+        return hours + ':' + addZero(minutes) + amPm;
+      };
+      
+    </script>
+  </body>
 </html>
