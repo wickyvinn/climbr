@@ -319,7 +319,7 @@ app.route('/photo')
         };
         
         db.updatePermInfo(userId, { photoAddress: photoAddress }, respond); 
-        done==false;
+        done = false;
       }
 
     } else response.render('login.html', { error: "Please sign in." });
