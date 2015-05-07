@@ -269,7 +269,7 @@ app.route('/matches')
           
           function respond(seshinfos, perminfos) {
             var matches = logic.joinMatches(seshinfos, perminfos);
-            response.render("matches.html", {matches: JSON.stringify(matches)}); 
+            response.render("climbrs.html", {matches: JSON.stringify(matches)}); 
           }
 
           db.PermInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },

@@ -34,7 +34,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/matches">Matches <span class="badge">10</span></a></li>
+            <li class="active"><a href="/matches">Matches <span class="badge" id="matchesBadge"></span></a></li>
             <li><a href="/perminfo">About You</a></li>
             <li><a href="/seshinfo">Today's Sesh</a></li>
             <li><a href="/">Log out</a></li>
@@ -45,32 +45,86 @@
 
     <div class="container">
       <div class="profileContainer">
-        <img class="profile" src="../img/Igor.png">
+        <img id="profilePicture" class="profile">
         <div class="profileNameWrapper">
-          Vicky
+          <div id="firstName"></div>
         </div>
         <div class="profileInfoWrapper">
           <div class="row">
             <div class="col-xs-1"><span class="glyphicon glyphicon-time"></span></div>
-            <div class="col-xs-10">Here until 3pm</div>
+            <div class="col-xs-10" id="hereuntil"></div>
           </div>
           <div class="row">
             <div class="col-xs-1"><span class="glyphicon glyphicon-list-alt"></span></div>
-            <div class="col-xs-10">Down to: top rope, lead, boulder</div>
+            <div class="col-xs-10" id="activities"></div>
           </div>
-          <div class="row">
+          <div class="row" id="certsWrapper">
             <div class="col-xs-1"><span class="glyphicon glyphicon-tags"></span></div>
-            <div class="col-xs-10">top & lead certified</div>
+            <div class="col-xs-10" id="certs"></div>
           </div>
         </div>
       </div>
 
       <div class="swipeButtonsWrapper">
-        <span class="glyphicon glyphicon-remove-circle swipeLeft"></span>
+        <span class="glyphicon glyphicon-remove-circle swipe swipeLeft"></span>
         <span class="glyphicon glyphicon-ok-circle swipeRight"></span>
       </div>
 
     </div>
+    <script>
+      var matches = <%- matches %>;
 
+      $("#matchesBadge").html(matches.length);
+
+      function populateProfile(match) {
+        $('#firstName').html(match.perminfo.firstName);
+
+        // populate cert info
+        if ((match.perminfo.topCert && match.perminfo.leadCert) || match.perminfo.leadCert) {
+          $("#certs").html("top & lead certified");
+        } else if (match.perminfo.topCert) {
+          $("#certs").html("top certified");
+        }
+        else $("#certs").html("not yet belay certified")
+
+        // populate "here until" info
+        var d = new Date(match.seshinfo.timeOut);
+        var timeOutMilitary = String(d.getHours()) + String(d.getMinutes());
+        var timeOut = getFormattedTime(timeOutMilitary);
+        $('#hereuntil').html("here until ~ " + timeOut);
+
+        // populate "down to" info
+        var activities = []
+        if (match.seshinfo.wannaTop) activities.push("top rope");
+        if (match.seshinfo.wannaLead) activities.push("lead climb");
+        if (match.seshinfo.wannaBoulder) activities.push("boulder");
+        $('#activities').html("down to " + activities.join(", "));
+
+        $('#profilePicture').attr('src', "../img/Igor.png");  
+      }
+
+      $(function() {
+        populateProfile(matches[0]);
+        var i=0;
+        $('.swipe').on('click', function () {
+          i = (i+1) % (matches.length);
+          populateProfile(matches[i]);
+        });
+      });
+
+      function addZero(i) {
+        if (i < 10) { i = "0" + i; }
+        return i;
+      }
+
+       function getFormattedTime(fourDigitTime) {
+        var hours24 = parseInt(fourDigitTime.substring(0, 2),10);
+        var hours = ((hours24 + 11) % 12) + 1;
+        var amPm = hours24 > 11 ? 'pm' : 'am';
+        var minutes = fourDigitTime.substring(2);
+        return hours + ':' + addZero(minutes) + amPm;
+      };
+      
+    </script>
   </body>
 </html>
