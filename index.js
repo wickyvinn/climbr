@@ -269,7 +269,7 @@ app.route('/matches')
           
           function respond(seshinfos, perminfos) {
             var matches = logic.joinMatches(seshinfos, perminfos);
-            response.render("climbrs.html", {matches: JSON.stringify(matches)}); 
+            response.render("matches.html", {matches: JSON.stringify(matches)}); 
           }
 
           db.PermInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },
@@ -284,11 +284,6 @@ app.route('/matches')
       
     } else response.render('login.html', { error: "Please sign in." });
   });
-
-app.route('/climbrs')
-  .get(function(request, response) {
-    response.render("climbrs.html");
-  })
 
 app.route('/photo')
   .get(function(request, response) {
