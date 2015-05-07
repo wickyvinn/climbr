@@ -1,194 +1,130 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
+{% extends 'layout.html' %}
 
+{% block head %}
+  {% parent %}
     <style>
-     #section-2, #section-3, #section-4, #section-5, #section-6, #submission, #back {
-      display: none;
-     }
+       #section-2, #section-3, #section-4, #section-5, #section-6, #submission, #back {
+          display: none;
+        }
     </style>
+{% endblock %}
+    
+{% block content %}
+  {% parent %}
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" >
+  <div class="container">
 
-    <link href="../css/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="../css/bootstrap-toggle.min.css" rel="stylesheet">
-    <link href="../css/navbar.css" rel="stylesheet">
-
-    <script src="../js/jquery.min.js"></script>
-    <script src="../js/bootstrap/bootstrap.js"></script>
-    <script src="../js/bootstrap-toggle.min.js"></script>
-    <script src="js/navigation.js"></script>
-  
-  </head>
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand logo" href="/">climbr</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/">Log out</a></li>
-          </ul>
-        </div>
+    <form action="/perminfo" method="POST">
+      <div id="section-1">
+        <div class="question">Here goes your personal info. You can update this later if any of it changes.</div>
       </div>
-    </nav>
-
-    <div class="container">
-
-      <form action="/perminfo" method="POST">
-        <div id="section-1">
-          <div class="question">Here goes your personal info. You can update this later if any of it changes.</div>
-        </div>
-        
-        <div id="section-2">
-          <div class="question">Tell us about yourself. </div>
-          <div class="infoPartI">
-            <div class="row">
-              <div class="perm-col-left col-xs-2 perm-col"></div>
-              <div class="perm-col-right col-xs-8 perm-col"><input type="text" name="firstName" placeholder='First name'></input></div>
-            </div>
-
-            <div class="row">
-              <div class="perm-col-left col-xs-2 perm-col"></div>
-              <div class="perm-col-right col-xs-8 perm-col">
-                <select id="gender" name="gender">
-                  <option value="default">Gender</option>
-                  <option value="female">Female</option>
-                  <option value="male">Male</option>
-                  <option value="declined">Rather not say</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div id="section-3">
-
-          <div class="question">How much do you weigh? <br>(This information is not shared and used only for matching climbers.)</div>
-          <div class="infoPartI">
-            <div class="row">
-              <div class="col-xs-2 perm-col"></div>
-              <div class="perm-col-right col-xs-8 perm-col">
-                <input id="weight" name="weight" type="text" placeholder="lbs" min="20" max="400"></input>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="section-4">
-          <div class="question">Belay Certification</div>
-          <div class="infoPartI">
-            <div class="row">
-              <div class="col-xs-2 perm-col"></div>
-              <div class="col-xs-6 perm-col">Are you top rope certified?</div>
-              <div class="col-xs-4 perm-col">
-                <input id="top" name="topCert" type="checkbox" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-xs-2 perm-col"></div>
-              <div class="col-xs-6 perm-col">Are you lead certified?</div>
-              <div class="col-xs-4 perm-col">
-                <input id="top" name="leadCert" type="checkbox" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
-              </div>
-            </div>
-
-
-          </div>
-          
-        </div>
       
-        <div id="section-5">
-          <div class="question">Rope Level</div>
-          <div class="infoPartI">
-            <div class="row">
-              <div class="col-xs-1 perm-col"></div>
-              <div class="pages-col-mid col-xs-6 perm-col">When you're tired, you climb a ...</div>
-              <div class="col-xs-3 perm-col"><br><select id="ropeLow" class="highlightDropDown ropeLevel" name="ropeLow"></select></div>
+      <div id="section-2">
+        <div class="question">Tell us about yourself. </div>
+        <div class="infoPartI">
+          <div class="row">
+            <div class="perm-col-left col-xs-2 perm-col"></div>
+            <div class="perm-col-right col-xs-8 perm-col"><input type="text" name="firstName" placeholder='First name'></input></div>
+          </div>
+
+          <div class="row">
+            <div class="perm-col-left col-xs-2 perm-col"></div>
+            <div class="perm-col-right col-xs-8 perm-col">
+              <select id="gender" name="gender">
+                <option value="default">Gender</option>
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+                <option value="declined">Rather not say</option>
+              </select>
             </div>
-            <div class="row">
-              <div class="col-xs-1 perm-col"></div>
-              <div class="pages-col-mid col-xs-6 perm-col">When you're pumped, you climb a ...</div>
-              <div class="col-xs-3 perm-col"><br><select id="ropeHigh" class="highlightDropDown ropeLevel" name="ropeHigh"></select></div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="section-3">
+
+        <div class="question">How much do you weigh? <br>(This information is not shared and used only for matching climbers.)</div>
+        <div class="infoPartI">
+          <div class="row">
+            <div class="col-xs-2 perm-col"></div>
+            <div class="perm-col-right col-xs-8 perm-col">
+              <input id="weight" name="weight" type="text" placeholder="lbs" min="20" max="400"></input>
             </div>
+          </div>
         </div>
       </div>
 
+      <div id="section-4">
+        <div class="question">Belay Certification</div>
+        <div class="infoPartI">
+          <div class="row">
+            <div class="col-xs-2 perm-col"></div>
+            <div class="col-xs-6 perm-col">Are you top rope certified?</div>
+            <div class="col-xs-4 perm-col">
+              <input id="top" name="topCert" type="checkbox" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-2 perm-col"></div>
+            <div class="col-xs-6 perm-col">Are you lead certified?</div>
+            <div class="col-xs-4 perm-col">
+              <input id="top" name="leadCert" type="checkbox" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
+            </div>
+          </div>
 
 
-      <div id="section-6">
-          <div class="question">Bouldering Level</div>
-          <div class="infoPartI">
-            <div class="row">
-              <div class="col-xs-1 perm-col"></div>
-              <div class="pages-col-mid col-xs-6 perm-col">When you're tired, you climb a ...</div>
-              <div class="col-xs-3 perm-col"><br><select id="boulderLevel" class="highlightDropDown boulderLevel" name="boulderLow"></select></div>
-            </div>
-            <div class="row">
-              <div class="col-xs-1 perm-col"></div>
-              <div class="pages-col-mid col-xs-6 perm-col">When you're pumped, you climb a ...</div>
-              <div class="col-xs-3 perm-col"><br><select id="boulderHigh" class="highlightDropDown boulderLevel" name="boulderHigh"></select></div>
-            </div>
         </div>
-      </div>
-
         
-      <div class="submitWrapper navigation-buttons">
-        <button id="back" class="btn btn-default submitBtn" onclick="backSection(); return false;">Back</button>
-        <button id="next" class="btn btn-default submitBtn" onclick="nextSection(); return false;">Next</button>
-        <button id="submission" type="submit" class="btn btn-default submitBtn" onclick="validateSection()">Submit</button>
-        <br><br><div id="preventNext"></div>
       </div>
-    </form>
-
-
+    
+      <div id="section-5">
+        <div class="question">Rope Level</div>
+        <div class="infoPartI">
+          <div class="row">
+            <div class="col-xs-1 perm-col"></div>
+            <div class="pages-col-mid col-xs-6 perm-col">When you're tired, you climb a ...</div>
+            <div class="col-xs-3 perm-col"><br><select id="ropeLow" class="highlightDropDown ropeLevel" name="ropeLow"></select></div>
+          </div>
+          <div class="row">
+            <div class="col-xs-1 perm-col"></div>
+            <div class="pages-col-mid col-xs-6 perm-col">When you're pumped, you climb a ...</div>
+            <div class="col-xs-3 perm-col"><br><select id="ropeHigh" class="highlightDropDown ropeLevel" name="ropeHigh"></select></div>
+          </div>
+      </div>
     </div>
 
-    <script>
 
-      $('#weight').blur(function() {
-        $(this).attr("type", "text");
-        if ($(this).val().length > 0) {
-          $(this).val(parseInt($(this).val()).toString() + " lbs");
-        }
-      });
 
-      $('#weight').focus(function() {
-        if ($(this).val().length > 0) {
-          $(this).val($(this).val().replace(" lbs", ""));
-        }
-        $(this).attr("type", "number");
-      });
+    <div id="section-6">
+        <div class="question">Bouldering Level</div>
+        <div class="infoPartI">
+          <div class="row">
+            <div class="col-xs-1 perm-col"></div>
+            <div class="pages-col-mid col-xs-6 perm-col">When you're tired, you climb a ...</div>
+            <div class="col-xs-3 perm-col"><br><select id="boulderLevel" class="highlightDropDown boulderLevel" name="boulderLow"></select></div>
+          </div>
+          <div class="row">
+            <div class="col-xs-1 perm-col"></div>
+            <div class="pages-col-mid col-xs-6 perm-col">When you're pumped, you climb a ...</div>
+            <div class="col-xs-3 perm-col"><br><select id="boulderHigh" class="highlightDropDown boulderLevel" name="boulderHigh"></select></div>
+          </div>
+      </div>
+    </div>
 
-      $(function(){
-        var $select = $(".ropeLevel");
-        var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
-          $select.append($('<option></option>').html("Select a level").attr("value","default"));
-        for (i=0;i<levels.length;i++) {
-          $select.append($('<option></option>').val(levels[i]).html(levels[i]))
-        }
-      });
+      
+    <div class="submitWrapper navigation-buttons">
+      <button id="back" class="btn btn-default submitBtn" onclick="backSection(); return false;">Back</button>
+      <button id="next" class="btn btn-default submitBtn" onclick="nextSection(); return false;">Next</button>
+      <button id="submission" type="submit" class="btn btn-default submitBtn" onclick="validateSection()">Submit</button>
+      <br><br><div id="preventNext"></div>
+    </div>
+  </form>
 
-      $(function(){
-        var $select = $(".boulderLevel");
-        var levels = ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"];
-        $select.append($('<option></option>').html("Select a level").attr("value","default"));
-        for (i=0;i<levels.length;i++) {
-          $select.append($('<option></option>').val(levels[i]).html(levels[i]))
-        }
-      });
 
-    </script>
+  </div>
 
-  
-  </body>
-</html>
+  <script>
+    setupInputs()
+  </script>
+
+{% endblock %}

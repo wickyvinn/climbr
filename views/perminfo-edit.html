@@ -1,202 +1,135 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
+{% extends 'layout.html' %}
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" >
+{% block head %}
+  {% parent %}
+ <style> 
+    img.profileThumbnail {
+      width: 66px;
+    }
+  </style>
+{% endblock %}
 
-    <link href="../css/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="../css/bootstrap-toggle.min.css" rel="stylesheet">
-    <link href="../css/navbar.css" rel="stylesheet">
+{% block content %}
+  {% parent %}
 
-    <script src="../js/jquery.min.js"></script>
-    <script src="../js/bootstrap/bootstrap.js"></script>
-    <script src="../js/bootstrap-toggle.min.js"></script>
-  
-  </head>
-  <body>
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand logo" href="/">climbr</a>
+  <div class="container">
+      <div class="header">
+        about you
+      </div>
+      <div class="infoPartI">
+        <div class="row">
+          <div class="perm-col-left col-xs-3 perm-col"><span class="glyphicon glyphicon-user"></span></div>
+          <div class="perm-col-right col-xs-8 perm-col"><input type="text" class="editable" name="firstName" value= {{firstName}}> </input></div>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/matches">Matches</a></li>
-            <li class="active"><a href="/perminfo">About You</a></li>
-            <li><a href="/seshinfo">Today's Sesh</a></li>
-            <li><a href="/">Log out</a></li>
-          </ul>
+        <div class="row">
+          <div class="perm-col-left col-xs-3 perm-col"><strong>♀♂</strong></div>
+          <div class="perm-col-right col-xs-8 perm-col">
+            <select id="gender" name="gender" class="editable">
+              <option value="default">Gender</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="declined">Rather not say</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="perm-col-left col-xs-3 perm-col"><img src="../img/scales.png"></img></span></div>
+          <div class="perm-col-right col-xs-8 perm-col"><input id="weight" class="editable" name="weight" type="text" placeholder="lbs" min="20" max="400" value="{{weight }} lbs"></input></div>
         </div>
       </div>
-    </nav>
 
-    <div class="container">
-        <div class="header">
-          about you
-        </div>
-        <div class="infoPartI">
-          <div class="row">
-            <div class="perm-col-left col-xs-3 perm-col"><span class="glyphicon glyphicon-user"></span></div>
-            <div class="perm-col-right col-xs-8 perm-col"><input type="text" class="editable" name="firstName" value=<%=firstName%>></input></div>
-          </div>
-          <div class="row">
-            <div class="perm-col-left col-xs-3 perm-col"><strong>♀♂</strong></div>
-            <div class="perm-col-right col-xs-8 perm-col">
-              <select id="gender" name="gender" class="editable">
-                <option value="default">Gender</option>
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-                <option value="declined">Rather not say</option>
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="perm-col-left col-xs-3 perm-col"><img src="../img/scales.png"></img></span></div>
-            <div class="perm-col-right col-xs-8 perm-col"><input id="weight" class="editable" name="weight" type="text" placeholder="lbs" min="20" max="400" value="<%=weight %> lbs"></input></div>
-          </div>
-        </div>
-
-        <div class="infoPartII">
-          
-          <div class="row">
-            <div class="perm-col-left col-xs-3 perm-col"><span class="glyphicon glyphicon-tag"></span></div>
-            <div class="col-xs-6 perm-col">top rope certified?</div>
-            <div class="col-xs-3 perm-col">
-              <input id="top" name="topCert" type="checkbox" class="editable" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="perm-col-left col-xs-3 perm-col"><span class="glyphicon glyphicon-tags"></span></div>
-            <div class="col-xs-6 perm-col">lead certified?</div>
-            <div class="col-xs-3 perm-col">
-              <input id="lead" name="leadCert" type="checkbox" class="editable" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
-            </div>
-          </div>
+      <div class="infoPartII">
         
-        </div>
-
-        <div class="infoPartII">
-          <div class="row">
-            <div class="perm-col-left col-xs-3 perm-col"><img src="../img/ropeup.png"></div>
-            <div class="perm-col-right col-xs-8 perm-col">
-              <select id="ropeLow" class="editable ropeLevel" name="ropeLow"></select> to
-              <select id="ropeHigh" class="editable ropeLevel" name="ropeHigh"></select>
-            </div>
-          </div>
-          <div class="row">
-            <div class="perm-col-left col-xs-3 perm-col"><img src="../img/boulder.png"></div>
-            <div class="perm-col-right col-xs-8 perm-col">
-              <select id="boulderLow" class="editable boulderLevel" name="boulderLow"></select>to
-              <select id="boulderHigh" class="editable boulderLevel" name="boulderHigh"></select>
-            </div>
+        <div class="row">
+          <div class="perm-col-left col-xs-3 perm-col"><span class="glyphicon glyphicon-tag"></span></div>
+          <div class="col-xs-6 perm-col">top rope certified?</div>
+          <div class="col-xs-3 perm-col">
+            <input id="top" name="topCert" type="checkbox" class="editable" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
           </div>
         </div>
         
-        <div class="infoPartII">
-          <div class="row">
-            <div class="perm-col-left col-xs-3 perm-col"><span class="glyphicon glyphicon-camera"></span></div>
-            <div class="perm-col-right col-xs-8 perm-col"><a href="/photo">Upload photo</a></div>
+        <div class="row">
+          <div class="perm-col-left col-xs-3 perm-col"><span class="glyphicon glyphicon-tags"></span></div>
+          <div class="col-xs-6 perm-col">lead certified?</div>
+          <div class="col-xs-3 perm-col">
+            <input id="lead" name="leadCert" type="checkbox" class="editable" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
           </div>
+        </div>
+      
+      </div>
 
+      <div class="infoPartII">
+        <div class="row">
+          <div class="perm-col-left col-xs-3 perm-col"><img src="../img/ropeup.png"></div>
+          <div class="perm-col-right col-xs-8 perm-col">
+            <select id="ropeLow" class="editable ropeLevel" name="ropeLow"></select> to
+            <select id="ropeHigh" class="editable ropeLevel" name="ropeHigh"></select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="perm-col-left col-xs-3 perm-col"><img src="../img/boulder.png"></div>
+          <div class="perm-col-right col-xs-8 perm-col">
+            <select id="boulderLow" class="editable boulderLevel" name="boulderLow"></select>to
+            <select id="boulderHigh" class="editable boulderLevel" name="boulderHigh"></select>
+          </div>
+        </div>
+      </div>
+      
+      <div class="infoPartII">
+        <div class="row">
+          <div class="perm-col-left col-xs-3 perm-col"><span class="glyphicon glyphicon-camera"></span></div>
+          <div class="perm-col-right col-xs-5 perm-col"><a href="/photo">Change photo</a></div>
+          <div class="col-xs-4"><img class="profileThumbnail" src="{{ photoAddress }}"></div>
         </div>
 
-    </div>
+      </div>
+
+  </div>
 
 
-    <script>
+  <script>
 
-      $("#gender").val("<%=gender %>");
-      $('#top').prop('checked', <%=top %>);
-      $('#lead').prop('checked', <%=lead %>);
+    $("#gender").val("{{ gender }}");
+    $('#top').prop('checked', {{ top }});
+    $('#lead').prop('checked', {{ lead }});
 
-      $('#weight').blur(function() {
-        var weight = $(this).val();
-        $(this).attr("type", "text");
-        if ($(this).val().length > 0) {
-          $(this).val(parseInt($(this).val()).toString() + " lbs");
+    $(".editable").on("change", function (event) {
+      var newValueType = ($(this).attr("name"));
+      if (newValueType === "topCert" || newValueType === "leadCert") {
+        var newValue = $(this).is(":checked");
+      } else {
+        var newValue = $(this).val();
+      }
+      var data = {};
+      data[newValueType] = newValue;
+      console.log("Changed detected for (translated to json): " + JSON.stringify(data));
+      $.ajax({
+        type: "POST",
+        url: "/perminfo/edit",
+        xhrFields: {withCredentials: true},
+        data: data,
+        complete: function() {
+          console.log("process has completed.");
+        },
+        success: function(response) {
+          console.log("thing that just got saved (not translated): " + data);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          console.log("POSTing /perminfo/edit had an error.")
+          console.log(errorThrown);
         }
       });
-
-      $('#weight').focus(function() {
-        if ($(this).val().length > 0) {
-          $(this).val($(this).val().replace(" lbs", ""));
-        }
-        $(this).attr("type", "number");
-      });
-
-
-      $(".editable").on("change", function (event) {
-        var newValueType = ($(this).attr("name"));
-        if (newValueType === "topCert" || newValueType === "leadCert") {
-          var newValue = $(this).is(":checked");
-        } else {
-          var newValue = $(this).val();
-        }
-        var data = {};
-        data[newValueType] = newValue;
-        console.log("Changed detected for (translated to json): " + JSON.stringify(data));
-        $.ajax({
-          type: "POST",
-          url: "/perminfo/edit",
-          xhrFields: {withCredentials: true},
-          data: data,
-          complete: function() {
-            console.log("process has completed.");
-          },
-          success: function(response) {
-            console.log("thing that just got saved (not translated): " + data);
-          },
-          error: function(XMLHttpRequest, textStatus, errorThrown) {
-            console.log("POSTing /perminfo/edit had an error.")
-            console.log(errorThrown);
-          }
-        });
-      });
-
-      $(function(){
-        var select = $(".ropeLevel");
-        var levels = ["5.5", "5.6", "5.7", "5.8", "5.9", "5.10a", "5.10b", "5.10c", "5.10d", "5.11a", "5.11b", "5.11c", "5.11d", "5.12a", "5.12b", "5.12c", "5.12d", "5.13a", "5.13b", "5.13c", "5.13d", "5.14a", "5.14b", "5.14c", "5.14d"];
-
-        select.append($('<option></option>').html("---"));
-
-        for (i=0;i<levels.length;i++) {
-          select.append($('<option></option>').val(levels[i]).html(levels[i]))
-        }
-
-        $("#ropeLow").val("<%=ropeLow %>");
-        $("#ropeHigh").val("<%=ropeHigh %>");
-
-      });
-
-      $(function(){
-        var select = $(".boulderLevel");
-        var levels = ["VB", "V0", "V1", "V2", "V3", "V4", "V5", "V6", "V7", "V8", "V9", "V10", "V11", "V12", "V13", "V14", "V15", "V16", "V17"];
-
-        select.append($('<option></option>').html("---"));
-
-        for (i=0;i<levels.length;i++) {
-          select.append($('<option></option>').val(levels[i]).html(levels[i]))
-        }
-
-        $("#boulderLow").val("<%=boulderLow %>");
-        $("#boulderHigh").val("<%=boulderHigh %>");
-
-
-      });
+    });
     
-    </script>
+    var optionalObject = { 
+      ropeHigh: "{{ropeHigh}}", 
+      ropeLow: "{{ropeLow}}", 
+      boulderHigh: "{{boulderHigh}}", 
+      boulderLow: "{{boulderLow}}"
+    }
+    
+    setupInputs(optionalObject)
+  
+  </script>
 
-
-
-
-  </body>
-</html>
+{% endblock %}

@@ -10,7 +10,8 @@ function formatInfo(perminfo) {
     ropeLow: perminfo.ropeLow,
     ropeHigh: perminfo.ropeHigh,
     boulderLow: perminfo.boulderLow,
-    boulderHigh: perminfo.boulderHigh
+    boulderHigh: perminfo.boulderHigh,
+    photoAddress: perminfo.photoAddress
   }
 };  
 

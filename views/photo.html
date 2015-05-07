@@ -1,36 +1,59 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=320; user-scalable=no" />
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    
-    <script src="js/jquery.min.js"></script>
-    <style>
+{% extends 'layout.html' %}
 
-    #profilePhoto {
-      width:40%; 
-    }
+{% block head %}
+  {% parent %}
+    <link href='../css/profile.css' rel='stylesheet'>
+    <style>
+      #profilePhoto {
+        width:100%; 
+      }
+      #uploadForm {
+        margin-top: 10px;
+        text-align:center ;
+      }
+      #chooseFileProxy {
+        text-align: center;
+      }
+      .profileContainer {
+        background-color: #D8DCDC;
+      }
 
     </style>
+{% endblock %}
 
-  </head>
- 
-  <body>
- 
-  <form id = "uploadForm" enctype = "multipart/form-data" action = "/photo" method = "post">
-    <input type="file" name="userPhoto" capture="camera" accept="image/*" id="userPhoto"/>
-    <input type="submit" value="Upload Image" name="submit">
+{% block content %}    
+  {% parent %} 
+  <div class="container">
+    <form id="uploadForm" enctype = "multipart/form-data" action = "/photo" method = "post">
+
+      <button id="chooseFileProxy" class="btn btn-default submitBtn" onclick="chooseFile()">CHOOSE A PHOTO!</button>
+      <!-- this is your file input tag, so i hide it!-->
+      <div style='height: 0px;width:0px; overflow:hidden;'>
+        <input type="file" size="60" name="userPhoto" capture="camera" accept="image/*" id="trueChooseFile"/></div>
+      
+      <div class="profileContainer"><img id="profilePhoto" src="../img/camera.png"></div> 
+      <button id="submission" class="btn btn-default submitBtn" type="submit">UPLOAD</button>
   </form>
 
-  <div><img id="profilePhoto"></div>
-    
     <script>
+
+      // executes this function when the proxy box (hiding the true input box) is clicked (clicks the true input box)
+      function chooseFile(){
+       document.getElementById("trueChooseFile").click();
+      }
+
+      // shows current photo, if it exists
+      $(function() {
+        if ({{ currentPhoto|json_encode|raw }} !== "") {
+          $("#profilePhoto").attr("src", "{{currentPhoto}}");
+        } 
+      })
+
       // credit: http://www.raymondcamden.com/2013/05/20/Capturing-camerapicture-data-without-PhoneGap
       var desiredWidth;
 
       $(document).ready(function() {
-        $("#userPhoto").on("change",showPhoto);
+        $("#trueChooseFile").on("change",showPhoto);
         desiredWidth = window.innerWidth;
       });
 
@@ -42,8 +65,8 @@
         }
       }
 
+      
+
     </script>    
 
-  </body>
- 
-</html>
+{% endblock %}
