@@ -1,20 +1,12 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
+{% extends 'layout.html' %}
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" >
-    
+{% block head %}
+  {% parent %}
+  <link href='../css/signin.css' rel='stylesheet'>
+{% endblock %}
 
-    <link href="../css/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <link href="../css/signin.css" rel="stylesheet">
-    <script src="../js/jquery.min.js"></script>
-    <script src="../js/bootstrap/bootstrap.js"></script>
-  
-  </head>
-  <body>
-    
+{% block content %}
+
   <div class="container">
 
     <form action="/" method="POST" class="form-signin">
@@ -26,10 +18,8 @@
     </form>  
     
       <h5 class="fancy-text">just joining us? <a href="/signup">sign up!</a></h5> 
-      <div class="fancy-text"><%=error %> </div>
+      <div class="fancy-text">{{ error }} </div>
   
   </div>
       
-  </body>
-
-</html>
+{% endblock %}

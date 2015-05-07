@@ -10,6 +10,7 @@ var mongoose   = require('mongoose');
 var session    = require('express-session');
 var cookieParser = require('cookie-parser');
 var MongoStore = require('connect-mongo')(session);
+var swig       = require('swig');
 var multer     = require('multer');
 var done       = false;
 
@@ -18,8 +19,8 @@ var app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'ejs');
+app.engine('html', swig.renderFile);
+app.set('view engine', 'html');
 
 /*Configure the multer.*/
 // looks like this 'done' variable is global but i dunno if i like that. 
@@ -35,7 +36,6 @@ app.use(multer({ dest: './public/uploads/',
     done=true;
   }
 }));
-
 
 // require modules
 var logic      = require("./public/js/logic.js");
@@ -168,7 +168,7 @@ app.route('/perminfo')
         if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
         else {
           if (perminfoOrError.body == null) response.render('perminfo-pages.html');
-          else response.redirect("/perminfo/edit");
+          else response.redirect("/photo");
         }
       };
 
@@ -269,7 +269,7 @@ app.route('/matches')
           
           function respond(seshinfos, perminfos) {
             var matches = logic.joinMatches(seshinfos, perminfos);
-            response.render("matches.html", {matches: JSON.stringify(matches)}); 
+            response.render("matches.html", {matches: matches}); 
           }
 
           db.PermInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },
@@ -287,8 +287,19 @@ app.route('/matches')
 
 app.route('/photo')
   .get(function(request, response) {
-    if (request.session.user) response.render('photo.html');
-    else response.render('login.html', { error: "Please sign in." });
+    if (request.session.user) {
+
+      function respond(perminfoOrError) {
+        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+        else {
+          if (perminfoOrError.body === null) response.redirect("/perminfo");
+          else response.render('photo.html', {currentPhoto: perminfoOrError.body.photoAddress});
+        }
+      };
+
+      db.findPermInfo({"userId":request.session.user._id}, respond);
+    } else response.render('login.html', { error: "Please sign in." });
+
   })
   .post(function(request, response) {
     if (request.session.user) {
@@ -303,13 +314,14 @@ app.route('/photo')
           if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
           else {
             if (perminfoOrError.body === null) response.redirect("/photo");
-            else response.end("User perminfo updated.");
+            else response.redirect("/perminfo");
           }
         };
         
         db.updatePermInfo(userId, { photoAddress: photoAddress }, respond); 
-
+        done = false;
       }
+
     } else response.render('login.html', { error: "Please sign in." });
 
   });
