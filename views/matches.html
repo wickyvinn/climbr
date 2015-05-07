@@ -8,6 +8,7 @@
 
     <link href="../css/bootstrap/css/bootstrap.css" rel="stylesheet">
     <link href="../css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link href="../css/profile.css" rel="stylesheet">
     <link href="../css/navbar.css" rel="stylesheet">
 
     <script src="../js/jquery.min.js"></script>
@@ -15,40 +16,6 @@
     <script src="../js/bootstrap-toggle.min.js"></script>
     <script src="../js/hammer.min.js"></script>
   
-    <style>
-      body {
-        background-color: #EDF8FB;
-      }
-
-      #thumbsup {
-        text-align: center;
-        font-size: 200px;
-        color: #33CC33;
-      }
-
-      #thumbsdown {
-        text-align: center;
-        font-size: 200px;
-        color: #FF0000;
-      }
-
-      #thumbsupWrapper, #thumbsdownWrapper {
-        display: none;
-        text-align: center;
-        position: absolute;
-        z-index: 2;
-        margin-left: 50px;
-        
-      }
-
-      #thumbsupWrapper {
-        margin-top: 50px;
-      }
-
-      #thumbsdownWrapper {
-        margin-top: 50px;
-      }
-    </style>
   </head>
   <body>
     <nav class="navbar navbar-default navbar-fixed-top">
@@ -98,8 +65,8 @@
       </div>
 
       <div class="swipeButtonsWrapper">
-        <span class="glyphicon glyphicon-remove-circle swipe swipeLeft"></span>
-        <span class="glyphicon glyphicon-ok-circle swipeRight"></span>
+        <span id="nayButton" class="glyphicon glyphicon-remove-circle"></span>
+        <span id="yayButton" class="glyphicon glyphicon-ok-circle"></span>
       </div>
 
     </div>
@@ -135,40 +102,38 @@
       }
 
       $(function() {
+
+        // show the first match
         populateProfile(matches[0]);
         var i=0;
-        $('.swipe').on('click', function () {
-          i = (i+1) % (matches.length);
-          populateProfile(matches[i]);
-        });
 
+        // respond to any event on the page
+        function respond(iconElement) {
+          $('body').fadeTo(500, 0.5, function() { // once body is hidden, show the thumb.
+            iconElement.slideDown(100).delay(500).fadeOut(200, function () {
+              i = (i+1) % (matches.length);
+              populateProfile(matches[i]);
+              $('body').fadeTo(200, 1) // once the thumb is fades out, update the match and fade the body in.
+            })
+          })
+        }
+
+        // listen for event on buttons
+        $('#yayButton').on('click', function () { respond($("#thumbsupWrapper")) });
+        $('#nayButton').on('click', function () { respond($("#thumbsdownWrapper")) });
+
+        //  listen for swipes
         var container = document.getElementById("nonavContainer");
-        var containerHammer = new Hammer(container);
-        
-        containerHammer.on("swipeleft", function() {
-          $('body').fadeTo(500, 0.5, function() { // once body is hidden, show the thumb.
-            $('#thumbsdownWrapper').slideDown(100).delay(500).fadeOut(200, function () {
-              i = (i+1) % (matches.length);
-              populateProfile(matches[i]);
-              $('body').fadeTo(200, 1) // once the thumb is fades out, update the match and fade the body in.
-            })
-          })
+        var hammer = new Hammer(container);
+        hammer.on("swipeleft swiperight", function(event) {
+          if (event.type === "swiperight") respond($("#thumbsupWrapper"));
+          else respond($("#thumbsdownWrapper"));
         });
 
-        containerHammer.on("swiperight", function() {
 
-          $('body').fadeTo(500, 0.5, function() { // once body is hidden, show the thumb.
-            $('#thumbsupWrapper').slideDown(100).delay(500).fadeOut(200, function () {
-              i = (i+1) % (matches.length);
-              populateProfile(matches[i]);
-              $('body').fadeTo(200, 1) // once the thumb is fades out, update the match and fade the body in.
-            })
-
-          })
-        });
-          
       });
 
+      // functions for time
       function addZero(i) {
         if (i < 10) { i = "0" + i; }
         return i;
