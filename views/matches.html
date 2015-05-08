@@ -13,10 +13,22 @@
     <div id="thumbsupWrapper"><span id="thumbsup" class="glyphicon glyphicon-thumbs-up"></span></div>
     <div id="thumbsdownWrapper"><span id="thumbsdown" class="glyphicon glyphicon-thumbs-down"></span></div>
     <div class="profileContainer">
-      <img id="profilePicture" class="profile">
-      <div class="profileNameWrapper">
-        <div id="firstName"></div>
+      
+      
+
+      <div class="photoWrapper">
+        <span id="nayButton" class="glyphicon glyphicon-remove-circle"></span>
+          <div class="profileName" id="firstName"></div>
+        <span id="yayButton" class="glyphicon glyphicon-ok-circle"></span>
+        <div class="overlapWrapper">
+          <span id="nayButton" class="glyphicon glyphicon-remove-circle"></span>
+          <div class="profileName" id="firstName"></div>
+          <span id="yayButton" class="glyphicon glyphicon-ok-circle"></span>
+        </div>
+        <img id="profilePicture" class="profile">
+
       </div>
+
       <div class="profileInfoWrapper">
         <div class="row">
           <div class="col-xs-1"><span class="glyphicon glyphicon-time"></span></div>
@@ -33,13 +45,12 @@
       </div>
     </div>
 
-    <div class="swipeButtonsWrapper">
-      <span id="nayButton" class="glyphicon glyphicon-remove-circle"></span>
-      <span id="yayButton" class="glyphicon glyphicon-ok-circle"></span>
-    </div>
+    
 
   </div>
   <script>
+
+    console.log($(".profileNameWrapper").width())
     var matches = {{matches|json_encode|raw}};
 
     $("#matchesBadge").html(matches.length);
@@ -67,7 +78,8 @@
       if (match.seshinfo.wannaBoulder) activities.push("boulder");
       $('#activities').html("down to " + activities.join(", "));
 
-      $('#profilePicture').attr('src', "../img/Igor.png");  
+      $('#profilePicture').attr('src', "../img/sloth.jpg");  
+      console.log($("#profilePicture").width())
     }
 
     $(function() {
@@ -115,6 +127,7 @@
       var minutes = fourDigitTime.substring(2);
       return hours + ':' + addZero(minutes) + amPm;
     };
+
     
   </script>
 
