@@ -5,18 +5,18 @@ the light pink: #FF66A3;
 */
 
 body {
-  padding-top: 70px;
+  padding-top: 20%;
 }
 
 .perm-col {
-  font-size: 14px;
+  font-size: 4vw;
 }
 
 div[class^="col-"], div[class*="col-"] {
   color: #9D9DA4;
   font-family: "Raleway";
-  padding-top: 6px;
-  padding-bottom: 6px;
+  padding-top: 1.5%;
+  padding-bottom: .5%;
 }
 
 .question, #preventNext {
@@ -42,19 +42,18 @@ div[class^="col-"], div[class*="col-"] {
 }
 
 .header {
-  font-size: 20px;
+  font-size: 5vw;
   text-align: center;
   font-family: 'Lobster', cursive;
   color: #FF0066;
-  padding-bottom: 1.5px;
 }
 
 .infoPartI {
-  padding-top: 10px;
+  padding-top: 2%;
 }
 
 .infoPartII {
-  padding-top: 20px;
+  padding-top: 6%;
 }
 
 .submitWrapper {
