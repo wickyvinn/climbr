@@ -32,65 +32,57 @@ img.profile {
   border-style: solid;
 
   background-color: transparent;
-  position: relative;
-  display: inline;
 }
 
 .profileName {
-  font-family: "Lobster";
+  font-family: "Knewave";
   font-size: 10vw;
-  color: #FFF;
   display:inline;
   vertical-align: middle;
 }
 
-.photoWrapper {
-  display:table-cell;
-  vertical-align:top;
-  display: inline;
-
-}
-
 .overlapWrapper {
+  padding-top: 65%;
   text-align: center;
-  padding: 1%;
-  
   position: absolute;
   z-index: 1;
   left: 0; 
   right:0;
-  bottom: 41%;
 }
 
 #nayButton, #yayButton {
   font-size: 10vw;
-  color: white;
   vertical-align: middle;
+  padding-left: 2%;
+  padding-right: 2%;
 }
 
-#thumbsup {
-  text-align: center;
-  font-size: 200px;
-  color: #33CC33;
+#nayButton, #thumbsdown {
+  color: red;
 }
 
-#thumbsdown {
+#yayButton, #thumbsup {
+  color: green;
+}
+
+#thumbsup, #thumbsdown {
   text-align: center;
-  font-size: 200px;
-  color: #FF0000;
+  font-size: 70vw;
 }
 
 #thumbsupWrapper, #thumbsdownWrapper {
   display: none;
-  text-align: center;
   position: absolute;
   z-index: 2;
-  margin-left: 50px;
-  
+  left: 0; 
+  right:0;
+  text-align: center;
+  padding-top: 10%;
 }
 
-#thumbsupWrapper, #thumbsdownWrapper {
-  margin-top: 50px;
+@font-face {
+  font-family: "Knewave";
+  src: url("Knewave-Regular.ttf") format("opentype");
 }
 
 @font-face {
