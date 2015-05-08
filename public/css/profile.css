@@ -1,28 +1,25 @@
 .profileContainer {
-  margin: 8px;
-
   background-color: #FFF;
   border-radius: 5px;
   border-color: #D8DCDC;
-  border-width: 3px;
+  border-width: 4px;
   border-style: solid;
-  padding: 5px;
-
-  position: relative;
+  
+  margin-right: 2%;
+  margin-left: 2%;
+  padding: 2%;
 }
 
 .profileInfoWrapper {
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 10px;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  padding-left: 7%;
 
   background-color: #FFF;
   font-family: "Raleway";
   color: grey;
-  font-size: 12px;
+  font-size: 3vw;
 
-  position: relative;
-  z-index: 3;
 }
 
 img.profile {
@@ -31,83 +28,61 @@ img.profile {
 
   border-radius: 5px;
   border-color: #D8DCDC;
-  border-width: 3px;
+  border-width: 4px;
   border-style: solid;
-
-  z-index: 1;
 
   background-color: transparent;
 }
 
-.profileNameWrapper {
-  font-family: "Lobster";
-  font-size: 25px;
-  color: #FFF;
-  background-color: rgba(0, 0, 5, .3);
-  
-  padding: 5px;
-  padding-left: 20px;
-  border-radius: 5px;
-  
-  position: absolute;
-  top: 215px;
-  z-index: 2;
-
-  margin-left: 3px;
-  margin-right: 3px;
-  width: 94%;
+.profileName {
+  font-family: "Knewave";
+  font-size: 10vw;
+  display:inline;
+  vertical-align: middle;
 }
 
-.swipeButtonsWrapper {
+.overlapWrapper {
+  padding-top: 65%;
   text-align: center;
-  margin-right: 70px;
-  margin-left: 70px;
-
-  padding: 3px;
-
-  background-color: white;
-
-  position: relative;
-  border-radius: 400px;
-  border-color: #D8DCDC;
-  border-width: 3px;
-  border-style: solid;
+  position: absolute;
+  z-index: 1;
+  left: 0; 
+  right:0;
 }
 
-#nayButton {
-  font-size: 60px;
+#nayButton, #yayButton {
+  font-size: 10vw;
+  vertical-align: middle;
+  padding-left: 2%;
+  padding-right: 2%;
+}
+
+#nayButton, #thumbsdown {
+  color: red;
+}
+
+#yayButton, #thumbsup {
   color: green;
 }
 
-#yayButton {
-  font-size: 60px;
-  color: #FF0066;
-}
-
-
-#thumbsup {
+#thumbsup, #thumbsdown {
   text-align: center;
-  font-size: 200px;
-  color: #33CC33;
-}
-
-#thumbsdown {
-  text-align: center;
-  font-size: 200px;
-  color: #FF0000;
+  font-size: 70vw;
 }
 
 #thumbsupWrapper, #thumbsdownWrapper {
   display: none;
-  text-align: center;
   position: absolute;
   z-index: 2;
-  margin-left: 50px;
-  
+  left: 0; 
+  right:0;
+  text-align: center;
+  padding-top: 10%;
 }
 
-#thumbsupWrapper, #thumbsdownWrapper {
-  margin-top: 50px;
+@font-face {
+  font-family: "Knewave";
+  src: url("Knewave-Regular.ttf") format("opentype");
 }
 
 @font-face {
