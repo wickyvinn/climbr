@@ -1,6 +1,6 @@
 body {
-  padding-top: 40px;
-  padding-bottom: 40px;
+  padding-top: 8%;
+  padding-bottom: 10%;
   background: url("/img/redrocks.jpg")  no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -8,16 +8,19 @@ body {
   background-size: cover;     
 }
 
+h5 {
+  font-size: 4vw;
+}
+
 .form-signin {
-  max-width: 330px;
-  padding: 25px;
+  max-width: 100%;
+  padding: 10%;
   margin: 0 auto;
 }
 
 .form-signin .form-signin-heading,
-
 .form-signin .checkbox {
-  margin-bottom: 10px;
+  margin-bottom: 5%;
 }
 
 .form-signin .checkbox {
@@ -30,8 +33,8 @@ body {
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
           box-sizing: border-box;
-  padding: 10px;
-  font-size: 16px;
+  padding: 3%;
+  font-size: 4vw;
 }
 .form-signin .form-control:focus {
   z-index: 2;
@@ -50,11 +53,11 @@ body {
 }
 
 .passwordWithMargin {
-  margin-bottom: 10px;
+  margin-bottom: 5%;
 }
 
 .logo {
-  font-size: 100px;
+  font-size: 25vw;
   font-family: 'Lobster', cursive;
   color: #FF0066;
   text-align: center;
