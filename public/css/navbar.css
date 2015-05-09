@@ -58,7 +58,7 @@ div[class^="col-"], div[class*="col-"] {
 
 .submitWrapper {
   text-align: center;
-  padding-top: 30px;
+  padding-top: 5%;
 }
 
 .submitBtn {
@@ -68,18 +68,13 @@ div[class^="col-"], div[class*="col-"] {
 }
 
 .logo {
-  font-size: 30px;
+  font-size: 9vw;
   font-family: 'Lobster', cursive;
   color: white;
 }
 
 input {
   border: none;
-}
-
-.input-wrapper {
-  padding-top: 10px;
-  padding-bottom: 10px;
 }
 
 select {
