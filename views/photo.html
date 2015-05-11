@@ -1,72 +1,43 @@
-{% extends 'layout.html' %}
-
-{% block head %}
-  {% parent %}
-    <link href='../css/profile.css' rel='stylesheet'>
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=320; user-scalable=no" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    
+    <script src="js/jquery.min.js"></script>
     <style>
-      #profilePhoto {
-        width:100%; 
-      }
-      #uploadForm {
-        margin-top: 10px;
-        text-align:center ;
-      }
-      #chooseFileProxy {
-        text-align: center;
-      }
-      .profileContainer {
-        background-color: #D8DCDC;
-      }
-
+    #profilePhoto {
+      width:40%; 
+    }
     </style>
-{% endblock %}
 
-{% block content %}    
-  {% parent %} 
-  <div class="container">
-    <form id="uploadForm" enctype = "multipart/form-data" action = "/photo" method = "post">
-
-      <button id="chooseFileProxy" class="btn btn-default submitBtn" onclick="chooseFile()">CHOOSE A PHOTO!</button>
-      <!-- this is your file input tag, so i hide it!-->
-      <div style='height: 0px;width:0px; overflow:hidden;'>
-        <input type="file" size="60" name="userPhoto" capture="camera" accept="image/*" id="trueChooseFile"/></div>
-      
-      <div class="profileContainer"><img id="profilePhoto" src="../img/camera.png"></div> 
-      <button id="submission" class="btn btn-default submitBtn" type="submit">UPLOAD</button>
+  </head>
+ 
+  <body>
+ 
+  <form id = "uploadForm" enctype = "multipart/form-data" action = "/photo" method = "post">
+    <input type="file" name="userPhoto" capture="camera" accept="image/*" id="userPhoto"/>
+    <input type="submit" value="Upload Image" name="submit">
   </form>
 
+  <div><img id="profilePhoto"></div>
+    
     <script>
-
-      // executes this function when the proxy box (hiding the true input box) is clicked (clicks the true input box)
-      function chooseFile(){
-       document.getElementById("trueChooseFile").click();
-      }
-
-      // shows current photo, if it exists
-      $(function() {
-        if ({{ currentPhoto|json_encode|raw }} !== "") {
-          $("#profilePhoto").attr("src", "{{currentPhoto}}");
-        } 
-      })
-
       // credit: http://www.raymondcamden.com/2013/05/20/Capturing-camerapicture-data-without-PhoneGap
       var desiredWidth;
-
       $(document).ready(function() {
-        $("#trueChooseFile").on("change",showPhoto);
+        $("#userPhoto").on("change",showPhoto);
         desiredWidth = window.innerWidth;
       });
-
       // credit: https://www.youtube.com/watch?v=EPYnGFEcis4&feature=youtube_gdata_player
-
       function showPhoto(event) {
         if (event.target.files.length == 1 && event.target.files[0].type.indexOf("image/") == 0) {
           $("#profilePhoto").attr("src",URL.createObjectURL(event.target.files[0]));
         }
       }
-
-      
-
     </script>    
 
-{% endblock %}
+  </body>
+ 
+</html>
