@@ -1,29 +1,57 @@
-<!DOCTYPE HTML>
-<html>
-  <head>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <meta name="viewport" content="width=320; user-scalable=no" />
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-    
-    <script src="js/jquery.min.js"></script>
-    <style>
-    #profilePhoto {
-      width:40%; 
-    }
-    </style>
 
-  </head>
- 
-  <body>
- 
+{% extends 'layout.html' %}
+
+{% block head %}
+  {% parent %}
+    <link href='../css/profile.css' rel='stylesheet'>
+    <style>
+      #profilePhoto {
+        width:100%; 
+      }
+      #uploadForm {
+        margin-top: 10px;
+        text-align:center ;
+      }
+      #chooseFileProxy {
+        text-align: center;
+      }
+      .profileContainer {
+        margin: 4%;
+        background-color: #D8DCDC;
+      }
+      .hiddener {
+        display: hidden;
+      }
+    </style>
+{% endblock %}
+
+{% block content %}    
+  {% parent %} 
+  <div class="container">   
+  
   <form id = "uploadForm" enctype = "multipart/form-data" action = "/photo" method = "post">
-    <input type="file" name="userPhoto" capture="camera" accept="image/*" id="userPhoto"/>
-    <input type="submit" value="Upload Image" name="submit">
+    <button id="chooseFileProxy" class="btn btn-default submitBtn" onclick="chooseFile()">CHOOSE A PHOTO!</button>
+    <div style='height: 0px;width:0px; overflow:hidden;'>
+      <input type="file" name="userPhoto" capture="camera" accept="image/*" id="userPhoto"/>
+    </div>
+
+    <div class="profileContainer"><img id="profilePhoto"></div> 
+      
+    <input class="btn btn-default submitBtn" type="submit" value="UPLOAD IMAGE" name="submit">
   </form>
 
-  <div><img id="profilePhoto"></div>
+  
+
     
     <script>
+
+      $("#profilePhoto").attr("src", "{{ defaultPhoto }}");
+
+      function chooseFile(){
+        document.getElementById("userPhoto").click();
+        event.preventDefault()
+      }
+
       // credit: http://www.raymondcamden.com/2013/05/20/Capturing-camerapicture-data-without-PhoneGap
       var desiredWidth;
       $(document).ready(function() {

@@ -11,7 +11,6 @@ var session    = require('express-session');
 var cookieParser = require('cookie-parser');
 var MongoStore = require('connect-mongo')(session);
 var swig       = require('swig');
-var done       = false;
 
 // set up app
 var app = express();
@@ -295,13 +294,24 @@ app.use(multer({ dest: './public/uploads/',
   },
   onFileUploadComplete: function (file) {
     console.log(file.fieldname + ' uploaded to  ' + file.path)
-    done=true;
   }
 }));
 
 app.route('/photo')
   .get(function(request, response) {
-    if (request.session.user) response.render('photo.html');
+    if (request.session.user) {
+
+      function respond(perminfoOrError) {
+        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+        else {
+          if (perminfoOrError.body.photoAddress == null) response.render('photo.html', {defaultPhoto: "../img/camera.png"});
+          else response.render('photo.html', {defaultPhoto: perminfoOrError.body.photoAddress});
+        }
+      };
+
+      db.findPermInfo({"userId":request.session.user._id}, respond);
+    }
+
     else response.render('login.html', { error: "Please sign in." });
   })
   .post(function(request, response) {
