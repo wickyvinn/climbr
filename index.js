@@ -11,10 +11,9 @@ var session    = require('express-session');
 var cookieParser = require('cookie-parser');
 var MongoStore = require('connect-mongo')(session);
 var swig       = require('swig');
-var multer     = require('multer');
 var done       = false;
 
-// set up appp
+// set up app
 var app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
@@ -22,20 +21,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 
-/*Configure the multer.*/
-// looks like this 'done' variable is global but i dunno if i like that. 
-app.use(multer({ dest: './public/uploads/',
- rename: function (fieldname, filename) {
-    return filename+Date.now();
-  },
-  onFileUploadStart: function (file) {
-    console.log(file.originalname + ' is starting ...')
-  },
-  onFileUploadComplete: function (file) {
-    console.log(file.fieldname + ' uploaded to  ' + file.path)
-    done=true;
-  }
-}));
+
+// AWS-S3
+var AWS = require('aws-sdk');
+var s3 = new AWS.S3();
+var s3Bucket = "profile-pics-bucket";
+var fs = require('fs');
+
+// here, i think we have to be aware of how heroku populates the key/secret pair. it might be unnecessary. 
+// AWS.config.update({
+//   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+//   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+// });
 
 // require modules
 var logic      = require("./public/js/logic.js");
@@ -52,7 +49,6 @@ app.use(session({
   store: new MongoStore({ mongooseConnection: mongoose.connection }),
   cookie: { maxAge: 3600000 }
  }));
-
 
 ///// error handling
 
@@ -285,46 +281,90 @@ app.route('/matches')
     } else response.render('login.html', { error: "Please sign in." });
   });
 
+
+var multer = require('multer');
+
+/*Configure the multer.*/
+// looks like this 'done' variable is global but i dunno if i like that. 
+app.use(multer({ dest: './public/uploads/',
+ rename: function (fieldname, filename) {
+    return filename+Date.now();
+  },
+  onFileUploadStart: function (file) {
+    console.log(file.originalname + ' is starting ...')
+  },
+  onFileUploadComplete: function (file) {
+    console.log(file.fieldname + ' uploaded to  ' + file.path)
+    done=true;
+  }
+}));
+
 app.route('/photo')
   .get(function(request, response) {
-    if (request.session.user) {
-
-      function respond(perminfoOrError) {
-        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
-        else {
-          if (perminfoOrError.body === null) response.redirect("/perminfo");
-          else response.render('photo.html', {currentPhoto: perminfoOrError.body.photoAddress});
-        }
-      };
-
-      db.findPermInfo({"userId":request.session.user._id}, respond);
-    } else response.render('login.html', { error: "Please sign in." });
-
+    if (request.session.user) response.render('photo.html');
+    else response.render('login.html', { error: "Please sign in." });
   })
   .post(function(request, response) {
     if (request.session.user) {
-      
-      var userId = request.session.user._id
-      
-      if (done==true) {
-      
-        var photoAddress = request.files.userPhoto.path.replace("public", "");
 
-        function respond(perminfoOrError) {
-          if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
-          else {
-            if (perminfoOrError.body === null) response.redirect("/photo");
-            else response.redirect("/perminfo");
-          }
-        };
-        
-        db.updatePermInfo(userId, { photoAddress: photoAddress }, respond); 
-        done = false;
-      }
+      var userId = request.session.user._id
+      var file = request.files.userPhoto;
+      var fileName = userId; 
+
+      uploadPhoto(file, fileName, userId, response);
+
 
     } else response.render('login.html', { error: "Please sign in." });
-
   });
+
+  
+  function uploadPhoto(file, fileName, userId, res) {
+    var tmpFilePath = file.path;
+    fs.readFile(tmpFilePath, function (err, data) {
+      if (err) throw err; // Something went wrong!
+      var s3bucket = new AWS.S3({params: {Bucket: s3Bucket}});
+
+      s3bucket.createBucket(function () {
+        
+        var params = { Key: fileName, Body: data };
+       
+        s3bucket.upload(params, function (err, data) {
+          if (err) {
+            console.log('Error in uploading photo: ', err);
+            deleteTmpPhoto(tmpFilePath);
+            alert("There was an error in uploading your photo, try again.");
+            res.redirect('/photo');
+          } else {
+            console.log('Successfully uploaded data.');
+            deleteTmpPhoto(tmpFilePath);
+
+            var s3photoAddress = data.Location;
+            console.log(data);
+            function respond(perminfoOrError) {
+              if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+              else {
+                if (perminfoOrError.body === null) response.redirect("/photo");
+                else res.redirect("/perminfo");
+              }
+            };
+            
+            db.updatePermInfo(userId, { photoAddress: s3photoAddress }, respond); 
+
+          }
+        });
+
+      });
+
+    });
+  };
+
+  function deleteTmpPhoto(tmpFilePath) {
+    fs.unlink(tmpFilePath, function (err) {
+    if (err) throw err;
+    console.log('successfully deleted ' + tmpFilePath);
+});
+
+  }
 
 app.listen(app.get('port'), function() {
   console.log("climbr is running at localhost:" + app.get('port') + '.');

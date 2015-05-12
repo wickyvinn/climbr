@@ -80,7 +80,7 @@
       if (match.seshinfo.wannaBoulder) activities.push("boulder");
       $('#activities').html("down to " + activities.join(", "));
 
-      $('#profilePicture').attr('src', "../img/sloth.jpg");  
+      $('#profilePicture').attr('src', match.perminfo.photoAddress);  
       console.log($("#profilePicture").width())
     }
 
