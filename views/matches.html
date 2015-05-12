@@ -8,6 +8,9 @@
     body {
       background-color: #EDF8FB;
     }
+    #profilePicture {
+      background-color: #D8DCDC;
+    }
     </style>
 {% endblock %}
 
@@ -52,7 +55,6 @@
   </div>
   <script>
 
-    console.log($(".profileNameWrapper").width())
     var matches = {{matches|json_encode|raw}};
 
     $("#matchesBadge").html(matches.length);
@@ -79,9 +81,9 @@
       if (match.seshinfo.wannaLead) activities.push("lead climb");
       if (match.seshinfo.wannaBoulder) activities.push("boulder");
       $('#activities').html("down to " + activities.join(", "));
-
-      $('#profilePicture').attr('src', match.perminfo.photoAddress);  
-      console.log($("#profilePicture").width())
+      
+      if (match.perminfo.photoAddress == null) $('#profilePicture').attr('src', "../img/camera.png");  
+      else $('#profilePicture').attr('src', match.perminfo.photoAddress);  
     }
 
     $(function() {
