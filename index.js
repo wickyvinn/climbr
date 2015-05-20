@@ -16,7 +16,8 @@ var swig       = require('swig');
 var app = express();
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.engine('html', swig.renderFile);
 app.set('view engine', 'html');
 
@@ -318,63 +319,53 @@ app.route('/photo')
     if (request.session.user) {
 
       var userId = request.session.user._id
-      var file = request.files.userPhoto;
-      var fileName = userId; 
+      var buf = new Buffer(request.body.base64,'base64');
 
-      uploadPhoto(file, fileName, userId, response);
+      var filename = userId; 
+
+      var data = {
+        Key: filename, 
+        Body: buf,
+        ContentEncoding: 'base64',
+        ContentType: 'image/jpeg'
+      };
+
+      uploadPhotoToS3(data, userId, response);
 
 
     } else response.render('login.html', { error: "Please sign in." });
   });
 
-  
-  function uploadPhoto(file, fileName, userId, res) {
-    var tmpFilePath = file.path;
-    fs.readFile(tmpFilePath, function (err, data) {
-      if (err) throw err; // Something went wrong!
-      var s3bucket = new AWS.S3({params: {Bucket: s3Bucket}});
 
-      s3bucket.createBucket(function () {
-        
-        var params = { Key: fileName, Body: data };
-       
-        s3bucket.upload(params, function (err, data) {
-          if (err) {
-            console.log('Error in uploading photo: ', err);
-            deleteTmpPhoto(tmpFilePath);
-            alert("There was an error in uploading your photo, try again.");
-            res.redirect('/photo');
-          } else {
-            console.log('Successfully uploaded data.');
-            deleteTmpPhoto(tmpFilePath);
+function uploadPhotoToS3(data, userId, response) {
+  var s3bucket = new AWS.S3({params: {Bucket: s3Bucket}});
 
-            var s3photoAddress = data.Location;
-            console.log(data);
-            function respond(perminfoOrError) {
-              if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
-              else {
-                if (perminfoOrError.body === null) response.redirect("/photo");
-                else res.redirect("/perminfo");
-              }
-            };
-            
-            db.updatePermInfo(userId, { photoAddress: s3photoAddress }, respond); 
+  s3bucket.upload(data, function(err, data) {
+          
+    if (err) { 
 
-          }
-        });
+      console.log('Error in uploading photo: ', err);
+      alert("There was an error in uploading your photo, try again.");
+      response.send({redirect: '/photo'})
 
-      });
+    } else {
+      
+      var s3photoAddress = data.Location;
 
-    });
-  };
+      function respond(perminfoOrError) {
+        if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
+        else {
+          if (perminfoOrError.body === null) response.redirect("/photo");
+          else response.send({redirect: '/perminfo/edit'});
+        }
+      };
 
-  function deleteTmpPhoto(tmpFilePath) {
-    fs.unlink(tmpFilePath, function (err) {
-    if (err) throw err;
-    console.log('successfully deleted ' + tmpFilePath);
-});
+      db.updatePermInfo(userId, { photoAddress: s3photoAddress }, respond); 
 
-  }
+    }
+
+  });
+}
 
 app.listen(app.get('port'), function() {
   console.log("climbr is running at localhost:" + app.get('port') + '.');

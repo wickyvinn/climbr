@@ -4,7 +4,51 @@
 {% block head %}
   {% parent %}
     <link href='../css/profile.css' rel='stylesheet'>
+    <script src="../js/jquery.cropit.js"></script>
     <style>
+      .cropit-image-preview {
+        background-color: #D8DCDC;
+        background-size: cover;
+        border: 5px solid #D8DCDC;
+        border-radius: 10px;
+        margin-top: 7px;
+        width: 250px;
+        height: 250px;
+        cursor: move;
+      }
+
+      .cropit-image-background {
+        opacity: .2;
+        cursor: auto;
+      }
+
+      .cropit-image-preview-container {
+        margin-left: 14%;
+      }
+
+      input {
+        display: block;
+      }
+
+      .icon-small {
+        vertical-align: top;
+        font-size: 12px;
+        text-align: right;
+      }
+
+      .icon-large {
+        vertical-align: top;
+        font-size: 16px;
+        text-align: left;
+      }
+
+      .zoomer {
+        padding-right:20%;
+        padding-left:20%;
+        padding-top: 2%;
+        padding-bottom: 2%;
+      }
+
       #profilePhoto {
         width:100%; 
       }
@@ -15,56 +59,94 @@
       #chooseFileProxy {
         text-align: center;
       }
-      .profileContainer {
-        margin: 4%;
-        background-color: #D8DCDC;
-      }
-      .hiddener {
-        display: hidden;
-      }
+      
     </style>
+
 {% endblock %}
 
 {% block content %}    
   {% parent %} 
   <div class="container">   
-  
+
   <form id = "uploadForm" enctype = "multipart/form-data" action = "/photo" method = "post">
     <button id="chooseFileProxy" class="btn btn-default submitBtn" onclick="chooseFile()">CHOOSE A PHOTO!</button>
-    <div style='height: 0px;width:0px; overflow:hidden;'>
-      <input type="file" name="userPhoto" capture="camera" accept="image/*" id="userPhoto"/>
-    </div>
 
-    <div class="profileContainer"><img id="profilePhoto"></div> 
-      
-    <input class="btn btn-default submitBtn" type="submit" value="UPLOAD IMAGE" name="submit">
-  </form>
 
   
+  <div class="image-editor">
+    <div style='height: 0px;width:0px; overflow:hidden;'>
+      <input type="file" id="userPhoto" capture="camera" accept="image/*" class="cropit-image-input" name="userPhoto">
+    </div>  
 
-    
+    <div id="image-cropper">
+      <div class="cropit-image-preview-container">
+        <div id="croppedImage" class="cropit-image-preview"></div>
+      </div>
+
+      <div class="zoomer">
+        <div class="row">
+          <div class="col-xs-2"><span class="glyphicon glyphicon-picture icon-small"></span></div>
+          <div class="col-xs-8"><input type="range" class="cropit-image-zoom-input"></div>
+          <div class="col-xs-2"><span class="glyphicon glyphicon-picture icon-large"></span></div> 
+        </div>
+      </div>
+      <input class="btn btn-default submitBtn export" value="UPLOAD IMAGE">
+    </div>
+
+  </div>
+  
+  </form>
+
     <script>
+      $(function() {
+        $('.image-editor').cropit({
+          imageState: {
+            src: '/../img/camera.png'
+          }
+        });
 
-      $("#profilePhoto").attr("src", "{{ defaultPhoto }}");
+        $('.export').click(function() {
+          event.preventDefault()
+          var offSet = $('.image-editor').cropit('offset');
+          var zoom = $('.image-editor').cropit('zoom');
+          var newPhotoUrl = $('.image-editor').cropit('export');
+
+          var data = {}
+          data["base64"] = newPhotoUrl.replace(/^data:image\/\w+;base64,/, "");
+
+          // this will fail if we just try to upload a pic who's source is not localhost.
+
+          $.ajax({
+            type: "POST",
+            url: "/photo",
+            xhrFields: {withCredentials: true},
+            data: data,
+            complete: function() {
+              console.log("process has completed.");
+            },
+            success: function(data) {
+              console.log("new profile picture is uploaded to s3.");
+              if (data.redirect) window.location.href = data.redirect;
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+              console.log("POSTing /photo had an error.")
+              console.log(errorThrown);
+            }
+          });
+          
+
+        });
+
+      });
 
       function chooseFile(){
         document.getElementById("userPhoto").click();
-        event.preventDefault()
+        event.preventDefault();
       }
 
-      // credit: http://www.raymondcamden.com/2013/05/20/Capturing-camerapicture-data-without-PhoneGap
-      var desiredWidth;
-      $(document).ready(function() {
-        $("#userPhoto").on("change",showPhoto);
-        desiredWidth = window.innerWidth;
-      });
-      // credit: https://www.youtube.com/watch?v=EPYnGFEcis4&feature=youtube_gdata_player
-      function showPhoto(event) {
-        if (event.target.files.length == 1 && event.target.files[0].type.indexOf("image/") == 0) {
-          $("#profilePhoto").attr("src",URL.createObjectURL(event.target.files[0]));
-        }
-      }
-    </script>    
+      
+      
+    </script>  
 
   </body>
  
