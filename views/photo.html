@@ -12,18 +12,14 @@
         border: 5px solid #D8DCDC;
         border-radius: 10px;
         margin-top: 7px;
-        width: 250px;
-        height: 250px;
+        width: 342px;
+        height: 342px;
         cursor: move;
       }
 
       .cropit-image-background {
         opacity: .2;
         cursor: auto;
-      }
-
-      .cropit-image-preview-container {
-        margin-left: 14%;
       }
 
       input {
@@ -66,7 +62,6 @@
 
 {% block content %}    
   {% parent %} 
-  <div class="container">   
 
   <form id = "uploadForm" enctype = "multipart/form-data" action = "/photo" method = "post">
     <button id="chooseFileProxy" class="btn btn-default submitBtn" onclick="chooseFile()">CHOOSE A PHOTO!</button>
