@@ -41,7 +41,7 @@
     var usernameValid;
     var passwordValid;
 
-    $("input[type='username']").keydown(function() {
+    $("input[type='username']").keyup(function() {
       var username = $(this).val()
       
       if (validateUsername(username)) {
