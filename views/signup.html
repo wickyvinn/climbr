@@ -40,6 +40,10 @@
 
     var usernameValid;
     var passwordValid;
+    $("input[type='username'], #confpass").blur(function() {
+      $(this).removeClass("validIcon");
+    });
+
 
     $("input[type='username']").keyup(function() {
       var username = $(this).val()
