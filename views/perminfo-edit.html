@@ -104,7 +104,6 @@
       }
       var data = {};
       data[newValueType] = newValue;
-      console.log("Changed detected for (translated to json): " + JSON.stringify(data));
       $.ajax({
         type: "POST",
         url: "/perminfo/edit",
@@ -114,7 +113,7 @@
           console.log("process has completed.");
         },
         success: function(response) {
-          console.log("thing that just got saved (not translated): " + data);
+          console.log("success");
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           console.log("POSTing /perminfo/edit had an error.")
