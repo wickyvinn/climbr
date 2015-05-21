@@ -3,6 +3,19 @@
 {% block head %}
   {% parent %}
   <link href='../css/signin.css' rel='stylesheet'>
+  <style> 
+    .invalidIcon {
+      background-image: url("../img/invalid.png");
+      background-position: 96% 44%;
+      background-repeat: no-repeat;
+    }
+    .validIcon {
+      background-image: url("../img/valid.png");
+      background-position: 96% 44%;
+      background-repeat: no-repeat;
+    }
+
+  </style>
 {% endblock %}
 
 {% block content %}
@@ -12,15 +25,64 @@
     <form action="/signup" method="POST" class="form-signin">
       <div class="logo">climbr</div>
       <h5 class="form-signin-heading fancy-text">find a climbing buddy nearby.</h5>
-      <input type="username" name="username" class="form-control" placeholder="username" required=""></input>
-      <input type="password" name="password" class="passwordNoMargin form-control" placeholder="password"></input>
-      <input type="password" name="password" class="passwordWithMargin form-control" placeholder="confirm password"></input>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Belay On</button>
+      <input type="username" name="username" class="form-control" placeholder="username" required="" autocapitalize="off">
+      <input type="password" id="pass" name="password" class="passwordNoMargin form-control" placeholder="password"></input>
+      <input type="password" id="confpass" name="password" class="passwordWithMargin form-control" placeholder="confirm password"></input>
+      <button class="btn btn-lg btn-primary btn-block" onclick = "valid()" type="submit">Belay On</button>
     </form>  
       
       <h5 class="fancy-text">have an account? <a href="/">log in!</a></h5> 
       <div class="fancy-text">{{ error }} </div>
   
   </div>
+
+  <script>
+
+    var usernameValid;
+    var passwordValid;
+
+    $("input[type='username']").keydown(function() {
+      var username = $(this).val()
+      
+      if (validateUsername(username)) {
+        $(this).css("color", "black");
+        $(this).removeClass("invalidIcon").addClass("validIcon");
+        usernameValid = true;
+      } else {
+        $(this).css("color", "red"); 
+        $(this).removeClass("validIcon").addClass("invalidIcon");
+        usernameValid = true;
+      }
+
+    });
+
+    function validateUsername(username) {
+      var usernameRegex = /^[a-zA-Z0-9]+$/;
+      var validUsername = username.match(usernameRegex);
+      if (validUsername == null) return false
+      else return true
+    };
+
+    $("#confpass").keyup(function() {
+      var confpass = $(this).val();
+      var pass = $("#pass").val();
+
+      if (pass === confpass) {
+        $(this).removeClass("invalidIcon").addClass("validIcon");
+        passwordValid = true;
+
+      } else {
+        $(this).removeClass("validIcon").addClass("invalidIcon");
+        passwordValid = false;
+      }
+    })
+
+    function valid() {
+      if (!passwordValid || !usernameValid) {
+        event.preventDefault();
+        alert("You need a legit username/password combination.");
+      }
+    };
+  </script>
       
 {% endblock %}
