@@ -5713,14 +5713,14 @@ a.list-group-item-danger.active:focus {
   border-radius: 3px;
 }
 .close {
-  float: right;
+  /*float: right;*/
   font-size: 21px;
-  font-weight: bold;
+  /*font-weight: bold;*/
   line-height: 1;
-  color: #000;
+  /*color: #000;*/
   text-shadow: 0 1px 0 #fff;
-  filter: alpha(opacity=20);
-  opacity: .2;
+  /*filter: alpha(opacity=20);*/
+  /*opacity: .2;*/
 }
 .close:hover,
 .close:focus {

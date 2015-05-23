@@ -6,6 +6,7 @@
 // require libraries
 var express    = require('express');
 var bodyParser = require('body-parser');
+var url        = require('url');
 var mongoose   = require('mongoose');
 var session    = require('express-session');
 var cookieParser = require('cookie-parser');
@@ -243,7 +244,7 @@ app.route('/seshinfo')
 
       function respond(seshinfoOrError) {
         if (seshinfoOrError instanceof Error) errorHandler(response, seshinfoOrError);
-        else response.redirect('/matches');
+        else response.redirect('/climbers');
       };
 
       db.updateSeshInfo(request.session.user._id, updateBody, respond);    
@@ -253,7 +254,7 @@ app.route('/seshinfo')
 
   })
 
-app.route('/matches')
+app.route('/climbers')
   .get(function(request, response) {
     if (request.session.user) {
       var userId = request.session.user._id
@@ -264,8 +265,8 @@ app.route('/matches')
           else if (!seshinfos) errorHandler(response, Error(401, "BADBAD VERY BAD"));
           
           function respond(seshinfos, perminfos) {
-            var matches = logic.joinMatches(seshinfos, perminfos);
-            response.render("matches.html", {matches: matches}); 
+            var climbers = logic.joinClimbers(seshinfos, perminfos);
+            response.render("climbers.html", {climbers: climbers}); 
           }
 
           db.PermInfos.find( { userId: { $ne:mongoose.Types.ObjectId(userId) } },
@@ -279,7 +280,47 @@ app.route('/matches')
       ); 
       
     } else response.render('login.html', { error: "Please sign in." });
-  });
+  })
+
+
+app.route('/matches')  
+  .get(function(request, response) {
+    if (request.session.user) {
+
+      var userId = request.session.user._id;
+      var matchId = request.body;
+      var url_parts = url.parse(request.url, true);
+      var query = url_parts.query;
+      var matchId = query.matchId;
+
+      function respond(matchOrError) {
+        if (matchOrError instanceof Error) errorHandler(response, matchOrError);
+        else {
+          // i hate this but findOne and count doesn't seem to work in mongoose
+          if (matchOrError.body.length < 1) response.send(false)
+          else response.send(true);
+        };
+      };
+
+      db.checkMatch(request.session.user._id, matchId, respond);
+
+    } else response.render('login.html', { error: "Please sign in." });
+  })
+  .post(function(request, response) {
+    if (request.session.user) {
+
+      var userId = request.session.user._id;
+      var matchId = request.body["matchId"];
+
+      function respond(matchesOrError) {
+        if (matchesOrError instanceof Error) errorHandler(response, matchesOrError);
+        else response.end();
+      };
+
+      db.addMatch(request.session.user._id, matchId, respond);
+
+    } else response.render('login.html', { error: "Please sign in." })
+  })
 
 
 app.route('/photo')

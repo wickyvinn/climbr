@@ -45,9 +45,15 @@ var SeshInfo = new Schema({
   timeOut:     Date
 });
 
+var Match = new Schema({
+  userId:     String,
+  matches:    [String] // array of userids that were swiped right
+});
+
 var Users     = mongoose.model('users', User);
 var PermInfos = mongoose.model('perminfos', PermInfo);
 var SeshInfos = mongoose.model('seshinfos', SeshInfo);
+var Matches   = mongoose.model('matches', Match);
 
 // queries
 
@@ -134,7 +140,7 @@ function findSeshInfos(userId, respondFunction) {
 
 function updateSeshInfo(userId, body, respondFunction) {
 
-    SeshInfos.update({userId: userId}, {$set: body}, {upsert: true}, function(err, seshinfo) {
+  SeshInfos.update({userId: userId}, {$set: body}, {upsert: true}, function(err, seshinfo) {
 
     if (seshinfo) { var queryResult = new idx.Success(seshinfo); }
     else if (err) { var queryResult = new idx.Error(401, err); }
@@ -145,12 +151,43 @@ function updateSeshInfo(userId, body, respondFunction) {
 
 }
 
+function getMatches(userId, respondFunction) {
+
+  Matches.findOne( { userId: userId }, function(err, matchesArray) {
+      if (err) { var queryResult = new idx.Error(401, err); }
+      else if (matchesArray) { var queryResult = new idx.Success(matchesArray); }
+      else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: getMatches!!!"); }
+      respondFunction(queryResult);
+    });
+};
+
+function checkMatch(userId, matchId, respondFunction) {
+  Matches.find( {$and: [{userId: matchId}, { matches: userId }]}, function(err, match) {
+    if (err) { var queryResult = new idx.Error(401, err); }
+    else if (match) { var queryResult = new idx.Success(match); }
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: checkMatch!!!"); }
+    respondFunction(queryResult);
+  });
+};
+
+function addMatch(userId, matchId, respondFunction) {
+
+  Matches.update({userId: userId}, { $push: { matches: matchId } }, {upsert: true}, function(err, matches) {
+    if (matches) { var queryResult = new idx.Success(matches); }
+    else if (err) { var queryResult = new idx.Error(401, err); }
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: addMatch!!!")}
+    respondFunction(queryResult); 
+  });
+
+}
+
 
 // export dat shiz
 
 exports.Users      = Users;
 exports.PermInfos  = PermInfos;
 exports.SeshInfos  = SeshInfos;
+exports.Matches    = Matches;
 
 exports.findUser       = findUser;
 exports.createUser     = createUser;
@@ -159,3 +196,7 @@ exports.findPermInfos  = findPermInfos;
 exports.updatePermInfo = updatePermInfo;
 exports.findSeshInfos  = findSeshInfos; 
 exports.updateSeshInfo = updateSeshInfo;
+exports.getMatches     = getMatches;
+exports.addMatch       = addMatch;
+exports.checkMatch     = checkMatch;
+

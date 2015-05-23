@@ -16,7 +16,7 @@ function formatInfo(perminfo) {
 };  
 
 // take in two arrays of objects, join in single array. 
-function joinMatches(seshinfos, perminfos) {
+function joinClimbers(seshinfos, perminfos) {
 
   var matches = [];
 
@@ -33,5 +33,5 @@ function joinMatches(seshinfos, perminfos) {
 
 // export da shiz 
 
-exports.formatInfo = formatInfo;
-exports.joinMatches = joinMatches;
+exports.formatInfo   = formatInfo;
+exports.joinClimbers = joinClimbers;
