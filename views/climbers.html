@@ -11,6 +11,22 @@
     #profilePicture {
       background-color: #D8DCDC;
     }
+    #launcher {
+      display: hidden;
+    }
+    .modal-dialog {
+      background-color: #EDF8FB;
+      border-radius: 6px;
+      opacity: 0.93;
+    }
+    .modal-header, .modal-body {
+      text-align: center;
+      font-family: "Raleway";
+    }
+    .close {
+      font-size: 18vw;
+    }
+
     </style>
 {% endblock %}
 
@@ -53,6 +69,23 @@
     
 
   </div>
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <div><h2 class="modal-title" id="myModalLabel">BELAY ON!</h2></div>
+        </div>
+        <div class="modal-body">
+          <div id="modal-message"><span id="matchName"></span> wants to climb with you! <p>Chat with them here.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
   <script>
 
     var climbers = {{climbers|json_encode|raw}};
@@ -98,14 +131,12 @@
         data["matchId"] = matchId
         $.ajax({
           type: "POST",
-          url: "/climbers",
+          url: "/matches",
           xhrFields: {withCredentials: true},
           data: data,
           complete: function() {
-            console.log("process has completed.");
           },
           success: function(response) {
-            console.log("success");
           },
           error: function(XMLHttpRequest, textStatus, errorThrown) {
             console.log("POSTing /climbers had an error.")
@@ -116,12 +147,15 @@
       
 
       // respond to any event on the page
-      function respond(iconElement, matchId, picked) {
+      function respond(iconElement, matchId, matchName, picked) {
         $('body').fadeTo(500, 0.5, function() { // once body is hidden, show the thumb.
           iconElement.slideDown(100).delay(500).fadeOut(200, function () {
               
             // record swipe to db
-            if (picked) recordMatch(matchId)
+            if (picked) {
+              recordMatch(matchId)
+              checkMatch(matchId, matchName) // check if matchId likes userId
+            }
               // if not picked, don't surface for the rest of session i guess?
 
             // populate next person
@@ -135,20 +169,24 @@
       // listen for event on buttons
       $('#yayButton').on('click', function () { 
         var matchId = $('#firstName').attr("name");
-        respond($("#thumbsupWrapper"), matchId, true) 
+        var matchName = $('#firstName').text();
+        respond($("#thumbsupWrapper"), matchId, matchName, true) 
       });
       
       $('#nayButton').on('click', function () { 
         var matchId = $('#firstName').attr("name");
-        respond($("#thumbsdownWrapper"), matchId, false) 
+        var matchName = $('#firstName').val();
+        respond($("#thumbsdownWrapper"), matchId, matchName, false) 
       });
 
       //  listen for swipes
       var container = document.getElementById("nonavContainer");
       var hammer = new Hammer(container);
       hammer.on("swipeleft swiperight", function(event) {
-        if (event.type === "swiperight") respond($("#thumbsupWrapper"));
-        else respond($("#thumbsdownWrapper"));
+        var matchId = $('#firstName').attr("name");
+        var matchName = $('#firstName').val();
+        if (event.type === "swiperight") respond($("#thumbsupWrapper"), matchId, matchName, true) 
+        else respond($("#thumbsdownWrapper"), matchId, matchName, false) 
       });
 
 
@@ -166,6 +204,30 @@
       var amPm = hours24 > 11 ? 'pm' : 'am';
       var minutes = fourDigitTime.substring(2);
       return hours + ':' + addZero(minutes) + amPm;
+    };
+
+    // check for a match.
+    function checkMatch(matchId, matchName) {
+      var data = {};
+      data["matchId"] = matchId;
+      $.ajax({
+        type: "get",
+        url: "/matches",
+        data: data,
+        xhrFields: {withCredentials: true},
+        complete: function() {
+        },
+        success: function(response) {
+          if (response) {
+            $("#matchName").html(matchName);
+            $('#myModal').modal('show');
+          }
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          console.log("GETting /matches had an error.")
+          console.log(errorThrown);
+        }
+      });
     };
 
     

@@ -6,6 +6,7 @@
 // require libraries
 var express    = require('express');
 var bodyParser = require('body-parser');
+var url        = require('url');
 var mongoose   = require('mongoose');
 var session    = require('express-session');
 var cookieParser = require('cookie-parser');
@@ -280,6 +281,31 @@ app.route('/climbers')
       
     } else response.render('login.html', { error: "Please sign in." });
   })
+
+
+app.route('/matches')  
+  .get(function(request, response) {
+    if (request.session.user) {
+
+      var userId = request.session.user._id;
+      var matchId = request.body;
+      var url_parts = url.parse(request.url, true);
+      var query = url_parts.query;
+      var matchId = query.matchId;
+
+      function respond(matchOrError) {
+        if (matchOrError instanceof Error) errorHandler(response, matchOrError);
+        else {
+          // i hate this but findOne and count doesn't seem to work in mongoose
+          if (matchOrError.body.length < 1) response.send(false)
+          else response.send(true);
+        };
+      };
+
+      db.checkMatch(request.session.user._id, matchId, respond);
+
+    } else response.render('login.html', { error: "Please sign in." });
+  })
   .post(function(request, response) {
     if (request.session.user) {
 
@@ -295,8 +321,6 @@ app.route('/climbers')
 
     } else response.render('login.html', { error: "Please sign in." })
   })
-
-app.route('/connect')
 
 
 app.route('/photo')
