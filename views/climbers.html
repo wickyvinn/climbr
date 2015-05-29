@@ -69,8 +69,10 @@
     
 
   </div>
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  
+
+  <!-- Wants to climb with you Modal -->
+  <div class="modal fade" id="matchModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -85,12 +87,30 @@
   </div>
 
 
+<!-- Tells you can swipe modal -->
+  <div class="modal fade" id="swipeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <img style="max-width: 50%; padding-bottom: 10px" src="../img/swipe-illustration.png"></img>
+
+          <div id="modal-message">Swipe right to pick a climber, <br> and left to pass.</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
 
     var climbers = {{climbers|json_encode|raw}};
 
     $("#climbersBadge").html(climbers.length);
+
+    $('#swipeModal').modal('show');
 
     function populateProfile(match) {
       $('#firstName').html(match.perminfo.firstName).attr('name', match.perminfo.userId);
@@ -145,6 +165,11 @@
         });
       };
       
+      // ever so often, check if there are any matches, and expose them.
+      $(function () {
+        checkForMatches();
+        // sleep every 30 seconds.
+      })
 
       // respond to any event on the page
       function respond(iconElement, matchId, matchName, picked) {
@@ -154,6 +179,7 @@
             // record swipe to db
             if (picked) {
               recordMatch(matchId)
+              // checkForMatches()
               checkMatch(matchId, matchName) // check if matchId likes userId
             }
               // if not picked, don't surface for the rest of session i guess?
@@ -206,6 +232,27 @@
       return hours + ':' + addZero(minutes) + amPm;
     };
 
+    // the periodic check for matches
+    function checkForMatches() {
+      $.ajax({
+        type: "get",
+        url: "/matches/any",
+        xhrFields: { withCredentials: true },
+        success: function (matches) {
+          if (matches.length > 1) {
+            $("#matchName").html("Someone");
+            $('#myModal').modal('show');
+          }
+        },
+        error: function(http, textstatus, error) {
+          console.log(http);
+          console.log(textstatus);
+          console.log(error);
+        }
+      });
+    };
+
+
     // check for a match.
     function checkMatch(matchId, matchName) {
       var data = {};
@@ -215,12 +262,10 @@
         url: "/matches",
         data: data,
         xhrFields: {withCredentials: true},
-        complete: function() {
-        },
         success: function(response) {
           if (response) {
             $("#matchName").html(matchName);
-            $('#myModal').modal('show');
+            $('#matchModal').modal('show');
           }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {

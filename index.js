@@ -136,7 +136,7 @@ app.route('/perminfo')
         if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
         else {
           if (perminfoOrError.body == null) response.render('perminfo-pages.html');
-          else response.redirect("/perminfo/edit");
+          else response.redirect("/seshinfo");
         }
       };
 
@@ -282,7 +282,24 @@ app.route('/climbers')
     } else response.render('login.html', { error: "Please sign in." });
   })
 
-
+app.route("/matches/any")
+  .get(function(request, response) {
+    if (request.session.user) {
+      var userId = request.session.user._id;
+      function respond(matchesOrError) {
+        if (matchesOrError instanceof Error) errorHandler(response, matchesOrError);
+        else {
+          console.log(matchesOrError.body);
+          var matchIds = matchesOrError.body.map(function (match) { JSON.stringify(match.userId) });
+          console.log(matchIds);
+          console.log("matches: " + matchIds);
+          if (matchIds.length < 1) response.end()
+          else response.send(matchIds);
+        }
+      };
+      db.getMatches(request.session.user._id, respond);
+    }
+  })
 app.route('/matches')  
   .get(function(request, response) {
     if (request.session.user) {
@@ -322,7 +339,10 @@ app.route('/matches')
     } else response.render('login.html', { error: "Please sign in." })
   })
 
-
+app.route('/swipe')
+  .get(function(request, response) {
+    response.render("swipe.html");
+  });
 app.route('/photo')
   .get(function(request, response) {
     if (request.session.user) {

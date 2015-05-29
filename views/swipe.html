@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+  {% parent %}
+  <link href='../css/profile.css' rel='stylesheet'>
+  <script src="../js/hammer.min.js"></script>
+  <style>
+    body {
+      background-color: #EDF8FB;
+    }
+    #profilePicture {
+      background-color: #D8DCDC;
+    }
+    #launcher {
+      display: hidden;
+    }
+    .modal-dialog {
+      background-color: #EDF8FB;
+      border-radius: 6px;
+      opacity: 0.93;
+    }
+    .modal-header, .modal-body {
+      text-align: center;
+      font-family: "Raleway";
+    }
+    .close {
+      font-size: 18vw;
+    }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+  {% parent %}
+
+  <div id="nonavContainer" class="container">
+    <div id="thumbsupWrapper"><span id="thumbsup" class="glyphicon glyphicon-thumbs-up"></span></div>
+    <div id="thumbsdownWrapper"><span id="thumbsdown" class="glyphicon glyphicon-thumbs-down"></span></div>
+    
+    <div class="profileContainer">
+      <div class="photoWrapper">
+
+        <img id="profilePicture" class="profile" src="../img/propic.png">
+
+      </div>
+
+      <div class="profileInfoWrapper">
+        <br />
+        <br />
+        <br />
+      </div>
+    </div>
+
+    
+
+  </div>
+  
+{% endblock %}

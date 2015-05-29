@@ -151,9 +151,10 @@ function updateSeshInfo(userId, body, respondFunction) {
 
 }
 
+
 function getMatches(userId, respondFunction) {
 
-  Matches.findOne( { userId: userId }, function(err, matchesArray) {
+  Matches.find( { matches: userId }, { userId: 1}, function(err, matchesArray) {
       if (err) { var queryResult = new idx.Error(401, err); }
       else if (matchesArray) { var queryResult = new idx.Success(matchesArray); }
       else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: getMatches!!!"); }
@@ -162,17 +163,19 @@ function getMatches(userId, respondFunction) {
 };
 
 function checkMatch(userId, matchId, respondFunction) {
+
   Matches.find( {$and: [{userId: matchId}, { matches: userId }]}, function(err, match) {
     if (err) { var queryResult = new idx.Error(401, err); }
     else if (match) { var queryResult = new idx.Success(match); }
     else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: checkMatch!!!"); }
     respondFunction(queryResult);
   });
+  
 };
 
 function addMatch(userId, matchId, respondFunction) {
 
-  Matches.update({userId: userId}, { $push: { matches: matchId } }, {upsert: true}, function(err, matches) {
+  Matches.update( { userId:userId }, { $addToSet: { matches:matchId }}, {upsert: true}, function (err, matches) { 
     if (matches) { var queryResult = new idx.Success(matches); }
     else if (err) { var queryResult = new idx.Error(401, err); }
     else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: addMatch!!!")}
