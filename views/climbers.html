@@ -80,7 +80,7 @@
           <div><h2 class="modal-title" id="myModalLabel">BELAY ON!</h2></div>
         </div>
         <div class="modal-body">
-          <div id="modal-message"><span id="matchName"></span> wants to climb with you! <p>Chat with them here.</p></div>
+          <div id="modal-message"><span id="matchMessage"></span><p>Chat with them here.</p></div>
         </div>
       </div>
     </div>
@@ -166,10 +166,10 @@
       };
       
       // ever so often, check if there are any matches, and expose them.
-      $(function () {
+      setInterval(function(){
         checkForMatches();
-        // sleep every 30 seconds.
-      })
+      },30000);
+
 
       // respond to any event on the page
       function respond(iconElement, matchId, matchName, picked) {
@@ -179,7 +179,6 @@
             // record swipe to db
             if (picked) {
               recordMatch(matchId)
-              // checkForMatches()
               checkMatch(matchId, matchName) // check if matchId likes userId
             }
               // if not picked, don't surface for the rest of session i guess?
@@ -224,7 +223,7 @@
       return i;
     }
 
-     function getFormattedTime(fourDigitTime) {
+    function getFormattedTime(fourDigitTime) {
       var hours24 = parseInt(fourDigitTime.substring(0, 2),10);
       var hours = ((hours24 + 11) % 12) + 1;
       var amPm = hours24 > 11 ? 'pm' : 'am';
@@ -234,14 +233,16 @@
 
     // the periodic check for matches
     function checkForMatches() {
+      console.log('checking for matches');
       $.ajax({
         type: "get",
         url: "/matches/any",
         xhrFields: { withCredentials: true },
         success: function (matches) {
           if (matches.length > 1) {
-            $("#matchName").html("Someone");
-            $('#myModal').modal('show');
+            console.log(matches);
+            $("#matchMessage").html("Someone wants to climb with you!");
+            $('#matchModal').modal('show');
           }
         },
         error: function(http, textstatus, error) {
@@ -264,7 +265,7 @@
         xhrFields: {withCredentials: true},
         success: function(response) {
           if (response) {
-            $("#matchName").html(matchName);
+            $("#matchMessage").html(matchName + " wants to climb with you!");
             $('#matchModal').modal('show');
           }
         },

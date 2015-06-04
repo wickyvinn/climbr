@@ -289,11 +289,10 @@ app.route("/matches/any")
       function respond(matchesOrError) {
         if (matchesOrError instanceof Error) errorHandler(response, matchesOrError);
         else {
-          console.log(matchesOrError.body);
-          var matchIds = matchesOrError.body.map(function (match) { JSON.stringify(match.userId) });
-          console.log(matchIds);
-          console.log("matches: " + matchIds);
-          if (matchIds.length < 1) response.end()
+          var matchesArray = matchesOrError.body;
+          var matchIds = [];
+          for (var i = 0; i < matchesArray.length; i++) { matchIds.push(matchesArray[i].userId); }
+          if (matchIds.length < 1) response.end();
           else response.send(matchIds);
         }
       };
@@ -339,10 +338,6 @@ app.route('/matches')
     } else response.render('login.html', { error: "Please sign in." })
   })
 
-app.route('/swipe')
-  .get(function(request, response) {
-    response.render("swipe.html");
-  });
 app.route('/photo')
   .get(function(request, response) {
     if (request.session.user) {
