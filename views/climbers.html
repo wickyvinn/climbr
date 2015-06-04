@@ -105,13 +105,15 @@
   </div>
 
   <script>
-    var matchesLastChecked;
+    
 
     var climbers = {{climbers|json_encode|raw}};
 
     $("#climbersBadge").html(climbers.length);
 
     $('#swipeModal').modal('show');
+
+    var matchesLastChecked;
 
     // ever so often, check if there are any matches, and expose them.
     setInterval(function(){
@@ -233,7 +235,7 @@
 
     // the periodic check for matches
     function checkForMatches() {
-      console.log('checking for matches');
+      console.log('Checking for new matches.');
       
       $.ajax({
         type: "get",
@@ -242,10 +244,10 @@
         success: function (latestMatches) {
           if (latestMatches.length > 1) {
             
-            // only if there's been a new match, show the match modal, and set the new exposed matches.
+            // only if there's been a new match, show the match modal, and update the matchesLastChecked variable.
             if (matchesLastChecked != latestMatches.toString()) { 
               matchesLastChecked = latestMatches.toString();
-              $("#matchMessage").html("Someone wants to climb with you!");
+              $("#matchMessage").html("Someone just said they want to climb with you!");
               $('#matchModal').modal('show');
             };
 
