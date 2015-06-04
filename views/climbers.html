@@ -46,7 +46,7 @@
           <span id="yayButton" class="glyphicon glyphicon-ok-circle"></span>
         </div>
         
-        <img id="profilePicture" class="profile">
+        <img id="profilePicture" onerror="this.src = '../img/camera.png';" class="profile">
 
       </div>
 
@@ -240,7 +240,6 @@
         xhrFields: { withCredentials: true },
         success: function (matches) {
           if (matches.length > 1) {
-            console.log(matches);
             $("#matchMessage").html("Someone wants to climb with you!");
             $('#matchModal').modal('show');
           }
