@@ -128,6 +128,22 @@ app.route('/signup')
     
   });
 
+app.route('/logout') 
+  .get(function(request, response) {
+
+    // delete matches upon logout. 
+    function respond(userOrError) {
+      if (userOrError instanceof Error) errorHandler(response, userOrError);
+      else {
+        request.session.destroy();
+        response.send("logged off successfully");
+      };
+    };
+
+    db.removeMatches(request.session.user._id, respond);
+    
+  });
+
 app.route('/perminfo')
   .get(function(request, response) {
     if (request.session.user) {

@@ -182,7 +182,18 @@ function addMatch(userId, matchId, respondFunction) {
     respondFunction(queryResult); 
   });
 
-}
+};
+
+function removeMatches(userId, respondFunction) {
+
+  Matches.remove( {userId: userId}, function (err, matches) {
+    if (matches) { var queryResult = new idx.Success(matches); }
+    else if (err) { var queryResult = new idx.Error(401, err); }
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: addMatch!!!")}
+    respondFunction(queryResult); 
+  });
+
+};
 
 
 // export dat shiz
@@ -202,4 +213,5 @@ exports.updateSeshInfo = updateSeshInfo;
 exports.getMatches     = getMatches;
 exports.addMatch       = addMatch;
 exports.checkMatch     = checkMatch;
+exports.removeMatches  = removeMatches;
 
