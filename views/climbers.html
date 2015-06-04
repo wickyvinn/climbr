@@ -105,12 +105,18 @@
   </div>
 
   <script>
+    var matchesLastChecked;
 
     var climbers = {{climbers|json_encode|raw}};
 
     $("#climbersBadge").html(climbers.length);
 
     $('#swipeModal').modal('show');
+
+    // ever so often, check if there are any matches, and expose them.
+    setInterval(function(){
+      checkForMatches();
+    },10000);
 
     function populateProfile(match) {
       $('#firstName').html(match.perminfo.firstName).attr('name', match.perminfo.userId);
@@ -164,12 +170,6 @@
           }
         });
       };
-      
-      // ever so often, check if there are any matches, and expose them.
-      setInterval(function(){
-        checkForMatches();
-      },30000);
-
 
       // respond to any event on the page
       function respond(iconElement, matchId, matchName, picked) {
@@ -234,14 +234,21 @@
     // the periodic check for matches
     function checkForMatches() {
       console.log('checking for matches');
+      
       $.ajax({
         type: "get",
         url: "/matches/any",
         xhrFields: { withCredentials: true },
-        success: function (matches) {
-          if (matches.length > 1) {
-            $("#matchMessage").html("Someone wants to climb with you!");
-            $('#matchModal').modal('show');
+        success: function (latestMatches) {
+          if (latestMatches.length > 1) {
+            
+            // only if there's been a new match, show the match modal, and set the new exposed matches.
+            if (matchesLastChecked != latestMatches.toString()) { 
+              matchesLastChecked = latestMatches.toString();
+              $("#matchMessage").html("Someone wants to climb with you!");
+              $('#matchModal').modal('show');
+            };
+
           }
         },
         error: function(http, textstatus, error) {
