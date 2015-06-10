@@ -242,16 +242,18 @@
         url: "/matches/any",
         xhrFields: { withCredentials: true },
         success: function (latestMatches) {
-          if (latestMatches.length > 1) {
-            
+          console.log("latest Matches: " + latestMatches);
+          console.log("matches  last checked: " + matchesLastChecked);
+          if (latestMatches.length > 0) {
+            console.log("latestMatches; "  + latestMatches);
             // only if there's been a new match, show the match modal, and update the matchesLastChecked variable.
             if (matchesLastChecked != latestMatches.toString()) { 
               matchesLastChecked = latestMatches.toString();
               $("#matchMessage").html("Someone just said they want to climb with you!");
               $('#matchModal').modal('show');
-            };
+            } else { console.log("matches last check are equal to latest matches.") } ;
 
-          }
+          }  else { console.log("latest matches length is : " + latestMatches.length);}
         },
         error: function(http, textstatus, error) {
           console.log(http);

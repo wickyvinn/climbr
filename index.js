@@ -311,8 +311,14 @@ app.route("/matches/any")
           var matchesArray = matchesOrError.body;
           var matchIds = [];
           for (var i = 0; i < matchesArray.length; i++) { matchIds.push(matchesArray[i].userId); }
-          if (matchIds.length < 1) response.end();
-          else response.send(matchIds);
+          if (matchIds.length < 1) {
+            response.end();
+            console.log("MatchesIds: " + matchIds);
+          }
+          else {
+            console.log("MatchesIds: " + matchIds);
+            response.send(matchIds);
+          }
         }
       };
       db.getMatches(request.session.user._id, respond);
