@@ -131,16 +131,19 @@ app.route('/signup')
 app.route('/logout') 
   .get(function(request, response) {
 
-    // delete matches upon logout. 
-    function respond(userOrError) {
-      if (userOrError instanceof Error) errorHandler(response, userOrError);
-      else {
-        request.session.destroy();
-        response.send("logged off successfully");
-      };
-    };
+    if (request.session.user) {
 
-    db.removeMatches(request.session.user._id, respond);
+      // delete matches upon logout. 
+      function respond(userOrError) {
+        if (userOrError instanceof Error) errorHandler(response, userOrError);
+        else {
+          request.session.destroy();
+          response.render('login.html', { error: "You have successfully logged out."});
+        };
+      };
+
+      db.removeMatches(request.session.user._id, respond);
+    } else response.redirect('/');
     
   });
 

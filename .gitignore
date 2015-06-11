@@ -1,6 +1,6 @@
 climbr.bmml
 Procfile
 node_modules
-**/.DS_Store
 uploads
+.DS_Store
 .env
