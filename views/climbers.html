@@ -118,7 +118,7 @@
     // ever so often, check if there are any matches, and expose them.
     setInterval(function(){
       checkForMatches();
-    },10000);
+    },5000);
 
     function populateProfile(match) {
       $('#firstName').html(match.perminfo.firstName).attr('name', match.perminfo.userId);
@@ -242,18 +242,16 @@
         url: "/matches/any",
         xhrFields: { withCredentials: true },
         success: function (latestMatches) {
-          console.log("latest Matches: " + latestMatches);
-          console.log("matches  last checked: " + matchesLastChecked);
           if (latestMatches.length > 0) {
-            console.log("latestMatches; "  + latestMatches);
+
             // only if there's been a new match, show the match modal, and update the matchesLastChecked variable.
             if (matchesLastChecked != latestMatches.toString()) { 
               matchesLastChecked = latestMatches.toString();
+
               $("#matchMessage").html("Someone just said they want to climb with you!");
               $('#matchModal').modal('show');
-            } else { console.log("matches last check are equal to latest matches.") } ;
-
-          }  else { console.log("latest matches length is : " + latestMatches.length);}
+            } else { "no new matches." }
+          }
         },
         error: function(http, textstatus, error) {
           console.log(http);
