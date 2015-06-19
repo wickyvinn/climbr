@@ -26,7 +26,13 @@
     .close {
       font-size: 18vw;
     }
-
+    .modal-footer {
+      text-align: center;
+    }
+    .chatBtn {
+      margin-top: 4%;
+      margin-bottom: 4%;
+    }
     </style>
 {% endblock %}
 
@@ -80,8 +86,10 @@
           <div><h2 class="modal-title" id="myModalLabel">BELAY ON!</h2></div>
         </div>
         <div class="modal-body">
-          <div id="modal-message"><span id="matchMessage"></span><p>Chat with them here.</p></div>
+          <div id="modal-message"><span id="matchMessage"></span></div>
+          <div><a class="btn btn-primary submitBtn chatBtn" href="/chat">CHAT</a></div>
         </div>
+
       </div>
     </div>
   </div>
