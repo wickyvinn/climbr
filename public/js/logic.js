@@ -18,20 +18,31 @@ function formatInfo(perminfo) {
 // take in two arrays of objects, join in single array. 
 function joinClimbers(seshinfos, perminfos) {
 
-  var matches = [];
+  var climbers = [];
 
   for (var i=0; i < seshinfos.length; i++) {
     var seshinfo = seshinfos[i]
     var userId = seshinfo.userId;
     var perminfo = perminfos.filter(function(perminfo) { return perminfo.userId === userId } );
-    matches.push({ userId: userId, perminfo: perminfo[0], seshinfo: seshinfo })
+    climbers.push({ userId: userId, perminfo: perminfo[0], seshinfo: seshinfo })
   }
 
-  return matches
+  return climbers
 
+}
+
+// iterate through matches array, and return an array of userIds
+
+function getUserIds(matchArray) {
+  var userIds = [];
+  for (var i=0; i < matchArray.length; i++) {
+    userIds.push(matchArray[i].userId);
+  }
+  return userIds;
 }
 
 // export da shiz 
 
 exports.formatInfo   = formatInfo;
 exports.joinClimbers = joinClimbers;
+exports.getUserIds   = getUserIds;

@@ -96,6 +96,16 @@ function findPermInfo(body, respondFunction) {
 
 };
 
+function findPermInfoOfUsers(userIds, respondFunction) {
+  PermInfos.find( { userId: { $in: userIds } },
+    function(err, users) {
+      if (err) { var queryResult = new idx.Error(401, err); }
+      else if (users) { var queryResult = new idx.Success(users); }
+      else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: findPermInfos!!!"); }
+      respondFunction(queryResult);
+    }
+  );
+}
 
 // find sessioninfos, filter out the current user herself.
 function findPermInfos(userId, respondFunction) {
@@ -206,7 +216,8 @@ exports.Matches    = Matches;
 exports.findUser       = findUser;
 exports.createUser     = createUser;
 exports.findPermInfo   = findPermInfo;
-exports.findPermInfos  = findPermInfos; 
+exports.findPermInfos  = findPermInfos;
+exports.findPermInfoOfUsers = findPermInfoOfUsers;
 exports.updatePermInfo = updatePermInfo;
 exports.findSeshInfos  = findSeshInfos; 
 exports.updateSeshInfo = updateSeshInfo;

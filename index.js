@@ -273,6 +273,25 @@ app.route('/seshinfo')
 
   })
 
+app.route('/chats')
+  .get(function (request, response) {
+    if (request.session.user) {
+      var userId = request.session.user._id;
+
+      function respond(matchesOrError) {
+        if (matchesOrError instanceof Error) errorHandler(response, matchesOrError);
+        else {
+          var matchUserIds = logic.getUserIds(matchesOrError.body);
+          function respondTwo(perminfos) { response.render("chats.html", {perminfos: perminfos.body}); }
+          db.findPermInfoOfUsers(matchUserIds, respondTwo);
+        }
+      }
+
+      db.getMatches(userId, respond);
+      
+    } else response.render('login.html', { error: "Please sign in." });
+  });
+
 app.route('/climbers')
   .get(function(request, response) {
     if (request.session.user) {
@@ -396,25 +415,7 @@ app.route('/photo')
   });
 
 
-app.route('/chat')
-  .get(function (request, response) {
-    if (request.session.user) {
-      var userId = request.session.user._id;
 
-      // i say their chat will just be current matches.  
-      
-      function respond(matchesOrError) {
-        if (matchesOrError instanceof Error) errorHandler(response, matchesOrError);
-        else {
-          var matchesArray = matchesOrError.body;
-          response.send(matchesArray);
-        }
-      };
-
-      db.getMatches(request.session.user._id, respond);
-      
-    } else response.render('login.html', { error: "Please sign in." });
-  });
 
 function uploadPhotoToS3(data, userId, response) {
   var s3bucket = new AWS.S3({params: {Bucket: s3Bucket}});

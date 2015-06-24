@@ -69,7 +69,7 @@
         </div>
         <div class="modal-body">
           <div id="modal-message"><span id="matchMessage"></span></div>
-          <div><a href="/chat">Chat with them here.</a></div>
+          <div><a href="/chats">Chat with them here.</a></div>
         </div>
 
       </div>
@@ -108,7 +108,7 @@
     // ever so often, check if there are any matches, and expose them.
     setInterval(function(){
       checkForMatches();
-    },5000);
+    },8000);
 
     function populateProfile(match) {
       $('#firstName').html(match.perminfo.firstName).attr('name', match.perminfo.userId);
