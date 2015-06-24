@@ -2,38 +2,20 @@
 
 {% block head %}
   {% parent %}
+ 
   <link href='../css/profile.css' rel='stylesheet'>
   <script src="../js/hammer.min.js"></script>
   <style>
-    body {
-      background-color: #EDF8FB;
-    }
-    #profilePicture {
-      background-color: #D8DCDC;
-    }
-    #launcher {
-      display: hidden;
-    }
-    .modal-dialog {
-      background-color: #EDF8FB;
-      border-radius: 6px;
-      opacity: 0.93;
-    }
-    .modal-header, .modal-body {
-      text-align: center;
-      font-family: "Raleway";
-    }
-    .close {
-      font-size: 18vw;
-    }
-    .modal-footer {
-      text-align: center;
-    }
-    .chatBtn {
-      margin-top: 4%;
-      margin-bottom: 4%;
-    }
-    </style>
+    body { background-color: #EDF8FB; }
+    #profilePicture { background-color: #D8DCDC; }
+    #launcher { display: hidden; }
+    .modal-dialog { background-color: #EDF8FB; border-radius: 6px; opacity: 0.93; }
+    .modal-header, .modal-body { text-align: center; font-family: "Raleway"; }
+    .close { font-size: 18vw; }
+    .modal-footer { text-align: center; }
+    .chatBtn { margin-top: 4%; margin-bottom: 4%; }
+  </style>
+
 {% endblock %}
 
 {% block content %}
@@ -87,7 +69,7 @@
         </div>
         <div class="modal-body">
           <div id="modal-message"><span id="matchMessage"></span></div>
-          <div><a class="btn btn-primary submitBtn chatBtn" href="/chat">CHAT</a></div>
+          <div><a href="/chat">Chat with them here.</a></div>
         </div>
 
       </div>
