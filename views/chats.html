@@ -4,6 +4,7 @@
   {% parent %}
   <style>
     body { margin-top: 20%;}
+    #chatlist a {color: black; text-decoration:none;}
     #chatlist li { list-style-type: none; font-family: "Raleway"; font-style: bold; font-size: 3.8vw; padding: 2% 10% 2% 4%; }
     #chatlist li { margin-right: 5%; margin-left: 5%;}
     #chatlist li { border-bottom-style: solid; border-width: 1px; border-color: #D8DCDC; }
@@ -20,8 +21,9 @@
   {% parent %}
   {% for perminfo in perminfos %}
   <div id="chatlist">
-    {% if loop.first %} <li class='first'>
-    {% else %} <li>
+    
+    {% if loop.first %} <a href="/chatroom"><li class='first'>
+    {% else %} <a href="/chatroom"><li>
     {% endif %}
       <img src={{ perminfo.photoAddress }}>
       <span class='firstname'>{{ perminfo.firstName }}</span> - 
@@ -34,8 +36,12 @@
       </span>
 
       <span class="glyphicon glyphicon-chevron-right"></span>
-      </li>
+      </li></a>
     {% endfor %}
   </div>
+
+  <script>
+  $('li').click( function() { $(this).css("background-color", "#4DB8DB"); } );
+  </script>
 
 {% endblock %}
