@@ -2,7 +2,7 @@
 
 {% block head %}
   {% parent %}
-  <meta name="viewport" content="width=device-width, initial-scale=1; user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1 user-scalable=no">
   <script src="/socket.io/socket.io.js"></script>
 
   <style>
@@ -23,7 +23,7 @@
         -webkit-transform: rotate( 29deg ) skew( -35deg );
     width:  20px;
   }
-  .you { float: left; margin: 0px 45px 0px 20px; }
+  .you { float: left; margin: 5px 45px 5px 20px; }
   .you::before { left: -9px; }
   .me { float: right; margin: 5px 20px 5px 45px; background-color: #4DB8DB; color: white; display: block; }
   .me::before { right: -9px; background-color: #4DB8DB; }
@@ -97,7 +97,7 @@
 
   <div class="send-area">
     <input id="data" class="chat-input" placeholder="Start chatting..."/>
-    <button id="datasend" >Send</button>
+    <button id="datasend" type="submit">Send</button>
   </div>
 
 <script>
