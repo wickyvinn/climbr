@@ -1,0 +1,47 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+  {% parent %}
+  <style>
+    body { margin-top: 20%;}
+    #chatlist a {color: black; text-decoration:none;}
+    #chatlist li { list-style-type: none; font-family: "Raleway"; font-style: bold; font-size: 3.8vw; padding: 2% 10% 2% 4%; }
+    #chatlist li { margin-right: 5%; margin-left: 5%;}
+    #chatlist li { border-bottom-style: solid; border-width: 1px; border-color: #D8DCDC; }
+    #chatlist li.first { border-top-style: solid }
+    .details { font-style: italic; font-size: 3vw;}
+    .firstname { margin-left: 2%;}
+    .left-col { margin-left: 7%;}
+    .right-col { margin-right: 5%; border-bottom-style: solid; border-width: 1px; border-color: #D8DCDC;}
+    img { border-radius: 70%; max-width: 14%;}
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% parent %}
+  {% for perminfo in perminfos %}
+  <div id="chatlist">
+    
+    {% if loop.first %} <a href="/chatroom"><li class='first'>
+    {% else %} <a href="/chatroom"><li>
+    {% endif %}
+      <img src={{ perminfo.photoAddress }}>
+      <span class='firstname'>{{ perminfo.firstName }}</span> - 
+      <span class='details'>
+
+      {% if perminfo.leadCert %} lead certified
+      {% elseif perminfo.topCert %} top certified
+      {% else %} not yet belayed certified
+      {% endif %}
+      </span>
+
+      <span class="glyphicon glyphicon-chevron-right"></span>
+      </li></a>
+    {% endfor %}
+  </div>
+
+  <script>
+  $('li').click( function() { $(this).css("background-color", "#4DB8DB"); } );
+  </script>
+
+{% endblock %}

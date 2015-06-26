@@ -2,32 +2,20 @@
 
 {% block head %}
   {% parent %}
+ 
   <link href='../css/profile.css' rel='stylesheet'>
   <script src="../js/hammer.min.js"></script>
   <style>
-    body {
-      background-color: #EDF8FB;
-    }
-    #profilePicture {
-      background-color: #D8DCDC;
-    }
-    #launcher {
-      display: hidden;
-    }
-    .modal-dialog {
-      background-color: #EDF8FB;
-      border-radius: 6px;
-      opacity: 0.93;
-    }
-    .modal-header, .modal-body {
-      text-align: center;
-      font-family: "Raleway";
-    }
-    .close {
-      font-size: 18vw;
-    }
+    body { background-color: #EDF8FB; margin-top: 20%;}
+    #profilePicture { background-color: #D8DCDC; }
+    #launcher { display: hidden; }
+    .modal-dialog { background-color: #EDF8FB; border-radius: 6px; opacity: 0.93; }
+    .modal-header, .modal-body { text-align: center; font-family: "Raleway"; }
+    .close { font-size: 18vw; }
+    .modal-footer { text-align: center; }
+    .chatBtn { margin-top: 4%; margin-bottom: 4%; }
+  </style>
 
-    </style>
 {% endblock %}
 
 {% block content %}
@@ -80,8 +68,10 @@
           <div><h2 class="modal-title" id="myModalLabel">BELAY ON!</h2></div>
         </div>
         <div class="modal-body">
-          <div id="modal-message"><span id="matchMessage"></span><p>Chat with them here.</p></div>
+          <div id="modal-message"><span id="matchMessage"></span></div>
+          <div><a href="/chats">Chat with them here.</a></div>
         </div>
+
       </div>
     </div>
   </div>
@@ -118,7 +108,7 @@
     // ever so often, check if there are any matches, and expose them.
     setInterval(function(){
       checkForMatches();
-    },5000);
+    },8000);
 
     function populateProfile(match) {
       $('#firstName').html(match.perminfo.firstName).attr('name', match.perminfo.userId);
