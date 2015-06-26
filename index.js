@@ -4,7 +4,12 @@
 
 
 // require libraries
-var express    = require('express');
+var express = require('express');
+var app = express();
+var http = require('http');
+var server = http.createServer(app);
+var io = require('socket.io').listen(server);
+
 var bodyParser = require('body-parser');
 var url        = require('url');
 var mongoose   = require('mongoose');
@@ -14,7 +19,7 @@ var MongoStore = require('connect-mongo')(session);
 var swig       = require('swig');
 
 // set up app
-var app = express();
+
 app.set('port', (process.env.PORT || 5000));
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json({limit: '50mb'}));
@@ -454,7 +459,34 @@ function uploadPhotoToS3(data, userId, response) {
   });
 }
 
-app.listen(app.get('port'), function() {
+var usernames = {};
+
+var numUsers = 0;  
+
+io.on('connection', function (socket) { 
+  // when the client emits 'sendchat', this listens and executes
+  socket.on('sendchat', function (data) {
+    socket.emit('updatechat', socket.username, data, true); // show to person who typed
+    socket.broadcast.emit('updatechat', socket.username, data, false); // show to other
+  });
+
+  // when the client emits 'adduser', this listens and executes
+  socket.on('adduser', function(username){
+    socket.username = username;
+    usernames[username] = username;
+    numUsers += 1;
+    io.emit('updateusers', numUsers);
+  });
+
+  // when the user disconnects.. perform this
+  socket.on('disconnect', function(){
+    delete usernames[socket.username];
+    numUsers -= 1;
+    io.emit('updateusers', numUsers);
+  });
+});
+
+server.listen(app.get('port'), function() {
   console.log("climbr is running at localhost:" + app.get('port') + '.');
 });
 
