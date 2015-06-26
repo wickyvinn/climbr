@@ -292,6 +292,13 @@ app.route('/chats')
     } else response.render('login.html', { error: "Please sign in." });
   });
 
+app.route('/chatroom')
+  .get(function (request, response) {
+    if (request.session.user) {
+      response.render("chatroom.html");
+    } else response.render('login.html', { error: "Please sign in." });
+  });
+
 app.route('/climbers')
   .get(function(request, response) {
     if (request.session.user) {

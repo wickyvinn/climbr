@@ -3,10 +3,11 @@
 {% block head %}
   {% parent %}
   <style>
-    li { list-style-type: none; font-family: "Raleway"; font-style: bold; font-size: 3.8vw; padding: 2% 10% 2% 4%; }
-    li { margin-right: 5%; margin-left: 5%;}
-    li { border-bottom-style: solid; border-width: 1px; border-color: #D8DCDC; }
-    li.first { border-top-style: solid }
+    body { margin-top: 20%;}
+    #chatlist li { list-style-type: none; font-family: "Raleway"; font-style: bold; font-size: 3.8vw; padding: 2% 10% 2% 4%; }
+    #chatlist li { margin-right: 5%; margin-left: 5%;}
+    #chatlist li { border-bottom-style: solid; border-width: 1px; border-color: #D8DCDC; }
+    #chatlist li.first { border-top-style: solid }
     .details { font-style: italic; font-size: 3vw;}
     .firstname { margin-left: 2%;}
     .left-col { margin-left: 7%;}
@@ -18,6 +19,7 @@
 {% block content %}
   {% parent %}
   {% for perminfo in perminfos %}
+  <div id="chatlist">
     {% if loop.first %} <li class='first'>
     {% else %} <li>
     {% endif %}
@@ -32,7 +34,8 @@
       </span>
 
       <span class="glyphicon glyphicon-chevron-right"></span>
-    </li>
-  {% endfor %}
+      </li>
+    {% endfor %}
+  </div>
 
 {% endblock %}
