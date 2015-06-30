@@ -55,6 +55,16 @@ var PermInfos = mongoose.model('perminfos', PermInfo);
 var SeshInfos = mongoose.model('seshinfos', SeshInfo);
 var Matches   = mongoose.model('matches', Match);
 
+
+function getUserIds(matchArray) {
+  var userIds = [];
+  for (var i=0; i < matchArray.length; i++) {
+    userIds.push(matchArray[i].userId);
+  }
+  return userIds;
+}
+
+
 // queries
 
 function findUser(username, respondFunction) {
@@ -161,15 +171,30 @@ function updateSeshInfo(userId, body, respondFunction) {
 
 }
 
+// all people who swiped right on the user. returns Array[userId]
+function likesUser(userId, respondFunction) {
 
-function getMatches(userId, respondFunction) {
+  Matches.find({ matches: userId }, { userId: true, _id: false}, function (err, matches) {
 
-  Matches.find( { matches: userId }, { userId: 1}, function(err, matchesArray) {
       if (err) { var queryResult = new idx.Error(401, err); }
-      else if (matchesArray) { var queryResult = new idx.Success(matchesArray); }
+      else if (matches) { var queryResult = new idx.Success(getUserIds(matches)); }
       else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: getMatches!!!"); }
       respondFunction(queryResult);
+
     });
+};
+
+// all the people the user swiped right on. gonna be an object that looks like Array[String], where String = userId
+function userLikes(userId, respondFunction) {
+  var matchIds = [];
+  Matches.findOne({ userId:userId }, { matches: true, _id: false }, function (err, matchesObject) {
+
+    if (err) { var queryResult = new idx.Error(401, err); }
+    else if (matchesObject) { var queryResult = new idx.Success(matchesObject.matches); }
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: userLikes!!!");  }
+    respondFunction(queryResult);
+
+  });
 };
 
 function checkMatch(userId, matchId, respondFunction) {
@@ -221,7 +246,8 @@ exports.findPermInfoOfUsers = findPermInfoOfUsers;
 exports.updatePermInfo = updatePermInfo;
 exports.findSeshInfos  = findSeshInfos; 
 exports.updateSeshInfo = updateSeshInfo;
-exports.getMatches     = getMatches;
+exports.likesUser      = likesUser;
+exports.userLikes      = userLikes;
 exports.addMatch       = addMatch;
 exports.checkMatch     = checkMatch;
 exports.removeMatches  = removeMatches;

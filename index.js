@@ -282,17 +282,29 @@ app.route('/chats')
   .get(function (request, response) {
     if (request.session.user) {
       var userId = request.session.user._id;
+      var userLikes;
+      var likesUser; 
 
-      function respond(matchesOrError) {
-        if (matchesOrError instanceof Error) errorHandler(response, matchesOrError);
-        else {
-          var matchUserIds = logic.getUserIds(matchesOrError.body);
-          function respondTwo(perminfos) { response.render("chats.html", {perminfos: perminfos.body}); }
-          db.findPermInfoOfUsers(matchUserIds, respondTwo);
-        }
-      }
+      function respondUserLikes(userLikesIds) { // 2. respond to first query
+        db.findPermInfoOfUsers(userLikesIds.body, respondPermInfo1); // 3. second query.
+      };
 
-      db.getMatches(userId, respond);
+      function respondPermInfo1(perminfos) {  // 4. respond to second query.
+        userLikes = perminfos.body;
+        db.likesUser(userId, respondLikesUser); // 5. third query.
+      };
+
+      function respondLikesUser(likesUserIds) { // 6. fourth query.
+        db.findPermInfoOfUsers(likesUserIds.body, respondPermInfo2);
+      };
+      
+      function respondPermInfo2(perminfos) {  // 7. respond to fourth query and send response..
+        likesUser = perminfos.body;
+        var chatRooms = likesUser.concat(userLikes); 
+        response.render("chats.html", {perminfos: chatRooms})
+      };
+      
+      db.userLikes(userId, respondUserLikes); // 1. first query.
       
     } else response.render('login.html', { error: "Please sign in." });
   });
@@ -339,14 +351,12 @@ app.route("/matches/any")
       function respond(matchesOrError) {
         if (matchesOrError instanceof Error) errorHandler(response, matchesOrError);
         else {
-          var matchesArray = matchesOrError.body;
-          var matchIds = [];
-          for (var i = 0; i < matchesArray.length; i++) { matchIds.push(matchesArray[i].userId); }
+          var matchIds = matchesOrError.body;
           if (matchIds.length < 1) response.end();
           else response.send(matchIds);
         }
       };
-      db.getMatches(request.session.user._id, respond);
+      db.likesUser(request.session.user._id, respond);
     }
   })
 app.route('/matches')  
