@@ -300,21 +300,48 @@ app.route('/chats')
       
       function respondPermInfo2(perminfos) {  // 7. respond to fourth query and send response..
         likesUser = perminfos.body;
-        var chatRooms = likesUser.concat(userLikes); 
+        var chatRooms = likesUser.concat(userLikes);
         response.render("chats.html", {perminfos: chatRooms})
       };
       
       db.userLikes(userId, respondUserLikes); // 1. first query.
       
     } else response.render('login.html', { error: "Please sign in." });
+  })
+
+app.route('/chatroom/:matchId')
+  
+  .get(function(request, response) {
+    
+    if (request.session.user) {
+      var userId = request.session.user._id;
+      var matchId = request.params.matchId;
+
+      function respondToCreate(namespaceOrError) {
+        if (namespaceOrError instanceof Error) errorHandler(response, namespaceOrError);
+        else {
+          var namespace = namespaceOrError.body;
+          response.render("chatroom.html");
+        }
+      };
+
+      function respondToFind(namespaceOrError) {
+        if (namespaceOrError instanceof Error) errorHandler(response, namespaceOrError);
+        else {
+          if (namespaceOrError.body == null) db.createNamespace(userId, matchId, respondToCreate);
+          else response.render("chatroom.html");
+        }
+      };
+
+      db.findNamespace(userId, matchId, respondToFind)
+
+
+    } else response.render('login.html', { error: "Please sign in." });
+    
+
   });
 
-app.route('/chatroom')
-  .get(function (request, response) {
-    if (request.session.user) {
-      response.render("chatroom.html");
-    } else response.render('login.html', { error: "Please sign in." });
-  });
+
 
 app.route('/climbers')
   .get(function(request, response) {

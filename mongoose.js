@@ -50,10 +50,15 @@ var Match = new Schema({
   matches:    [String] // array of userids that were swiped right
 });
 
+var Namespace = new Schema({
+  users: [String] // array of users who can view this namespace
+});
+
 var Users     = mongoose.model('users', User);
 var PermInfos = mongoose.model('perminfos', PermInfo);
 var SeshInfos = mongoose.model('seshinfos', SeshInfo);
 var Matches   = mongoose.model('matches', Match);
+var Namespaces  = mongoose.model('namespaces', Namespace);
 
 
 function getUserIds(matchArray) {
@@ -224,12 +229,36 @@ function removeMatches(userId, respondFunction) {
   Matches.remove( {userId: userId}, function (err, matches) {
     if (matches) { var queryResult = new idx.Success(matches); }
     else if (err) { var queryResult = new idx.Error(401, err); }
-    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: addMatch!!!")}
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: removeMatches!!!")}
     respondFunction(queryResult); 
   });
 
 };
 
+function findNamespace(userId, matchId, respondFunction) {
+  
+  Namespaces.findOne({ $and: [{users:userId}, {users:matchId}]}, function (err, namespace) {
+    
+    if (err) { var queryResult = new idx.Error(401, err); }
+    else if (namespace) { var queryResult = new idx.Success(namespace); }
+    else if (namespace === null) { var queryResult = new idx.Success(null); }
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: findnamespace!!!"); }
+    respondFunction(queryResult)
+
+  });
+};
+
+function createNamespace(userId, matchId, respondFunction) {
+
+  Namespaces.create({users: [userId, matchId]}, function(err, namespace) {
+  
+    if (namespace) { var queryResult = new idx.Success(namespace); }
+    else if (err) { var queryResult = new idx.Error(401, err); }
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: createUser!!!"); }
+    respondFunction(queryResult);
+
+  });
+};
 
 // export dat shiz
 
@@ -237,6 +266,7 @@ exports.Users      = Users;
 exports.PermInfos  = PermInfos;
 exports.SeshInfos  = SeshInfos;
 exports.Matches    = Matches;
+exports.Namespaces = Namespaces;
 
 exports.findUser       = findUser;
 exports.createUser     = createUser;
@@ -251,4 +281,7 @@ exports.userLikes      = userLikes;
 exports.addMatch       = addMatch;
 exports.checkMatch     = checkMatch;
 exports.removeMatches  = removeMatches;
+exports.findNamespace  = findNamespace;
+exports.createNamespace = createNamespace;
+
 

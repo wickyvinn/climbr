@@ -22,7 +22,7 @@
   {% for perminfo in perminfos %}
   <div id="chatlist">
     
-    {% if loop.first %} <a href="/chatroom"><li class='first'>
+    {% if loop.first %} <a href="/chatroom/{{perminfo.userId}}"><li class='first'>
     {% else %} <a href="/chatroom"><li>
     {% endif %}
       <img src={{ perminfo.photoAddress }}>
