@@ -313,15 +313,15 @@ app.route('/chats')
 
 // socketio 
 
-// function socketio(namespaceId) {
+// function socketio(roomId) {
 //   var usernames = {};
 //   var numUsers = 0;  
 
 //   io.on('connection', function (socket) { 
 //     // when the client emits 'sendchat', this listens and executes
 //     socket.on('sendchat', function (data) {
-//       socket.to(namespaceId).emit('updatechat', socket.username, data, true); // show to person who typed
-//       socket.broadcast.to(namespaceId).emit('updatechat', socket.username, data, false); // show to other
+//       socket.to(roomId).emit('updatechat', socket.username, data, true); // show to person who typed
+//       socket.broadcast.to(roomId).emit('updatechat', socket.username, data, false); // show to other
 //     });
 
 //     // when the client emits 'adduser', this listens and executes
@@ -329,35 +329,32 @@ app.route('/chats')
 //       socket.username = username;
 //       usernames[username] = username;
 //       numUsers += 1;
-//       io.to(namespaceId).emit('updateusers', numUsers);
+//       io.to(roomId).emit('updateusers', numUsers);
 //     });
 
 //     // when the user disconnects.. perform this
 //     socket.on('disconnect', function(){
 //       delete usernames[socket.username];
 //       numUsers -= 1;
-//       io.to(namespaceId).emit('updateusers', numUsers);
+//       io.to(roomId).emit('updateusers', numUsers);
 //     });
 //   });
 // }
 
 
 io.sockets.on('connection', function(socket){
-  socket.on('subscribe', function(namespaceId) { 
-    console.log('joining namespaceId', namespaceId);
-    socket.join(namespaceId); 
+  socket.on('subscribe', function(roomId) { 
+    socket.join(roomId); 
   })
 
-  socket.on('unsubscribe', function(namespaceId) {  
-    console.log('leaving namespaceId', namespaceId);
-    socket.leave(namespaceId); 
+  socket.on('unsubscribe', function(roomId) {  
+    socket.leave(roomId); 
   })
 
   socket.on('sendchat', function(data) {
     console.log('server received sendchat emission, now emitting back updatechat to client');
     socket.emit('updatechat', socket.username, data.message, true);
-    // socket.to(data.namespaceId).emit('updatechat', socket.username, data.message, true); // show to person who typed
-    socket.broadcast.to(data.namespaceId).emit('updatechat', socket.username, data.message, false);
+    socket.broadcast.to(data.roomId).emit('updatechat', socket.username, data.message, false);
   });
 
 });
@@ -370,28 +367,28 @@ app.route('/chatroom/:matchId')
       var userId = request.session.user._id;
       var matchId = request.params.matchId;
 
-      function respondToCreate(namespaceOrError) {
-        if (namespaceOrError instanceof Error) errorHandler(response, namespaceOrError);
+      function respondToCreate(roomOrError) {
+        if (roomOrError instanceof Error) errorHandler(response, roomOrError);
         else {
-          var namespaceId = namespaceOrError.body._id;
-          console.log(namespaceId);
-          response.render("chatroom.html", {namespaceId: namespaceId});
+          var roomId = roomOrError.body._id;
+          console.log(roomId);
+          response.render("chatroom.html", {roomId: roomId});
         }
       };
 
-      function respondToFind(namespaceOrError) {
-        if (namespaceOrError instanceof Error) errorHandler(response, namespaceOrError);
+      function respondToFind(roomOrError) {
+        if (roomOrError instanceof Error) errorHandler(response, roomOrError);
         else {
-          if (namespaceOrError.body == null) db.createNamespace(userId, matchId, respondToCreate);
+          if (roomOrError.body == null) db.createRoom(userId, matchId, respondToCreate);
           else {
-            var namespaceId = namespaceOrError.body._id;
-            console.log(namespaceId);
-            response.render("chatroom.html", { namespaceId: namespaceId });
+            var roomId = roomOrError.body._id;
+            console.log(roomId);
+            response.render("chatroom.html", { roomId: roomId });
           }
         }
       };
 
-      db.findNamespace(userId, matchId, respondToFind)
+      db.findRoom(userId, matchId, respondToFind)
 
 
     } else response.render('login.html', { error: "Please sign in." });
@@ -444,6 +441,7 @@ app.route("/matches/any")
       db.likesUser(request.session.user._id, respond);
     }
   })
+
 app.route('/matches')  
   .get(function(request, response) {
     if (request.session.user) {
@@ -521,9 +519,6 @@ app.route('/photo')
     } else response.render('login.html', { error: "Please sign in." });
   });
 
-
-
-
 function uploadPhotoToS3(data, userId, response) {
   var s3bucket = new AWS.S3({params: {Bucket: s3Bucket}});
 
@@ -553,9 +548,6 @@ function uploadPhotoToS3(data, userId, response) {
 
   });
 }
-
-
-
 
 server.listen(app.get('port'), function() {
   console.log("climbr is running at localhost:" + app.get('port') + '.');

@@ -39,14 +39,14 @@
 
 <script>
 
-var namespaceId = {{namespaceId|json_encode|raw}};
+var roomId = {{roomId|json_encode|raw}};
 
 var socket = io.connect();
 socket.on('message', function (data) {
   console.log(data);
 });
 
- socket.emit('subscribe', namespaceId);
+ socket.emit('subscribe', roomId);
 
   var totalHeight = 0;
 
@@ -86,7 +86,7 @@ socket.on('message', function (data) {
       var message = $('#data').val();
       if (message != "") { $('#data').val('');
         console.log('emit to server: sendchat');
-        socket.emit('sendchat', { namespaceId: namespaceId, message: message });
+        socket.emit('sendchat', { roomId: roomId, message: message });
       }
     });
 
