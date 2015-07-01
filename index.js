@@ -279,34 +279,62 @@ app.route('/seshinfo')
 
   })
 
-app.route('/chats')
+app.route('/chats') // this is a clusterfuck
   .get(function (request, response) {
     if (request.session.user) {
       var userId = request.session.user._id;
-      var userLikes;
-      var likesUser; 
+      var userLikes = [];
+      var likesUser = []; 
 
-      function respondUserLikes(userLikesIds) { // 2. respond to first query
-        db.findPermInfoOfUsers(userLikesIds.body, respondPermInfo1); // 3. second query.
+      function respondUserLikes(userLikes) {  // 2. respond to first query.
+        userLikes = userLikes.body;
+
+        function respondLikesUser(likesUser) {  // 4. respond to second query.
+          likesUser = likesUser.body;
+          var reciprocated = [];
+          var newLikesUser = [];
+          var newUserLikes = [];
+          var displayReciprocated; 
+          var displayLikesUser;
+          var displayUserLikes; 
+
+          function categorize(callback) { // 5. categorize each person.
+            for (var i=0; i < userLikes.length; i++) {
+              var itemIndex = likesUser.indexOf(userLikes[i]);
+              if ( itemIndex != -1) {
+                reciprocated.push(userLikes[i]);
+                likesUser.splice(itemIndex, 1);
+              } else newUserLikes.push(userLikes[i]);
+            };
+            var newLikesUser = likesUser;
+            if (callback) callback();
+          };
+
+          // return this when it's done categorizing.
+
+          function respondPermInfo1(perminfos) {  // 4. respond to second query.
+            displayLikesUser = perminfos.body;
+            db.findPermInfoOfUsers(newUserLikes, respondPermInfo2);
+          };
+
+          function respondPermInfo2(perminfos) {  // 4. respond to second query.
+            displayUserLikes = perminfos.body;
+            db.findPermInfoOfUsers(reciprocated, respondPermInfo3);
+          };
+
+          function respondPermInfo3(perminfos) {  // 4. respond to second query.
+            displayReciprocated = perminfos.body;
+            response.render("chats.html", {likesUser: displayLikesUser, userLikes: displayUserLikes, reciprocated: displayReciprocated});
+          };
+
+          categorize(db.findPermInfoOfUsers(newLikesUser, respondPermInfo1));
+
       };
 
-      function respondPermInfo1(perminfos) {  // 4. respond to second query.
-        userLikes = perminfos.body;
-        db.likesUser(userId, respondLikesUser); // 5. third query.
-      };
+        db.likesUser(userId, respondLikesUser); // 3. second query.
+      }
 
-      function respondLikesUser(likesUserIds) { // 6. fourth query.
-        db.findPermInfoOfUsers(likesUserIds.body, respondPermInfo2);
-      };
-      
-      function respondPermInfo2(perminfos) {  // 7. respond to fourth query and send response..
-        likesUser = perminfos.body;
-        var chatRooms = likesUser.concat(userLikes);
-        response.render("chats.html", {perminfos: chatRooms})
-      };
-      
       db.userLikes(userId, respondUserLikes); // 1. first query.
-      
     } else response.render('login.html', { error: "Please sign in." });
   })
 

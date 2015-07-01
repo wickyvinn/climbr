@@ -19,19 +19,19 @@
 
 {% block content %}
   {% parent %}
-  {% if perminfos.length > 0 %}
-    {% for perminfo in perminfos %}
+  {% if likesUser.length > 0 %}
+  People who like you.
+    {% for user in likesUser %}
     <div id="chatlist">
-      
-        {% if loop.first %} <a href="/chatroom/{{perminfo.userId}}"><li class='first'>
-        {% else %} <a href="/chatroom/{{perminfo.userId}}"><li>
+        {% if loop.first %} <a href="/chatroom/{{user.userId}}"><li class='first'>
+        {% else %} <a href="/chatroom/{{user.userId}}"><li>
         {% endif %}
-          <img src={{ perminfo.photoAddress }}>
-          <span class='firstname'>{{ perminfo.firstName }}</span> - 
+          <img src={{ user.photoAddress }}>
+          <span class='firstname'>{{ user.firstName }}</span> - 
           <span class='details'>
 
-          {% if perminfo.leadCert %} lead certified
-          {% elseif perminfo.topCert %} top certified
+          {% if user.leadCert %} lead certified
+          {% elseif user.topCert %} top certified
           {% else %} not yet belayed certified
           {% endif %}
           </span>
@@ -40,6 +40,55 @@
           </li></a>
     {% endfor %}
   {% endif %}
+
+
+
+  {% if userLikes.length > 0 %}
+  You like these people
+    {% for user in userLikes %}
+    <div id="chatlist">
+        {% if loop.first %} <a href="/chatroom/{{user.userId}}"><li class='first'>
+        {% else %} <a href="/chatroom/{{user.userId}}"><li>
+        {% endif %}
+          <img src={{ user.photoAddress }}>
+          <span class='firstname'>{{ user.firstName }}</span> - 
+          <span class='details'>
+
+          {% if user.leadCert %} lead certified
+          {% elseif user.topCert %} top certified
+          {% else %} not yet belayed certified
+          {% endif %}
+          </span>
+
+          <span class="glyphicon glyphicon-chevron-right"></span>
+          </li></a>
+    {% endfor %}
+  {% endif %}
+
+
+  {% if reciprocated.length > 0 %}
+  You guys like each other.
+    {% for user in reciprocated %}
+    <div id="chatlist">
+        {% if loop.first %} <a href="/chatroom/{{user.userId}}"><li class='first'>
+        {% else %} <a href="/chatroom/{{user.userId}}"><li>
+        {% endif %}
+          <img src={{ user.photoAddress }}>
+          <span class='firstname'>{{ user.firstName }}</span> - 
+          <span class='details'>
+
+          {% if user.leadCert %} lead certified
+          {% elseif user.topCert %} top certified
+          {% else %} not yet belayed certified
+          {% endif %}
+          </span>
+
+          <span class="glyphicon glyphicon-chevron-right"></span>
+          </li></a>
+    {% endfor %}
+  {% endif %}
+
+
 
   </div>
 

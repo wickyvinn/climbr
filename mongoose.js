@@ -176,7 +176,7 @@ function updateSeshInfo(userId, body, respondFunction) {
 
 }
 
-// all people who swiped right on the user. returns Array[userId]
+// all people who swiped right on the user but the user hasn't swiped right on them... returns Array[userId]
 function likesUser(userId, respondFunction) {
 
   Matches.find({ matches: userId }, { userId: true, _id: false}, function (err, matches) {
@@ -195,7 +195,8 @@ function userLikes(userId, respondFunction) {
   Matches.findOne({ userId:userId }, { matches: true, _id: false }, function (err, matchesObject) {
 
     if (err) { var queryResult = new idx.Error(401, err); }
-    else if (matchesObject) { var queryResult = new idx.Success(matchesObject.matches); }
+    else if (matchesObject != null) { var queryResult = new idx.Success(matchesObject.matches); }
+    else if (matchesObject === null) { var queryResult = new idx.Success([])}
     else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: userLikes!!!");  }
     respondFunction(queryResult);
 
