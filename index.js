@@ -80,6 +80,7 @@ function errorHandler(response, queryResult) {
 }
 
 
+
 //////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// ROUTES ////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -309,6 +310,58 @@ app.route('/chats')
     } else response.render('login.html', { error: "Please sign in." });
   })
 
+
+// socketio 
+
+// function socketio(namespaceId) {
+//   var usernames = {};
+//   var numUsers = 0;  
+
+//   io.on('connection', function (socket) { 
+//     // when the client emits 'sendchat', this listens and executes
+//     socket.on('sendchat', function (data) {
+//       socket.to(namespaceId).emit('updatechat', socket.username, data, true); // show to person who typed
+//       socket.broadcast.to(namespaceId).emit('updatechat', socket.username, data, false); // show to other
+//     });
+
+//     // when the client emits 'adduser', this listens and executes
+//     socket.on('adduser', function(username){
+//       socket.username = username;
+//       usernames[username] = username;
+//       numUsers += 1;
+//       io.to(namespaceId).emit('updateusers', numUsers);
+//     });
+
+//     // when the user disconnects.. perform this
+//     socket.on('disconnect', function(){
+//       delete usernames[socket.username];
+//       numUsers -= 1;
+//       io.to(namespaceId).emit('updateusers', numUsers);
+//     });
+//   });
+// }
+
+
+io.sockets.on('connection', function(socket){
+  socket.on('subscribe', function(namespaceId) { 
+    console.log('joining namespaceId', namespaceId);
+    socket.join(namespaceId); 
+  })
+
+  socket.on('unsubscribe', function(namespaceId) {  
+    console.log('leaving namespaceId', namespaceId);
+    socket.leave(namespaceId); 
+  })
+
+  socket.on('sendchat', function(data) {
+    console.log('server received sendchat emission, now emitting back updatechat to client');
+    socket.emit('updatechat', socket.username, data.message, true);
+    // socket.to(data.namespaceId).emit('updatechat', socket.username, data.message, true); // show to person who typed
+    socket.broadcast.to(data.namespaceId).emit('updatechat', socket.username, data.message, false);
+  });
+
+});
+
 app.route('/chatroom/:matchId')
   
   .get(function(request, response) {
@@ -320,8 +373,9 @@ app.route('/chatroom/:matchId')
       function respondToCreate(namespaceOrError) {
         if (namespaceOrError instanceof Error) errorHandler(response, namespaceOrError);
         else {
-          var namespace = namespaceOrError.body;
-          response.render("chatroom.html");
+          var namespaceId = namespaceOrError.body._id;
+          console.log(namespaceId);
+          response.render("chatroom.html", {namespaceId: namespaceId});
         }
       };
 
@@ -329,7 +383,11 @@ app.route('/chatroom/:matchId')
         if (namespaceOrError instanceof Error) errorHandler(response, namespaceOrError);
         else {
           if (namespaceOrError.body == null) db.createNamespace(userId, matchId, respondToCreate);
-          else response.render("chatroom.html");
+          else {
+            var namespaceId = namespaceOrError.body._id;
+            console.log(namespaceId);
+            response.render("chatroom.html", { namespaceId: namespaceId });
+          }
         }
       };
 
@@ -496,32 +554,8 @@ function uploadPhotoToS3(data, userId, response) {
   });
 }
 
-var usernames = {};
 
-var numUsers = 0;  
 
-io.on('connection', function (socket) { 
-  // when the client emits 'sendchat', this listens and executes
-  socket.on('sendchat', function (data) {
-    socket.emit('updatechat', socket.username, data, true); // show to person who typed
-    socket.broadcast.emit('updatechat', socket.username, data, false); // show to other
-  });
-
-  // when the client emits 'adduser', this listens and executes
-  socket.on('adduser', function(username){
-    socket.username = username;
-    usernames[username] = username;
-    numUsers += 1;
-    io.emit('updateusers', numUsers);
-  });
-
-  // when the user disconnects.. perform this
-  socket.on('disconnect', function(){
-    delete usernames[socket.username];
-    numUsers -= 1;
-    io.emit('updateusers', numUsers);
-  });
-});
 
 server.listen(app.get('port'), function() {
   console.log("climbr is running at localhost:" + app.get('port') + '.');

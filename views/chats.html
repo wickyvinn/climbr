@@ -19,25 +19,28 @@
 
 {% block content %}
   {% parent %}
-  {% for perminfo in perminfos %}
-  <div id="chatlist">
-    
-    {% if loop.first %} <a href="/chatroom/{{perminfo.userId}}"><li class='first'>
-    {% else %} <a href="/chatroom"><li>
-    {% endif %}
-      <img src={{ perminfo.photoAddress }}>
-      <span class='firstname'>{{ perminfo.firstName }}</span> - 
-      <span class='details'>
+  {% if perminfos.length > 0 %}
+    {% for perminfo in perminfos %}
+    <div id="chatlist">
+      
+        {% if loop.first %} <a href="/chatroom/{{perminfo.userId}}"><li class='first'>
+        {% else %} <a href="/chatroom/{{perminfo.userId}}"><li>
+        {% endif %}
+          <img src={{ perminfo.photoAddress }}>
+          <span class='firstname'>{{ perminfo.firstName }}</span> - 
+          <span class='details'>
 
-      {% if perminfo.leadCert %} lead certified
-      {% elseif perminfo.topCert %} top certified
-      {% else %} not yet belayed certified
-      {% endif %}
-      </span>
+          {% if perminfo.leadCert %} lead certified
+          {% elseif perminfo.topCert %} top certified
+          {% else %} not yet belayed certified
+          {% endif %}
+          </span>
 
-      <span class="glyphicon glyphicon-chevron-right"></span>
-      </li></a>
+          <span class="glyphicon glyphicon-chevron-right"></span>
+          </li></a>
     {% endfor %}
+  {% endif %}
+
   </div>
 
   <script>
