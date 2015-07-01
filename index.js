@@ -310,38 +310,6 @@ app.route('/chats')
     } else response.render('login.html', { error: "Please sign in." });
   })
 
-
-// socketio 
-
-// function socketio(roomId) {
-//   var usernames = {};
-//   var numUsers = 0;  
-
-//   io.on('connection', function (socket) { 
-//     // when the client emits 'sendchat', this listens and executes
-//     socket.on('sendchat', function (data) {
-//       socket.to(roomId).emit('updatechat', socket.username, data, true); // show to person who typed
-//       socket.broadcast.to(roomId).emit('updatechat', socket.username, data, false); // show to other
-//     });
-
-//     // when the client emits 'adduser', this listens and executes
-//     socket.on('adduser', function(username){
-//       socket.username = username;
-//       usernames[username] = username;
-//       numUsers += 1;
-//       io.to(roomId).emit('updateusers', numUsers);
-//     });
-
-//     // when the user disconnects.. perform this
-//     socket.on('disconnect', function(){
-//       delete usernames[socket.username];
-//       numUsers -= 1;
-//       io.to(roomId).emit('updateusers', numUsers);
-//     });
-//   });
-// }
-
-
 io.sockets.on('connection', function(socket){
   socket.on('subscribe', function(roomId) { 
     socket.join(roomId); 

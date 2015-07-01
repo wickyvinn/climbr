@@ -7,7 +7,7 @@
 
   <style>
   body { margin-top: 17%;}
-  #current-users { font-family: "Raleway"; font-size: 4vw; text-align: center; font-style: italic; padding: 4%; }
+  #header { font-family: "Raleway"; font-size: 4vw; text-align: center; font-style: italic; padding: 4%; }
   button { padding: 2.5%; background: #D8DCDC; border: solid; border-color: #D8DCDC; border-width: 1px; border-radius: 5px;
   color: #4DB8DB; }
   #messages { width: 96%; margin-left:3%; margin-right:3%; }
@@ -50,19 +50,6 @@ socket.on('message', function (data) {
 
   var totalHeight = 0;
 
-  // socket.on('connect', function(){
-  //   socket.emit('adduser');
-  // });
-
-
-  // socket.on('updateusers', function(numUsers) {
-  //   if (numUsers < 2) {
-  //     $('#current-users').html("Welcome. You're the only one here though, just hang on.");  
-  //   } else {
-  //     $('#current-users').html('Go ahead, start chatting.');  
-  //   }
-  // });
-
   // listener, whenever the server emits 'updatechat', this updates the chat body
   socket.on('updatechat', function (username, data, me) {
     $('#last').attr("id","notlast");
@@ -101,9 +88,7 @@ socket.on('message', function (data) {
 
 </script>
 
-  <div id="current-users"></div>
   <div id="messages"></div>
-
   <div class="send-area">
     <input id="data" class="chat-input" placeholder="Start chatting..."/>
     <button id="datasend" type="submit">Send</button>
