@@ -397,7 +397,7 @@ app.route('/chatroom/:matchId')
             var atGym = atGymOrError.body.atGym; 
             var date = new Date(atGymOrError.body.lastUpdated);
             var time = logic.getFormattedTime(date);
-            var month = date.getMonth();
+            var month = date.getMonth() + 1;
             var day = date.getDate();
             var updated = month + "/" + day + " at " + time;
           }

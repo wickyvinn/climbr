@@ -28,12 +28,23 @@
   .me { float: right; margin: 5px 20px 5px 45px; background-color: #4DB8DB; color: white; display: block; }
   .me::before { right: -9px; background-color: #4DB8DB; }
 
-  .matchInfo { text-align: center; padding: 5%; }
+  .matchInfo { 
+    text-align: center;
+    padding: 5%;
+    /*position: fixed;*/
+    height: 133px;
+    /*z-index: 1030;*/
+    width: 100%;
+    background-color: white;
+  }
+
   img { border-radius: 70%; max-width: 20%;}
   .info { padding: 1.5%; font-family: "Raleway"; }
   .firstName { font-size: 4vw; font-style: italic;}
   .atGym { font-size: 3vw; color: #4DB8DB; }
   #lastupdated { font-size: 2vw; color: #4DB8DB; font-style: italic;}
+
+    
   </style>
 
 
@@ -94,7 +105,6 @@ socket.on('message', function (data) {
 
 </script>
   
-  <div id="messages"></div>
   <div class="matchInfo">
     <img src={{ perminfo.photoAddress}}>
     <div class="info">
@@ -103,10 +113,10 @@ socket.on('message', function (data) {
         <span class="glyphicon glyphicon-record"></span>
         <span id="atGymMsg"></span>
         <div id="lastupdated"></div>
-      </div>
-    
+      </div>    
     </div>
   </div>
+  <div id="messages"></div>
   <div class="send-area">
 
     <input id="data" class="chat-input" placeholder="Start chatting..."/>
@@ -114,6 +124,37 @@ socket.on('message', function (data) {
   </div>
 
 <script>
+
+  document.addEventListener('touchmove', function(e) {
+    e.preventDefault();
+    var touch = e.touches[0];
+    $('.matchInfo').slideDown("slow");
+    $('.matchInfo').css("position", "relative");
+  }, false);
+
+  function showMatchInfo () {
+    $('.matchInfo').slideDown("slow");
+    $('.matchInfo').css("position", "fixed");
+    $('.matchInfo').css("z-index", "1030");
+    }
+
+  function hideMatchInfo () {
+    $('.matchInfo').slideUp(800, function() {
+      $('.matchInfo').css("position", "relative");
+      $('.matchInfo').css("z-index", "");
+    });
+    
+  };
+
+  var lastScrollTop = 0;
+  $(window).scroll(function(event){
+    var st = $(this).scrollTop();
+    // scroll down
+    if (st > lastScrollTop) { showMatchInfo() } 
+    // scroll up
+    else { hideMatchInfo() }
+    lastScrollTop = st;
+  });
 
   var atGym = {{ atGym }};
   $(function() { 
@@ -135,6 +176,7 @@ socket.on('message', function (data) {
       $('body').toggleClass("down", (fromTop > 200));
     });
   });
+
 </script>
 
 
