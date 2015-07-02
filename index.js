@@ -367,7 +367,6 @@ app.route('/chatroom/:matchId')
         if (roomOrError instanceof Error) errorHandler(response, roomOrError);
         else {
           var roomId = roomOrError.body._id;
-          console.log(roomId);
           response.render("chatroom.html", {roomId: roomId});
         }
       };
