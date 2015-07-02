@@ -161,7 +161,7 @@ app.route('/perminfo')
         if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
         else {
           if (perminfoOrError.body == null) response.render('perminfo-pages.html');
-          else response.redirect("/seshinfo");
+          else response.redirect("/atgym");
         }
       };
 
@@ -227,13 +227,37 @@ app.route('/perminfo/edit')
         if (perminfoOrError instanceof Error) errorHandler(response, perminfoOrError);
         else {
           if (perminfoOrError.body === null) response.redirect("/perminfo");
-          else response.redirect("/seshinfo");
+          else response.redirect("/atgym");
         }
       };
       
       db.updatePermInfo(request.session.user._id, request.body, respond); 
 
     } else response.render('login.html', { error: "Please sign in." });
+  });
+
+app.route('/atgym')
+  .get(function(request, response) {
+    if (request.session.user) {
+      response.render('atgym.html');
+    } else response.render('login.html', { error: "Please sign in." });
+  })
+  .post(function(request, response) {
+    if (request.session.user) {
+      
+      var userId = request.session.user._id;
+      var updateBody = {
+        atGym: request.body.atGym,
+        lastUpdated: Date.now()
+      }
+
+      function respond(atGymOrError) {
+        if (atGymOrError instanceof Error) errorHandler(response, atGymOrError);
+        else response.redirect('/seshinfo');
+      };
+
+      db.updateAtGym(request.session.user._id, updateBody, respond);    
+    }
   });
 
 app.route('/seshinfo')
@@ -362,12 +386,33 @@ app.route('/chatroom/:matchId')
     if (request.session.user) {
       var userId = request.session.user._id;
       var matchId = request.params.matchId;
+      var roomId; 
+      var perminfo;
+
+      function respondToPermInfo(perminfo) {
+        perminfo = perminfo.body;
+        
+        function respondToAtGym(atGymOrError) {
+          if (atGymOrError.body != null) { 
+            var atGym = atGymOrError.body.atGym; 
+            var date = new Date(atGymOrError.body.lastUpdated);
+            var time = logic.getFormattedTime(date);
+            var month = date.getMonth();
+            var day = date.getDate();
+            var updated = month + "/" + day + " at " + time;
+          }
+          else { var atGym = false; var updated = null}
+          response.render("chatroom.html", {roomId: roomId, perminfo: perminfo, atGym: atGym, updated: updated})
+        }
+        
+        db.findAtGym(matchId, respondToAtGym);
+      };
 
       function respondToCreate(roomOrError) {
         if (roomOrError instanceof Error) errorHandler(response, roomOrError);
         else {
-          var roomId = roomOrError.body._id;
-          response.render("chatroom.html", {roomId: roomId});
+          roomId = roomOrError.body._id;
+          db.findPermInfo({"userId":matchId}, respondToPermInfo);
         }
       };
 
@@ -376,9 +421,8 @@ app.route('/chatroom/:matchId')
         else {
           if (roomOrError.body == null) db.createRoom(userId, matchId, respondToCreate);
           else {
-            var roomId = roomOrError.body._id;
-            console.log(roomId);
-            response.render("chatroom.html", { roomId: roomId });
+            roomId = roomOrError.body._id;
+            db.findPermInfo({"userId":matchId}, respondToPermInfo);
           }
         }
       };

@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+
+{% block head %}
+  {% parent %}
+  <style> 
+    body { margin-top: 20%;}
+  </style>
+{% endblock %}
+
+{% block content %}
+  {% parent %}
+
+  <div class="container">
+      <div class="header">
+        update your status.
+      </div>
+      <form action="/atgym" method="POST">
+      <div id="sectionToValidate">
+        <div class="infoPartI">
+          <div class="row">
+            <div class="question col-xs-8">Are you at the gym right now?</div>
+            <div class="question col-xs-4"><input id="topropesesh" name="atGym" type="checkbox" class="editable" data-toggle="toggle" data-size="mini" data-on="Yes" data-off="No" data-onstyle="info">
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      <div class="submitWrapper">
+        <button id="submission" class="btn btn-default submitBtn" type="submit" onclick="validateSection()">CLIMB ON</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+
+    function validateSection() {
+      var section = $('#sectionToValidate');
+      var emptyInputs = section.find("input").filter(function() {
+        return this.value === ""; 
+      });
+      
+      var emptySelects = section.find("select").filter(function() {
+        var defaultValue = "default";
+        var selectedValue = $(this).val()
+        return (defaultValue === selectedValue);
+      });
+
+
+      // if forms are empty, prevent moving forward
+      if (emptyInputs.length + emptySelects.length) != 0 ) { 
+        alert("Hold on, you left some answers empty.");
+        event.preventDefault(); // for the submit option
+        return false
+      } else return true
+    };
+  </script>
+
+{% endblock %}

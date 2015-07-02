@@ -28,6 +28,12 @@
   .me { float: right; margin: 5px 20px 5px 45px; background-color: #4DB8DB; color: white; display: block; }
   .me::before { right: -9px; background-color: #4DB8DB; }
 
+  .matchInfo { text-align: center; padding: 5%; }
+  img { border-radius: 70%; max-width: 20%;}
+  .info { padding: 1.5%; font-family: "Raleway"; }
+  .firstName { font-size: 4vw; font-style: italic;}
+  .atGym { font-size: 3vw; color: #4DB8DB; }
+  #lastupdated { font-size: 2vw; color: #4DB8DB; font-style: italic;}
   </style>
 
 
@@ -87,16 +93,39 @@ socket.on('message', function (data) {
   });
 
 </script>
-
+  
   <div id="messages"></div>
+  <div class="matchInfo">
+    <img src={{ perminfo.photoAddress}}>
+    <div class="info">
+      <div class="firstName">chat with {{ perminfo.firstName }}</div>
+      <div class="atGym">
+        <span class="glyphicon glyphicon-record"></span>
+        <span id="atGymMsg"></span>
+        <div id="lastupdated"></div>
+      </div>
+    
+    </div>
+  </div>
   <div class="send-area">
+
     <input id="data" class="chat-input" placeholder="Start chatting..."/>
     <button id="datasend" type="submit">Send</button>
   </div>
 
 <script>
 
-
+  var atGym = {{ atGym }};
+  $(function() { 
+    if (!atGym) {
+      $("#atGymMsg").html("  NOT AT GYM");
+      $(".atGym").css("color", "gray");
+    } else {
+      $("#atGymMsg").html("  AT GYM");
+      $("#lastupdated").html("last seen: {{ updated }} ");
+    }
+  });
+  
   $(document).ready(function() {
     var $header = $("header"),
     $clone = $header.before($header.clone().addClass("clone"));

@@ -54,11 +54,18 @@ var Room = new Schema({
   users: [String] // array of users who can view this room
 });
 
+var AtGym = new Schema( {
+  userId: String,
+  atGym:  Boolean,
+  lastUpdated: Date
+})
+
 var Users     = mongoose.model('users', User);
 var PermInfos = mongoose.model('perminfos', PermInfo);
 var SeshInfos = mongoose.model('seshinfos', SeshInfo);
 var Matches   = mongoose.model('matches', Match);
 var Rooms     = mongoose.model('rooms', Room);
+var AtGyms    = mongoose.model('atgym', AtGym);
 
 
 function getUserIds(matchArray) {
@@ -261,6 +268,34 @@ function createRoom(userId, matchId, respondFunction) {
   });
 };
 
+function updateAtGym(userId, body, respondFunction) {
+
+  AtGyms.update({userId: userId}, {$set: body}, {upsert: true}, function(err, atGym) {
+
+    if (atGym) { var queryResult = new idx.Success(atGym); }
+    else if (err) { var queryResult = new idx.Error(401, err); }
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: updateatGym!!!"); }
+    respondFunction(queryResult);
+
+  });
+
+}
+
+function findAtGym(userId, respondFunction) {
+
+  AtGyms.findOne({userId: userId}, function(err, atGym) {
+
+    if (err) { var queryResult = new idx.Error(401, err); }
+    else if (atGym) { var queryResult = new idx.Success(atGym); }
+    else if (atGym === null) { var queryResult = new idx.Success(null); }
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: findAtGym!!!"); }
+    respondFunction(queryResult);
+
+  });
+
+};
+
+
 // export dat shiz
 
 exports.Users      = Users;
@@ -268,6 +303,7 @@ exports.PermInfos  = PermInfos;
 exports.SeshInfos  = SeshInfos;
 exports.Matches    = Matches;
 exports.Rooms      = Rooms;
+exports.AtGyms     = AtGyms; 
 
 exports.findUser       = findUser;
 exports.createUser     = createUser;
@@ -284,5 +320,7 @@ exports.checkMatch     = checkMatch;
 exports.removeMatches  = removeMatches;
 exports.findRoom       = findRoom;
 exports.createRoom     = createRoom;
+exports.updateAtGym    = updateAtGym;
+exports.findAtGym      = findAtGym;
 
 
