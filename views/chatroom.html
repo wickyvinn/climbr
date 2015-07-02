@@ -31,9 +31,7 @@
   .matchInfo { 
     text-align: center;
     padding: 5%;
-    /*position: fixed;*/
     height: 133px;
-    /*z-index: 1030;*/
     width: 100%;
     background-color: white;
   }
@@ -128,15 +126,19 @@ socket.on('message', function (data) {
   document.addEventListener('touchmove', function(e) {
     e.preventDefault();
     var touch = e.touches[0];
-    $('.matchInfo').slideDown("slow");
-    $('.matchInfo').css("position", "relative");
+    if ($('#navbar').attr("aria-expanded") === "false") {
+      $('.matchInfo').slideDown("slow");
+      $('.matchInfo').css("position", "relative");
+    }
   }, false);
 
   function showMatchInfo () {
-    $('.matchInfo').slideDown("slow");
-    $('.matchInfo').css("position", "fixed");
-    $('.matchInfo').css("z-index", "1030");
+    if ($('#navbar').attr("aria-expanded") === "false") {
+      $('.matchInfo').slideDown("slow");
+      $('.matchInfo').css("position", "fixed");
+      $('.matchInfo').css("z-index", "1030");
     }
+  }
 
   function hideMatchInfo () {
     $('.matchInfo').slideUp(800, function() {
