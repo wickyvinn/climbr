@@ -80,6 +80,7 @@ function errorHandler(response, queryResult) {
 }
 
 
+
 //////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// ROUTES ////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////
@@ -278,31 +279,119 @@ app.route('/seshinfo')
 
   })
 
-app.route('/chats')
+app.route('/chats') // this is a clusterfuck
   .get(function (request, response) {
     if (request.session.user) {
       var userId = request.session.user._id;
+      var userLikes = [];
+      var likesUser = []; 
 
-      function respond(matchesOrError) {
-        if (matchesOrError instanceof Error) errorHandler(response, matchesOrError);
-        else {
-          var matchUserIds = logic.getUserIds(matchesOrError.body);
-          function respondTwo(perminfos) { response.render("chats.html", {perminfos: perminfos.body}); }
-          db.findPermInfoOfUsers(matchUserIds, respondTwo);
-        }
+      function respondUserLikes(userLikes) {  // 2. respond to first query.
+        userLikes = userLikes.body;
+
+        function respondLikesUser(likesUser) {  // 4. respond to second query.
+          likesUser = likesUser.body;
+          var reciprocated = [];
+          var newLikesUser = [];
+          var newUserLikes = [];
+          var displayReciprocated; 
+          var displayLikesUser;
+          var displayUserLikes; 
+
+          function categorize(callback) { // 5. categorize each person.
+            for (var i=0; i < userLikes.length; i++) {
+              var itemIndex = likesUser.indexOf(userLikes[i]);
+              if ( itemIndex != -1) {
+                reciprocated.push(userLikes[i]);
+                likesUser.splice(itemIndex, 1);
+              } else newUserLikes.push(userLikes[i]);
+            };
+            var newLikesUser = likesUser;
+            if (callback) callback();
+          };
+
+          // return this when it's done categorizing.
+
+          function respondPermInfo1(perminfos) {  // 4. respond to second query.
+            displayLikesUser = perminfos.body;
+            db.findPermInfoOfUsers(newUserLikes, respondPermInfo2);
+          };
+
+          function respondPermInfo2(perminfos) {  // 4. respond to second query.
+            displayUserLikes = perminfos.body;
+            db.findPermInfoOfUsers(reciprocated, respondPermInfo3);
+          };
+
+          function respondPermInfo3(perminfos) {  // 4. respond to second query.
+            displayReciprocated = perminfos.body;
+            response.render("chats.html", {likesUser: displayLikesUser, userLikes: displayUserLikes, reciprocated: displayReciprocated});
+          };
+
+          categorize(db.findPermInfoOfUsers(newLikesUser, respondPermInfo1));
+
+      };
+
+        db.likesUser(userId, respondLikesUser); // 3. second query.
       }
 
-      db.getMatches(userId, respond);
-      
+      db.userLikes(userId, respondUserLikes); // 1. first query.
     } else response.render('login.html', { error: "Please sign in." });
+  })
+
+io.sockets.on('connection', function(socket){
+  socket.on('subscribe', function(roomId) { 
+    socket.join(roomId); 
+  })
+
+  socket.on('unsubscribe', function(roomId) {  
+    socket.leave(roomId); 
+  })
+
+  socket.on('sendchat', function(data) {
+    console.log('server received sendchat emission, now emitting back updatechat to client');
+    socket.emit('updatechat', socket.username, data.message, true);
+    socket.broadcast.to(data.roomId).emit('updatechat', socket.username, data.message, false);
   });
 
-app.route('/chatroom')
-  .get(function (request, response) {
+});
+
+app.route('/chatroom/:matchId')
+  
+  .get(function(request, response) {
+    
     if (request.session.user) {
-      response.render("chatroom.html");
+      var userId = request.session.user._id;
+      var matchId = request.params.matchId;
+
+      function respondToCreate(roomOrError) {
+        if (roomOrError instanceof Error) errorHandler(response, roomOrError);
+        else {
+          var roomId = roomOrError.body._id;
+          response.render("chatroom.html", {roomId: roomId});
+        }
+      };
+
+      function respondToFind(roomOrError) {
+        if (roomOrError instanceof Error) errorHandler(response, roomOrError);
+        else {
+          if (roomOrError.body == null) db.createRoom(userId, matchId, respondToCreate);
+          else {
+            var roomId = roomOrError.body._id;
+            console.log(roomId);
+            response.render("chatroom.html", { roomId: roomId });
+          }
+        }
+      };
+
+      db.findRoom(userId, matchId, respondToFind)
+
+
     } else response.render('login.html', { error: "Please sign in." });
+    
+
   });
+
+
 
 app.route('/climbers')
   .get(function(request, response) {
@@ -339,16 +428,15 @@ app.route("/matches/any")
       function respond(matchesOrError) {
         if (matchesOrError instanceof Error) errorHandler(response, matchesOrError);
         else {
-          var matchesArray = matchesOrError.body;
-          var matchIds = [];
-          for (var i = 0; i < matchesArray.length; i++) { matchIds.push(matchesArray[i].userId); }
+          var matchIds = matchesOrError.body;
           if (matchIds.length < 1) response.end();
           else response.send(matchIds);
         }
       };
-      db.getMatches(request.session.user._id, respond);
+      db.likesUser(request.session.user._id, respond);
     }
   })
+
 app.route('/matches')  
   .get(function(request, response) {
     if (request.session.user) {
@@ -426,9 +514,6 @@ app.route('/photo')
     } else response.render('login.html', { error: "Please sign in." });
   });
 
-
-
-
 function uploadPhotoToS3(data, userId, response) {
   var s3bucket = new AWS.S3({params: {Bucket: s3Bucket}});
 
@@ -458,33 +543,6 @@ function uploadPhotoToS3(data, userId, response) {
 
   });
 }
-
-var usernames = {};
-
-var numUsers = 0;  
-
-io.on('connection', function (socket) { 
-  // when the client emits 'sendchat', this listens and executes
-  socket.on('sendchat', function (data) {
-    socket.emit('updatechat', socket.username, data, true); // show to person who typed
-    socket.broadcast.emit('updatechat', socket.username, data, false); // show to other
-  });
-
-  // when the client emits 'adduser', this listens and executes
-  socket.on('adduser', function(username){
-    socket.username = username;
-    usernames[username] = username;
-    numUsers += 1;
-    io.emit('updateusers', numUsers);
-  });
-
-  // when the user disconnects.. perform this
-  socket.on('disconnect', function(){
-    delete usernames[socket.username];
-    numUsers -= 1;
-    io.emit('updateusers', numUsers);
-  });
-});
 
 server.listen(app.get('port'), function() {
   console.log("climbr is running at localhost:" + app.get('port') + '.');

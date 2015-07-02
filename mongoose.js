@@ -50,10 +50,25 @@ var Match = new Schema({
   matches:    [String] // array of userids that were swiped right
 });
 
+var Room = new Schema({
+  users: [String] // array of users who can view this room
+});
+
 var Users     = mongoose.model('users', User);
 var PermInfos = mongoose.model('perminfos', PermInfo);
 var SeshInfos = mongoose.model('seshinfos', SeshInfo);
 var Matches   = mongoose.model('matches', Match);
+var Rooms     = mongoose.model('rooms', Room);
+
+
+function getUserIds(matchArray) {
+  var userIds = [];
+  for (var i=0; i < matchArray.length; i++) {
+    userIds.push(matchArray[i].userId);
+  }
+  return userIds;
+}
+
 
 // queries
 
@@ -161,15 +176,31 @@ function updateSeshInfo(userId, body, respondFunction) {
 
 }
 
+// all people who swiped right on the user but the user hasn't swiped right on them... returns Array[userId]
+function likesUser(userId, respondFunction) {
 
-function getMatches(userId, respondFunction) {
+  Matches.find({ matches: userId }, { userId: true, _id: false}, function (err, matches) {
 
-  Matches.find( { matches: userId }, { userId: 1}, function(err, matchesArray) {
       if (err) { var queryResult = new idx.Error(401, err); }
-      else if (matchesArray) { var queryResult = new idx.Success(matchesArray); }
+      else if (matches) { var queryResult = new idx.Success(getUserIds(matches)); }
       else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: getMatches!!!"); }
       respondFunction(queryResult);
+
     });
+};
+
+// all the people the user swiped right on. gonna be an object that looks like Array[String], where String = userId
+function userLikes(userId, respondFunction) {
+  var matchIds = [];
+  Matches.findOne({ userId:userId }, { matches: true, _id: false }, function (err, matchesObject) {
+
+    if (err) { var queryResult = new idx.Error(401, err); }
+    else if (matchesObject != null) { var queryResult = new idx.Success(matchesObject.matches); }
+    else if (matchesObject === null) { var queryResult = new idx.Success([])}
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: userLikes!!!");  }
+    respondFunction(queryResult);
+
+  });
 };
 
 function checkMatch(userId, matchId, respondFunction) {
@@ -199,12 +230,36 @@ function removeMatches(userId, respondFunction) {
   Matches.remove( {userId: userId}, function (err, matches) {
     if (matches) { var queryResult = new idx.Success(matches); }
     else if (err) { var queryResult = new idx.Error(401, err); }
-    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: addMatch!!!")}
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: removeMatches!!!")}
     respondFunction(queryResult); 
   });
 
 };
 
+function findRoom(userId, matchId, respondFunction) {
+  
+  Rooms.findOne({ $and: [{users:userId}, {users:matchId}]}, function (err, room) {
+    
+    if (err) { var queryResult = new idx.Error(401, err); }
+    else if (room) { var queryResult = new idx.Success(room); }
+    else if (room === null) { var queryResult = new idx.Success(null); }
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: findroom!!!"); }
+    respondFunction(queryResult)
+
+  });
+};
+
+function createRoom(userId, matchId, respondFunction) {
+
+  Rooms.create({users: [userId, matchId]}, function(err, room) {
+  
+    if (room) { var queryResult = new idx.Success(room); }
+    else if (err) { var queryResult = new idx.Error(401, err); }
+    else { var queryResult = new idx.Error(401, "SHIT SHIT SOMETHING WEIRD HAPPENED: createUser!!!"); }
+    respondFunction(queryResult);
+
+  });
+};
 
 // export dat shiz
 
@@ -212,6 +267,7 @@ exports.Users      = Users;
 exports.PermInfos  = PermInfos;
 exports.SeshInfos  = SeshInfos;
 exports.Matches    = Matches;
+exports.Rooms      = Rooms;
 
 exports.findUser       = findUser;
 exports.createUser     = createUser;
@@ -221,8 +277,12 @@ exports.findPermInfoOfUsers = findPermInfoOfUsers;
 exports.updatePermInfo = updatePermInfo;
 exports.findSeshInfos  = findSeshInfos; 
 exports.updateSeshInfo = updateSeshInfo;
-exports.getMatches     = getMatches;
+exports.likesUser      = likesUser;
+exports.userLikes      = userLikes;
 exports.addMatch       = addMatch;
 exports.checkMatch     = checkMatch;
 exports.removeMatches  = removeMatches;
+exports.findRoom       = findRoom;
+exports.createRoom     = createRoom;
+
 

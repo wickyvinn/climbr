@@ -4,6 +4,9 @@
   {% parent %}
   <style>
     body { margin-top: 20%;}
+    .categoryHeader { font-family: "Raleway"; color: #4DB8DB;  font-size: 3.3vw; margin-left: 7%; font-size: italic; }
+    .firstCategoryHeader { padding-top: 0%; }
+    .otherCategoryHeader { padding-top: 5%; }
     #chatlist a {color: black; text-decoration:none;}
     #chatlist li { list-style-type: none; font-family: "Raleway"; font-style: bold; font-size: 3.8vw; padding: 2% 10% 2% 4%; }
     #chatlist li { margin-right: 5%; margin-left: 5%;}
@@ -19,25 +22,75 @@
 
 {% block content %}
   {% parent %}
-  {% for perminfo in perminfos %}
-  <div id="chatlist">
-    
-    {% if loop.first %} <a href="/chatroom"><li class='first'>
-    {% else %} <a href="/chatroom"><li>
-    {% endif %}
-      <img src={{ perminfo.photoAddress }}>
-      <span class='firstname'>{{ perminfo.firstName }}</span> - 
-      <span class='details'>
 
-      {% if perminfo.leadCert %} lead certified
-      {% elseif perminfo.topCert %} top certified
-      {% else %} not yet belayed certified
-      {% endif %}
-      </span>
+  {% if reciprocated.length > 0 %}
+  <div class="categoryHeader firstCategoryHeader">YOU BOTH WANT TO CLIMB TOGETHER</div>
+    {% for user in reciprocated %}
+    <div id="chatlist">
+        {% if loop.first %} <a href="/chatroom/{{user.userId}}"><li class='first'>
+        {% else %} <a href="/chatroom/{{user.userId}}"><li>
+        {% endif %}
+          <img src={{ user.photoAddress }}>
+          <span class='firstname'>{{ user.firstName }}</span> - 
+          <span class='details'>
 
-      <span class="glyphicon glyphicon-chevron-right"></span>
-      </li></a>
+          {% if user.leadCert %} lead certified
+          {% elseif user.topCert %} top certified
+          {% else %} not yet belayed certified
+          {% endif %}
+          </span>
+
+          <span class="glyphicon glyphicon-chevron-right"></span>
+          </li></a>
     {% endfor %}
+  {% endif %}
+
+  {% if userLikes.length > 0 %}
+  <div class="categoryHeader otherCategoryHeader">YOU WANT TO CLIMB WITH THEM</div>
+    {% for user in userLikes %}
+    <div id="chatlist">
+        {% if loop.first %} <a href="/chatroom/{{user.userId}}"><li class='first'>
+        {% else %} <a href="/chatroom/{{user.userId}}"><li>
+        {% endif %}
+          <img src={{ user.photoAddress }}>
+          <span class='firstname'>{{ user.firstName }}</span> - 
+          <span class='details'>
+
+          {% if user.leadCert %} lead certified
+          {% elseif user.topCert %} top certified
+          {% else %} not yet belayed certified
+          {% endif %}
+          </span>
+
+          <span class="glyphicon glyphicon-chevron-right"></span>
+          </li></a>
+    {% endfor %}
+  {% endif %}
+
+
+  {% if likesUser.length > 0 %}
+  <div class="categoryHeader otherCategoryHeader">THEY WANT TO CLIMB WITH YOU</div>
+    {% for user in likesUser %}
+    <div id="chatlist">
+        {% if loop.first %} <a href="/chatroom/{{user.userId}}"><li class='first'>
+        {% else %} <a href="/chatroom/{{user.userId}}"><li>
+        {% endif %}
+          <img src={{ user.photoAddress }}>
+          <span class='firstname'>{{ user.firstName }}</span> - 
+          <span class='details'>
+
+          {% if user.leadCert %} lead certified
+          {% elseif user.topCert %} top certified
+          {% else %} not yet belayed certified
+          {% endif %}
+          </span>
+
+          <span class="glyphicon glyphicon-chevron-right"></span>
+          </li></a>
+    {% endfor %}
+  {% endif %}
+
+
   </div>
 
   <script>

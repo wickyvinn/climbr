@@ -7,14 +7,14 @@
 
   <style>
   body { margin-top: 17%;}
-  #current-users { font-family: "Raleway"; font-size: 4vw; text-align: center; font-style: italic; padding: 4%; }
+  #header { font-family: "Raleway"; font-size: 4vw; text-align: center; font-style: italic; padding: 4%; }
   button { padding: 2.5%; background: #D8DCDC; border: solid; border-color: #D8DCDC; border-width: 1px; border-radius: 5px;
   color: #4DB8DB; }
   #messages { width: 96%; margin-left:3%; margin-right:3%; }
   .send-area { background: #D8DCDC; padding: 3%; width: 100%; position: fixed; bottom: 0px; }
   .chat-input { border: 0; padding: 2.5%; border-radius: 5px; border: solid; border-width: 1px; border-color: #D8DCDC; width: 82%; color: #FF0066; }
   .username { font-weight: bold;}
-  .bubble { background-color: #F2F2F2; border-radius: 5px; display: inline-block; padding: 10px 18px; position: relative; vertical-align: top; clear:both; font-family: "Raleway"; word-wrap: break-word; }
+  .bubble { background-color: #F2F2F2; border-radius: 5px; display: inline-block; padding: 10px 18px; position: relative; vertical-align: top; clear:both; font-family: "Raleway"; word-wrap: break-word; max-width: 90%;}
   .bubble::before { background-color: #F2F2F2; content: "\00a0"; display: block; height: 16px; position: absolute; top: 11px;
     transform: rotate( 29deg ) skew( -35deg );
         -moz-transform:    rotate( 29deg ) skew( -35deg );
@@ -39,21 +39,16 @@
 
 <script>
 
-  var socket = io();
+var roomId = {{roomId|json_encode|raw}};
+
+var socket = io.connect();
+socket.on('message', function (data) {
+  console.log(data);
+});
+
+ socket.emit('subscribe', roomId);
+
   var totalHeight = 0;
-
-  socket.on('connect', function(){
-    socket.emit('adduser');
-  });
-
-
-  socket.on('updateusers', function(numUsers) {
-    if (numUsers < 2) {
-      $('#current-users').html("Welcome. You're the only one here though, just hang on.");  
-    } else {
-      $('#current-users').html('Go ahead, start chatting.');  
-    }
-  });
 
   // listener, whenever the server emits 'updatechat', this updates the chat body
   socket.on('updatechat', function (username, data, me) {
@@ -77,7 +72,8 @@
     $('#datasend').click( function() {
       var message = $('#data').val();
       if (message != "") { $('#data').val('');
-        socket.emit('sendchat', message);
+        console.log('emit to server: sendchat');
+        socket.emit('sendchat', { roomId: roomId, message: message });
       }
     });
 
@@ -92,15 +88,14 @@
 
 </script>
 
-  <div id="current-users"></div>
   <div id="messages"></div>
-
   <div class="send-area">
     <input id="data" class="chat-input" placeholder="Start chatting..."/>
     <button id="datasend" type="submit">Send</button>
   </div>
 
 <script>
+
 
   $(document).ready(function() {
     var $header = $("header"),
