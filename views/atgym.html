@@ -12,7 +12,7 @@
 
   <div class="container">
       <div class="header">
-        update your status.
+        what's your status?
       </div>
       <form action="/atgym" method="POST">
       <div id="sectionToValidate">
@@ -47,7 +47,7 @@
 
 
       // if forms are empty, prevent moving forward
-      if (emptyInputs.length + emptySelects.length) != 0 ) { 
+      if ((emptyInputs.length + emptySelects.length) != 0 ) { 
         alert("Hold on, you left some answers empty.");
         event.preventDefault(); // for the submit option
         return false

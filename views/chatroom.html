@@ -126,7 +126,7 @@ socket.on('message', function (data) {
   document.addEventListener('touchmove', function(e) {
     e.preventDefault();
     var touch = e.touches[0];
-    if ($('#navbar').attr("aria-expanded") === "false") {
+    if ($('#navbar').attr("aria-expanded") !== "true") {
       $('.matchInfo').slideDown("slow");
       $('.matchInfo').css("position", "relative");
     }
