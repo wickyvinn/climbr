@@ -128,12 +128,13 @@ socket.on('message', function (data) {
     var touch = e.touches[0];
     if ($('#navbar').attr("aria-expanded") !== "true") {
       $('.matchInfo').slideDown("slow");
-      $('.matchInfo').css("position", "relative");
+      $('.matchInfo').css("position", "fixed");
+      $('.matchInfo').css("z-index", "1030");
     }
   }, false);
 
   function showMatchInfo () {
-    if ($('#navbar').attr("aria-expanded") === "false") {
+    if ($('#navbar').attr("aria-expanded")!== "true") {
       $('.matchInfo').slideDown("slow");
       $('.matchInfo').css("position", "fixed");
       $('.matchInfo').css("z-index", "1030");
@@ -152,9 +153,9 @@ socket.on('message', function (data) {
   $(window).scroll(function(event){
     var st = $(this).scrollTop();
     // scroll down
-    if (st > lastScrollTop) { showMatchInfo() } 
+    if (st > lastScrollTop) { console.log("scroll down"); } 
     // scroll up
-    else { hideMatchInfo() }
+    else { console.log('scroll up'); hideMatchInfo(); }
     lastScrollTop = st;
   });
 
