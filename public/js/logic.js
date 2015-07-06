@@ -1,5 +1,20 @@
 // Functions used in routes
 
+function getFormattedTime(date) {
+  function addZero(i) {
+    if (i < 10) { i = "0" + i; }
+    return i;
+  } 
+
+  var timeMilitary = String(date.getHours()) + String(date.getMinutes());
+  var hours24 = parseInt(timeMilitary.substring(0, 2),10);
+  var hours = ((hours24 + 11) % 12) + 1;
+  var amPm = hours24 > 11 ? 'pm' : 'am';
+  var minutes = timeMilitary.substring(2);
+  return hours + ':' + addZero(minutes) + amPm;
+};
+
+
 function formatInfo(perminfo) {
   return {
     firstName: perminfo.firstName.charAt(0).toUpperCase() + perminfo.firstName.slice(1),
@@ -42,7 +57,7 @@ function getUserIds(matchArray) {
 }
 
 // export da shiz 
-
+exports.getFormattedTime  = getFormattedTime;
 exports.formatInfo   = formatInfo;
 exports.joinClimbers = joinClimbers;
 exports.getUserIds   = getUserIds;
