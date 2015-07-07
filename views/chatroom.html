@@ -90,8 +90,8 @@ socket.on('message', function (data) {
   $(function(){
     $('#datasend').click( function() {
       var message = $('#data').val();
-      if (message != "") { $('#data').val('');
-        console.log('emit to server: sendchat');
+      if (message != "") { 
+        $('#data').val('');
         socket.emit('sendchat', { roomId: roomId, message: message });
       }
     });
@@ -141,9 +141,9 @@ socket.on('message', function (data) {
   $(window).scroll(function(event){
     var st = $(this).scrollTop();
     // scroll down
-    if (st > lastScrollTop) { console.log("scroll down"); floatHeader()} 
+    if (st > lastScrollTop) floatHeader()
     // scroll up
-    else if (st === 0) {  stickHeader() }
+    else if (st === 0) stickHeader()
     lastScrollTop = st;
   });
 
@@ -153,7 +153,6 @@ socket.on('message', function (data) {
       $("#atGymMsg").html("  NOT AT GYM");
       $(".atGym").css("color", "gray");
     } else {
-      console.log("at gym")
       $("#atGymMsg").html("AT GYM");
       // $("#lastupdated").html("last seen: {{ updated }} ");
     }
