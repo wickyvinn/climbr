@@ -122,9 +122,15 @@ socket.on('message', function (data) {
 
 <script>
   var header = $('#collapsedHeader')
+  
+   $(".navbar-toggle").click(function(event) {
+      if ($("#navbar").attr("aria-expanded") !== "true") header.hide();
+      else header.show();
+   });
 
   function floatHeader() {
     if ($('#navbar').attr("aria-expanded")!== "true") {
+      header.show();
       header.css("position", "fixed");
       header.css("z-index", "1030");
     }
@@ -132,6 +138,7 @@ socket.on('message', function (data) {
 
   function stickHeader() {
     if ($('#navbar').attr("aria-expanded")!== "true") {
+      header.show();
       header.css("position", "relative");
       header.css("z-index", "");
     }
