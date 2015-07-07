@@ -4,6 +4,7 @@
   {% parent %}
   <meta name="viewport" content="width=device-width, initial-scale=1 user-scalable=no">
   <script src="/socket.io/socket.io.js"></script>
+  <script src="../js/hammer.min.js"></script>
 
   <style>
   body { margin-top: 17%;}
@@ -35,7 +36,10 @@
     width: 100%;
     background-color: white;
   }
-
+  #collapsedHeader { text-align: center; background-color: #EDF8FB; display: block; padding: 2%;}
+  img.collapsedImg { max-width: 9%;}
+  .collaspedFirstName { color: black; font-size: 8.5vw; font-family: "Raleway";  text-transform: uppercase; padding-left: 1%; vertical-align: middle;
+}
   img { border-radius: 70%; max-width: 20%;}
   .info { padding: 1.5%; font-family: "Raleway"; }
   .firstName { font-size: 4vw; font-style: italic;}
@@ -102,17 +106,12 @@ socket.on('message', function (data) {
   });
 
 </script>
-  
-  <div class="matchInfo">
-    <img src={{ perminfo.photoAddress}}>
-    <div class="info">
-      <div class="firstName">chat with {{ perminfo.firstName }}</div>
-      <div class="atGym">
-        <span class="glyphicon glyphicon-record"></span>
-        <span id="atGymMsg"></span>
-        <div id="lastupdated"></div>
-      </div>    
-    </div>
+  <div id="collapsedHeader">
+    <img class="collapsedImg" src={{perminfo.photoAddress}}>
+    <span class="collaspedFirstName"> {{ perminfo.firstName }} </span>
+    <span class="atGym glyphicon glyphicon-record"></span> 
+    <span class="atGym" id="atGymMsg"></span>
+    <!-- <span id="lastupdated"></span> -->
   </div>
   <div id="messages"></div>
   <div class="send-area">
@@ -122,40 +121,29 @@ socket.on('message', function (data) {
   </div>
 
 <script>
+  var header = $('#collapsedHeader')
 
-  document.addEventListener('touchmove', function(e) {
-    e.preventDefault();
-    var touch = e.touches[0];
-    if ($('#navbar').attr("aria-expanded") !== "true") {
-      $('.matchInfo').slideDown("slow");
-      $('.matchInfo').css("position", "fixed");
-      $('.matchInfo').css("z-index", "1030");
-    }
-  }, false);
-
-  function showMatchInfo () {
+  function floatHeader() {
     if ($('#navbar').attr("aria-expanded")!== "true") {
-      $('.matchInfo').slideDown("slow");
-      $('.matchInfo').css("position", "fixed");
-      $('.matchInfo').css("z-index", "1030");
+      header.css("position", "fixed");
+      header.css("z-index", "1030");
     }
   }
 
-  function hideMatchInfo () {
-    $('.matchInfo').slideUp(800, function() {
-      $('.matchInfo').css("position", "relative");
-      $('.matchInfo').css("z-index", "");
-    });
-    
-  };
+  function stickHeader() {
+    if ($('#navbar').attr("aria-expanded")!== "true") {
+      header.css("position", "relative");
+      header.css("z-index", "");
+    }
+  }
 
   var lastScrollTop = 0;
   $(window).scroll(function(event){
     var st = $(this).scrollTop();
     // scroll down
-    if (st > lastScrollTop) { console.log("scroll down"); } 
+    if (st > lastScrollTop) { console.log("scroll down"); floatHeader()} 
     // scroll up
-    else { console.log('scroll up'); hideMatchInfo(); }
+    else if (st === 0) {  stickHeader() }
     lastScrollTop = st;
   });
 
@@ -165,8 +153,9 @@ socket.on('message', function (data) {
       $("#atGymMsg").html("  NOT AT GYM");
       $(".atGym").css("color", "gray");
     } else {
-      $("#atGymMsg").html("  AT GYM");
-      $("#lastupdated").html("last seen: {{ updated }} ");
+      console.log("at gym")
+      $("#atGymMsg").html("AT GYM");
+      // $("#lastupdated").html("last seen: {{ updated }} ");
     }
   });
   
